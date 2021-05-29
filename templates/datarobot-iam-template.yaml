@@ -15,7 +15,7 @@ Parameters:
     Description: CloudFormation repository S3 bucket name
 
 Resources: 
-  DataRobotEnterpriseIAMRole:
+  DataRobotIAMRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -32,12 +32,12 @@ Resources:
     Properties:
       Path: /
       Roles:
-        - !Ref DataRobotEnterpriseIAMRole
+        - !Ref DataRobotIAMRole
 
   RolePolicies:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: DataRobotEnterpriseIAMPolicy
+      PolicyName: DataRobotIAMPolicy
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -77,7 +77,7 @@ Resources:
               - 'ssm:GetParameter'
               - 'ssm:DeleteParameter'
             Resource:
-              - arn:aws:ssm:*:*:parameter/*/datarobot-public-key
+#              - arn:aws:ssm:*:*:parameter/*/datarobot-public-key
               - !Sub 'arn:aws:s3:::${S3Bucket}'
               - !Sub 'arn:aws:s3:::${S3Bucket}/*'
               - !Sub 'arn:aws:cloudformation:*:*:stack/${MainStack}/*'
@@ -89,10 +89,13 @@ Resources:
               - arn:aws:ec2:*:*:volume/*
 
       Roles:
-        - !Ref DataRobotEnterpriseIAMRole      
-
+        - !Ref DataRobotIAMRole      
 Outputs:
-  InstanceProfile:
-    Description: InstanceProfile for DR EC2 instances
-    Value:
+  EC2InstanceSecurityProfile:
+    Description: SecurityGroup settings when using an S3 Bucket
+    Value: 
       Ref: InstanceProfile
+    Export:
+      Name: 
+        'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
+  

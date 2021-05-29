@@ -1,0 +1,192 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy DataRobot into an existing VPC
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: Launch into an existing VPC
+    Order: "5"
+  QSLint:
+    Exclusions: [ W9002, W9003, W9004, W9006 ]
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Network Configuration
+        Parameters:
+          - VPCID
+          - PrivateSubnet1ID
+          - PrivateSubnet2ID
+          - PublicSubnet1ID
+          - PublicSubnet2ID
+#          - RemoteAccessCIDR
+      - Label:
+          default: Security Configuration
+        Parameters:
+          - KeyPairName
+      - Label:
+          default: AWS Quick Start Configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+          - QSS3BucketRegion
+    ParameterLabels:
+      PublicSubnet1ID:
+        default: Public subnet 1 ID
+      PublicSubnet2ID:
+        default: Public subnet 2 ID
+      PrivateSubnet1ID:
+        default: Private subnet 1 ID
+      PrivateSubnet2ID:
+        default: Private subnet 2 ID
+#      RemoteAccessCIDR:
+#        default: Allowed bastion external access CIDR
+      VPCID:
+        default: VPC ID  
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket Region
+      KeyPairName:
+        default: Key pair name
+Parameters:
+  PublicSubnet1ID:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: ID of the public subnet in Availability Zone 1 of your existing VPC (e.g., subnet-a0246dcd).
+  PublicSubnet2ID:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: ID of the public subnet in Availability Zone 2 of your existing VPC (e.g., subnet-b1236eea).
+  PrivateSubnet1ID:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: ID of the private subnet in Availability Zone 1 of your existing VPC (e.g., subnet-fe9a8b32).
+  PrivateSubnet2ID:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: ID of the private subnet in Availability Zone 2 of your existing VPC (e.g., subnet-be8b01ea).
+  VPCID:
+    Type: "AWS::EC2::VPC::Id"
+    Description: ID of your existing VPC (e.g., vpc-0343606e).
+  KeyPairName:
+    Description: Name of an existing public/private key pair. If you do not have one in this AWS Region,
+      please create it before continuing.
+    Type: 'AWS::EC2::KeyPair::KeyName'
+#  RemoteAccessCIDR:
+#    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+#    Type: String
+#    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
+#    Description: Allowed CIDR block for external SSH access to the bastions
+  QSS3BucketName:
+    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
+    ConstraintDescription:
+      The Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a 
+      hyphen (-).
+    Default: aws-quickstart
+    Description:
+      Name of the S3 bucket for your copy of the Quick Start assets. 
+      Keep the default name unless you are customizing the template. 
+      Changing the name updates code references to point to a new Quick 
+      Start location. This name can include numbers, lowercase letters, 
+      uppercase letters, and hyphens, but do not start or end with a hyphen (-). 
+      See https://aws-quickstart.github.io/option1.html.
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: '^[0-9a-zA-Z-/]*$'
+    Type: String
+    ConstraintDescription:
+      The Quick Start S3 key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slashes (/). The prefix should
+      end with a forward slash (/).
+    Default: quickstart-apache-rocketmq/
+    Description:
+      S3 key prefix that is used to simulate a directory for your copy of the 
+      Quick Start assets. Keep the default prefix unless you are customizing 
+      the template. Changing this prefix updates code references to point to 
+      a new Quick Start location. This prefix can include numbers, lowercase 
+      letters, uppercase letters, hyphens (-), and forward slashes (/). End with 
+      a forward slash. See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
+      and https://aws-quickstart.github.io/option1.html.
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: 'AWS Region where the Quick Start S3 bucket (QSS3BucketName) is 
+      hosted. Keep the default Region unless you are customizing the template. 
+      Changing this Region updates code references to point to a new Quick Start location. 
+      When using your own bucket, specify the Region. 
+      See https://aws-quickstart.github.io/option1.html.'
+    Type: String
+
+
+Resources:
+#  BastionStack:
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      TemplateURL: https://aws-quickstart.s3.us-east-1.amazonaws.com/quickstart-linux-bastion/templates/linux-bastion.template
+#        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template'
+#        
+#
+#      Parameters:
+#        BastionInstanceType: t2.micro
+#        NumBastionHosts: 2
+#        BastionAMIOS: Amazon-Linux2-HVM
+#        EnableTCPForwarding: 'true'
+#        KeyPairName: !Ref 'KeyPairName'
+#        PublicSubnet1ID: !Ref PublicSubnet1ID
+#        PublicSubnet2ID: !Ref PublicSubnet2ID
+#        QSS3BucketName: !Ref 'QSS3BucketName'
+#        QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-linux-bastion/'
+#        QSS3BucketRegion: !Ref 'QSS3BucketRegion'
+#        RemoteAccessCIDR: !Ref 'RemoteAccessCIDR'
+#        VPCID: !Ref VPCID
+
+
+  SecurityStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TimeoutInMinutes: 2
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-securitygroup-template.yaml
+      Parameters:
+        MainStack: !Ref AWS::StackName
+        VpcId: !Ref VPCID
+        CidrBlock: 0.0.0.0/0
+        ExternalIPAddress: 0.0.0.0/0
+
+
+  IAMStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TimeoutInMinutes: 5
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-iam-template.yaml
+      Parameters:
+        MainStack: !Ref AWS::StackName
+        S3Bucket: weswagner-quickstart-dr
+        
+  AppNode:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-appnode-template.yaml
+      Parameters:
+        MainStack: !Ref AWS::StackName
+        SubnetId: !Ref PrivateSubnet1ID
+        Encrypted: false
+        EncryptionKey: ' '
+        SSHKey: !Ref KeyPairName
+        InstallationBucket: weswagner-quickstart-dr
+        ImageId: ami-01ca03df4a6012157
+        DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1622488193&Signature=h6%2B0y3YTJx5P87DzE1FVl0mNgTQ%3D"
+    DependsOn: 
+      - SecurityStack
+      - IAMStack    
+
+Outputs:
+  MasterTemplate:
+    Description: A refrence to the created DB
+    Value: MasterTemplate
+
+
+
+
+
+    
+    

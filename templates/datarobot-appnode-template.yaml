@@ -28,10 +28,11 @@ Parameters:
   SubnetId:
     Type: "AWS::EC2::Subnet::Id"
     Description: Subnet for cluster
-  SecurityGroupIds:
-    Type: List<AWS::EC2::SecurityGroup::Id>
-    Description: Cluster Security Group Id
-    # Default: sg-<some security group id>
+#  SecurityGroupIds:
+#    Type: List<AWS::EC2::SecurityGroup::Id>
+#    Description: Cluster Security Group Id
+#    Default: !ImportValue 
+#      'Fn::Sub': '${MainStack}-EC2SecurityGroup'
   ImageId:
     Type: AWS::EC2::Image::Id
     Description: RHEL or CentOS AMI Id
@@ -39,15 +40,17 @@ Parameters:
     Type: String
     Description: AWS Instance Type
     AllowedValues: [ "t3.2xlarge", "m5.xlarge", "m5.2xlarge", "c5.xlarge", "c5.2xlarge", "r5.xlarge", "r5.2xlarge", "r5.4xlarge", "r5d.12xlarge" ]
+    Default: r5.2xlarge
   NodeVolumeSize:
     Type: Number
     Description: Hard drive size for Operating System
     AllowedValues: [ 40, 60, 80, 100 ]
-    # Default: 40
+    Default: 40
   DataVolumeSize:
     Type: Number
     Description: Hard drive size for the DataRobot software
     AllowedValues: [ 128, 256, 512, 1024, 2048, 4096 ]
+    Default: 256
   Region:
     Type: String
     Description: Region to host cluster
@@ -56,7 +59,7 @@ Parameters:
   Encrypted:
     Type: String
     Description: Enable encryption on the DataRobot Application Drive
-    Default: true
+    Default: false
     AllowedValues: [ true, false ]
   EncryptionKey:
     Type: String
@@ -72,31 +75,24 @@ Parameters:
     Description: Should this node have a Public IP
     Default: false
     AllowedValues: [ true, false ]
-  IAmProfile:
-    Type: String
-    Description: Profile ID for the IAM Role we will be using
   StorageDir:
     Type: String
     Description: Where to store the verte4x files in our S3 bucket
     Default: "datarobot_storage"
-
   BackupDir:
     Type: String
     Description: Where to store the secrets and data file backups
     Default: "backup_files"
-
   UseS3BucketBackups:
     Type: String
     Description: Where to store the secrets and data file backups
     Default: true
     AllowedValues: [ true, false ]
-
   S3BucketBackupSchedule:
     Type: String
     Description: "Cron tab formatted schedule. Default: '0 0 * * 1-5' or Monday - Friday at midnight"
     Default: "0 0 * * 1-5"
     # Default: "30 * * * *"
-
   LogServer:
     Type: String
     Description: Type of Log Aggrigation Server to configure. Current options are off or Elastic/Logstacsh/Kibana. Splunk is on the way.
@@ -108,22 +104,22 @@ Parameters:
   ClusterType:
     Type: String
     Description: Type of cluster to build.
-    AllowedValues: [ "SingleNode", "PoC", "PreProd", "QuickStart" ] 
+    AllowedValues: [ "SingleNode", "PoC", "PreProd", "QuickStart" ]
+    Default: "PreProd" 
   UseAutoScaling:
     Type: String
-    Description: Enable the metricspublisher service to turn on AutoScaling 
+    Description: Enable the metricspublisher service to turn on AutoScaling
+    Default: "False" 
   StorageType:
     Type: String
     Description: How to save the data in this cluster. If using AutoScaling, you must not use minio.
     AllowedValues: [ "minio", "s3bucket", "gluster" ]
-    Default: minio
-
+    Default: s3bucket
   UseDPELoadBalancer:
     Type: String
     Description: Enable 3 DPE's for AWS App Load Blancing
     Default: false
     AllowedValues: [ true, false ]
-
   MetricNamespace:
     Type: String
     Description: CloudWatch AutoScaling Metric Namespace
@@ -725,7 +721,8 @@ Resources:
     Properties: 
       ImageId:  !Ref ImageId
       InstanceType: !Ref InstanceType
-      IamInstanceProfile: !Ref IAmProfile
+      IamInstanceProfile: !ImportValue 
+        'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
       KeyName: !Ref SSHKey
       Monitoring: true
       EbsOptimized: true
@@ -746,7 +743,10 @@ Resources:
         - DeviceIndex: "0"
           AssociatePublicIpAddress: !Ref PublicIpAddress
           SubnetId: !Ref SubnetId
-          GroupSet: !Ref SecurityGroupIds
+          GroupSet: 
+            - !ImportValue
+                'Fn::Sub': '${MainStack}-EC2SecurityGroup'
+
 
       UserData:
         Fn::Base64: !Sub |
@@ -760,7 +760,6 @@ Resources:
           DownloadURL=${DownloadURL}
           Encrypted=${Encrypted}
           # EncryptionKey=${EncryptionKey}
-          IAmProfile=${IAmProfile}
           InstallationBucket=${InstallationBucket}
           BackupDir=${BackupDir}
           UseS3BucketBackups=${UseS3BucketBackups}

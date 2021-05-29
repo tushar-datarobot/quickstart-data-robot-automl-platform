@@ -53,18 +53,18 @@ Resources:
           CidrIp: 0.0.0.0/0          
 
 ### Allow for access from "your IP"
-        - IpProtocol: tcp
-          FromPort: '22'
-          ToPort: '22'
-          CidrIp: !Ref ExternalIPAddress
-        - IpProtocol: tcp
-          FromPort: '80'
-          ToPort: '80'
-          CidrIp: !Ref ExternalIPAddress
-        - IpProtocol: tcp 
-          FromPort: '443'
-          ToPort: '443'
-          CidrIp: !Ref ExternalIPAddress
+#        - IpProtocol: tcp
+#          FromPort: '22'
+#          ToPort: '22'
+#          CidrIp: !Ref ExternalIPAddress
+#        - IpProtocol: tcp
+#          FromPort: '80'
+#          ToPort: '80'
+#          CidrIp: !Ref ExternalIPAddress
+#        - IpProtocol: tcp 
+#          FromPort: '443'
+#          ToPort: '443'
+#          CidrIp: !Ref ExternalIPAddress
         
 ### Required DataRobot ports
         - Description: Application Web
@@ -349,7 +349,9 @@ Outputs:
     Description: SecurityGroup settings when using an S3 Bucket
     Value: 
       Ref: InstanceSecurityGroup
-  SecurityGroupId:
+  EC2SecurityGroupId:
     Description: "PrivateIP IP address of the newly created EC2 instance"
     Value: !GetAtt InstanceSecurityGroup.GroupId
- 
+    Export:
+      Name:
+        'Fn::Sub': '${MainStack}-EC2SecurityGroup'
