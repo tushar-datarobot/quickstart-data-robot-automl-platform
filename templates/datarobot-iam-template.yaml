@@ -77,7 +77,7 @@ Resources:
               - 'ssm:GetParameter'
               - 'ssm:DeleteParameter'
             Resource:
-#              - arn:aws:ssm:*:*:parameter/*/datarobot-public-key
+              - arn:aws:ssm:*:*:parameter/*/datarobot-public-key
               - !Sub 'arn:aws:s3:::${S3Bucket}'
               - !Sub 'arn:aws:s3:::${S3Bucket}/*'
               - !Sub 'arn:aws:cloudformation:*:*:stack/${MainStack}/*'
