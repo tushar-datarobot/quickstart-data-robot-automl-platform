@@ -364,7 +364,7 @@ Resources:
                 ## Download the proper config file
                 type="$DR_VERSION-$CLUSTER_TYPE" 
                 echo "Creating for :> $type"
-                aws s3 cp s3://$S3QUICKSTART_BUCKET/templates/etc/$type-config.tmpl /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
+                aws s3 cp s3://$S3QUICKSTART_BUCKET/templates/etc/config.yaml /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 chown -R datarobot:datarobot /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 echo "Downloaded Config file :> $(ls -la /opt/datarobot/DataRobot-$DR_VERSION/config.yaml)"
 
@@ -489,12 +489,11 @@ Resources:
 
                 ids=$(aws ec2 describe-instances --region $AWS_REGION --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:MainStack,Values=$MAIN_STACK" --query 'Reservations[].Instances[].[InstanceId]' --output text)
                 echo "Waiting for instance ids :> '$ids'"
-                # sleep 60
                 aws ec2 wait instance-status-ok --region $AWS_REGION --instance-ids $ids
                 echo "... Done"
 
-                elk=$(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:Name,Values=$MAIN_STACK-ELKNode" --query "Reservations[].Instances[].[PrivateIpAddress]")
-                echo "Using ELK IP :> '$elk'"
+                # elk=$(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:Name,Values=$MAIN_STACK-ELKNode" --query "Reservations[].Instances[].[PrivateIpAddress]")
+                # echo "Using ELK IP :> '$elk'"
                 
                 # Establish SSH to all the nodes in the cluster
                 for host in $(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:MainStack,Values=$MAIN_STACK" "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].[PrivateIpAddress]"); do
@@ -507,57 +506,18 @@ Resources:
                 done
 
                 # Wait a sec...
-                sleep 30
+                # sleep 30
 
                 # Double Check SSH to all the nodes in the cluster
-                for host in $(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:MainStack,Values=$MAIN_STACK" "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].[PrivateIpAddress]"); do
-                  if [ "$host" != "$elk" ]; then
-                    echo -n "Testing (2) SSH to '$host':> "
+                # for host in $(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:MainStack,Values=$MAIN_STACK" "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].[PrivateIpAddress]"); do
+                #  if [ "$host" != "$elk" ]; then
+                #    echo -n "Testing (2) SSH to '$host':> "
                     #/usr/sbin/runuser -l datarobot -c "ssh -o StrictHostKeyChecking=no -o LogLevel=ERROR $host /bin/date"
-                    ssh -i /home/datarobot/.ssh/id_rsa -o StrictHostKeyChecking=no -o LogLevel=ERROR datarobot@$host /bin/date
-                  else
-                    echo "Skipping ELK node :> '$host'"
-                  fi
-                done
-              # test: "aws ec2 wait instance-status-ok --region $AWS_REGION --instance-ids `aws ec2 describe-instances --region $AWS_REGION --filter 'Name=tag:NodeType,Values=DataRobot' 'Name=tag:MainStack,Values=$MAIN_STACK' --query 'Reservations[].Instances[].[InstanceId]' --output text`"
-              env:
-                AWS_REGION: !Ref Region
-                MAIN_STACK: !Ref MainStack
-
-            # This step will do this twice
-            3e2-EstablishSSH:
-              command: !Sub |
-
-                # Force new line in the log
-                echo " "
-
-                elk=$(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:Name,Values=$MAIN_STACK-ELKNode" --query "Reservations[].Instances[].[PrivateIpAddress]")
-                echo "Using ELK IP :> '$elk'"
-                
-                # Establish SSH to all the nodes in the cluster
-                for host in $(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:MainStack,Values=$MAIN_STACK" "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].[PrivateIpAddress]"); do
-                  if [ "$host" != "$elk" ]; then
-                    echo -n "Testing (3) SSH to '$host':> "
-                    /usr/sbin/runuser -l datarobot -c "ssh -o StrictHostKeyChecking=no -o LogLevel=ERROR $host /bin/date"
-                  else
-                    echo "Skipping ELK node :> '$host'"
-                  fi
-                done
-
-                # Wait a sec...
-                sleep 30
-
-                # Double Check SSH to all the nodes in the cluster
-                for host in $(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:MainStack,Values=$MAIN_STACK" "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].[PrivateIpAddress]"); do
-                  if [ "$host" != "$elk" ]; then
-                    echo -n "Testing (4) SSH to '$host':> "
-                    #/usr/sbin/runuser -l datarobot -c "ssh -o StrictHostKeyChecking=no -o LogLevel=ERROR $host /bin/date"
-                    ssh -i /home/datarobot/.ssh/id_rsa -o StrictHostKeyChecking=no -o LogLevel=ERROR datarobot@$host /bin/date
-                  else
-                    echo "Skipping ELK node :> '$host'"
-                  fi
-                done                
-
+                #    ssh -i /home/datarobot/.ssh/id_rsa -o StrictHostKeyChecking=no -o LogLevel=ERROR datarobot@$host /bin/date
+                #  else
+                #    echo "Skipping ELK node :> '$host'"
+                #  fi
+                # done
               # test: "aws ec2 wait instance-status-ok --region $AWS_REGION --instance-ids `aws ec2 describe-instances --region $AWS_REGION --filter 'Name=tag:NodeType,Values=DataRobot' 'Name=tag:MainStack,Values=$MAIN_STACK' --query 'Reservations[].Instances[].[InstanceId]' --output text`"
               env:
                 AWS_REGION: !Ref Region

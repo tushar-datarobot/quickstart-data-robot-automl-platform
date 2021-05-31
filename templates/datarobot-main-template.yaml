@@ -179,7 +179,7 @@ Resources:
         QSInstallationBucket: weswagner-quickstart-dr
         DRInstallationBucket: !Ref DRS3InstallationBucket
         ImageId: ami-01ca03df4a6012157
-        DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1622488193&Signature=h6%2B0y3YTJx5P87DzE1FVl0mNgTQ%3D"
+        DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623097218&Signature=3%2BdjrvXa3n5NgBc1Gsi09Vt3Ybk%3D"
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-AppNode
@@ -188,13 +188,15 @@ Resources:
         - Key: NodeType
           Value: DataRobot
     DependsOn: 
-      - IAMStack    
+      - IAMStack
+      - SecurityStack    
 
 
   DedicatedPredictionServerStack:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
       - IAMStack
+      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
@@ -220,6 +222,7 @@ Resources:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
       - IAMStack
+      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
@@ -247,6 +250,7 @@ Resources:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
       - IAMStack
+      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
@@ -272,6 +276,7 @@ Resources:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
       - IAMStack
+      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
@@ -293,12 +298,12 @@ Resources:
         - Key: NodeType
           Value: DataRobot
 
-# Only for PreProd or Enterprise
 # Added to allow for AutoScaling, that when used provides upto 52 total workers
   ModelingOnlyNodeStack:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
       - IAMStack
+      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
@@ -319,6 +324,34 @@ Resources:
           Value: !Ref AWS::StackName
         - Key: NodeType
           Value: DataRobot  
+
+# Added to allow for AutoScaling, that when used provides upto 52 total workers
+  DataNodeStack:
+    Type: "AWS::CloudFormation::Stack"
+    DependsOn: 
+      - IAMStack
+      - SecurityStack
+    Properties:
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
+      Parameters:
+        DataVolumeSize: 100
+        ImageId: ami-01ca03df4a6012157
+        InstallationBucket: !Ref DRS3InstallationBucket
+        InstanceType: r5.2xlarge
+        MainStack: !Ref AWS::StackName
+        SSHKey: !Ref KeyPairName
+        SubnetId: !Ref PrivateSubnet1ID
+        Encrypted: false
+        EncryptionKey: ' '
+      Tags:
+        # DataRobot tags
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-DataNode
+        - Key: MainStack
+          Value: !Ref AWS::StackName
+        - Key: NodeType
+          Value: DataRobot  
+
 
 
 Outputs:

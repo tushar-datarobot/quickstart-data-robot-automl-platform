@@ -13,6 +13,7 @@ Parameters:
   S3Bucket:
     Type: String
     Description: CloudFormation repository S3 bucket name
+  
 
 Resources: 
   DataRobotIAMRole:
@@ -60,6 +61,8 @@ Resources:
             Resource:
               - !Sub 'arn:aws:s3:::${S3Bucket}'
               - !Sub 'arn:aws:s3:::${S3Bucket}/*'
+              - 'arn:aws:s3:::weswagner-quickstart-dr'
+              - 'arn:aws:s3:::weswagner-quickstart-dr/*'
 
           - Effect: Allow
             Action:
