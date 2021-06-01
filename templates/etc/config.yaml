@@ -31,7 +31,7 @@ os_configuration:
 
   # Web server configuration
   # Raw, proxy, or load balancer URL that will be used to reach the web server
-  webserver_hostname: AppDataNode
+  webserver_hostname: AppNode
   ssl:
     enabled: false # Set to false if you will not use SSL certificates
     # Paths relative to certs/ directory on installer node
@@ -41,7 +41,7 @@ os_configuration:
   
 
   # Prediction server configuration -- on quickstart put on appdatanode
-  prediction_endpoint: AppDataNode
+  prediction_endpoint: DedicatedPredictionServer
   prediction_ssl:
     enabled: false # Set to false if you will not use SSL certificates
     # Paths relative to certs/ directory
@@ -144,17 +144,12 @@ servers:
   - tableauextension
   - taskmanager
   - tileservergl
-  # - minio
-  # - gluster
-  - dedicatedpredictionapi
-  - dedicatedpredictionnginx
-  - modmonrsyslogmaster
-  - predictionspooler
+  - metricspublisher
   hosts:
   - AppNode
-  #drenv_override:
-  #  WORKER_MODEL_CACHE: 16 # Models to cache in memory at once. Tune this for your use case
-  #  MODEL_CACHE_MODE: LRU # Mode for caching models. Options: LRU, latest
+  drenv_override:
+    WORKER_MODEL_CACHE: 16 # Models to cache in memory at once. Tune this for your use case
+    MODEL_CACHE_MODE: LRU # Mode for caching models. Options: LRU, latest
   # app_configuration:
   #   drenv_override:
   #     # Used to redirect an app node request
@@ -180,13 +175,14 @@ servers:
 
 # Modeling node(s)
 - services:
-  - execmanager
-  - resourcemonitor
+  - execmanagereda
   # repeat this pattern to add up to eight workers of each type
   - datasetsserviceworker0
   - datasetsservicequickworker0
   - datasetsserviceworker1
   - datasetsservicequickworker1
+  - datasetsserviceworker2
+  - datasetsservicequickworker2
   hosts:
   - ModelingNode1
   - ModelingNode2
@@ -194,7 +190,6 @@ servers:
 # Modeling-only servers
 - services:
   - execmanagersw
-  - resourcemonitor
   hosts:
   - ModelingOnlyNode
 

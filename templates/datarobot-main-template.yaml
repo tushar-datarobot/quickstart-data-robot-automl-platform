@@ -20,11 +20,15 @@ Metadata:
           - PrivateSubnet2ID
           - PublicSubnet1ID
           - PublicSubnet2ID
-          - DRS3InstallationBucket
       - Label:
           default: Security Configuration
         Parameters:
           - KeyPairName
+      - Label:
+          default: DataRobot S3 Install Bucket
+        Parameters:
+          - DRS3InstallationBucket
+          - DRS3CreateBucket
       - Label:
           default: AWS Quick Start Configuration
         Parameters:
@@ -42,6 +46,8 @@ Metadata:
         default: Private subnet 2 ID
       DRS3InstallationBucket:
         default: Bucket Name for DR Install S3 Bucket
+      DRS3CreateBucket:
+        default: Should Quickstart Create the bucket (select false if it already exists)
       VPCID:
         default: VPC ID  
       QSS3BucketName:
@@ -73,11 +79,18 @@ Parameters:
       please create it before continuing.
     Type: 'AWS::EC2::KeyPair::KeyName'
   DRS3InstallationBucket:
-    Default: datarobot-weswagner-quickstart-7.0.2-cloudformation
+    Default: datarobot-weswagner-east2
     Description:
       Name of the S3 bucket you want to install DataRobot into. It should not be public
       and the account you are running the quickstart will need the ability to assigne
       permissions for access to a role for EC2 instances.
+    Type: String
+  DRS3CreateBucket:
+    Default: "False"
+    AllowedValues:
+      - "False"
+      - "True"
+    Description: Choose True if you did not already create a bucket and want it to be created by the quickstart
     Type: String
   QSS3BucketName:
     AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
@@ -101,7 +114,7 @@ Parameters:
       The Quick Start S3 key prefix can include numbers, lowercase letters,
       uppercase letters, hyphens (-), and forward slashes (/). The prefix should
       end with a forward slash (/).
-    Default: quickstart-apache-rocketmq/
+    Default: templates/
     Description:
       S3 key prefix that is used to simulate a directory for your copy of the 
       Quick Start assets. Keep the default prefix unless you are customizing 
@@ -111,7 +124,7 @@ Parameters:
       a forward slash. See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
       and https://aws-quickstart.github.io/option1.html.
   QSS3BucketRegion:
-    Default: 'us-east-1'
+    Default: 'us-west-2'
     Description: 'AWS Region where the Quick Start S3 bucket (QSS3BucketName) is 
       hosted. Keep the default Region unless you are customizing the template. 
       Changing this Region updates code references to point to a new Quick Start location. 
@@ -119,30 +132,49 @@ Parameters:
       See https://aws-quickstart.github.io/option1.html.'
     Type: String
 
+Conditions:
+  CreateS3BucketCondition: !Equals 
+    - !Ref DRS3CreateBucket
+    - "True"
 
+Mappings: 
+  RegionMap: 
+    us-east-1: 
+      "Centos": "ami-01ca03df4a6012157"
+    us-east-2: 
+      "Centos": "ami-000e7ce4dd68e7a11"
+    us-west-2:
+      "Centos": "ami-0157b1e4eefd91fd7"
+    
 
 Resources:
-#  BastionStack:
-#    Type: AWS::CloudFormation::Stack
-#    Properties:
-#      TemplateURL: https://aws-quickstart.s3.us-east-1.amazonaws.com/quickstart-linux-bastion/templates/linux-bastion.template
-#        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template'
-#        
-#
-#      Parameters:
-#        BastionInstanceType: t2.micro
-#        NumBastionHosts: 2
-#        BastionAMIOS: Amazon-Linux2-HVM
-#        EnableTCPForwarding: 'true'
-#        KeyPairName: !Ref 'KeyPairName'
-#        PublicSubnet1ID: !Ref PublicSubnet1ID
-#        PublicSubnet2ID: !Ref PublicSubnet2ID
-#        QSS3BucketName: !Ref 'QSS3BucketName'
-#        QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-linux-bastion/'
-#        QSS3BucketRegion: !Ref 'QSS3BucketRegion'
-#        RemoteAccessCIDR: !Ref 'RemoteAccessCIDR'
-#        VPCID: !Ref VPCID
+  BastionStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://aws-quickstart.s3.amazonaws.com/quickstart-linux-bastion/templates/linux-bastion.template
+      Parameters:
+        VPCID: !Ref VPCID
+        PublicSubnet1ID: !Ref PublicSubnet1ID
+        PublicSubnet2ID: !Ref PublicSubnet2ID
+        KeyPairName: !Ref 'KeyPairName'
+        BastionInstanceType: t2.micro
+        BastionHostName: DRBastion
+        NumBastionHosts: 2
+        BastionAMIOS: Amazon-Linux2-HVM
+        EnableTCPForwarding: 'true'
+        QSS3BucketName: aws-quickstart
+        QSS3KeyPrefix: quickstart-linux-bastion/
+        QSS3BucketRegion: us-east-1
+        RemoteAccessCIDR: '0.0.0.0/0'
+        VPCID: !Ref VPCID
 
+
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Condition: CreateS3BucketCondition
+    Properties:
+      AccessControl: Private
+      BucketName: !Ref DRS3InstallationBucket
 
   SecurityStack:
     Type: AWS::CloudFormation::Stack
@@ -165,6 +197,7 @@ Resources:
         MainStack: !Ref AWS::StackName
         S3Bucket: !Ref DRS3InstallationBucket
         
+
   AppNode:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -178,7 +211,7 @@ Resources:
         SSHKey: !Ref KeyPairName
         QSInstallationBucket: weswagner-quickstart-dr
         DRInstallationBucket: !Ref DRS3InstallationBucket
-        ImageId: ami-01ca03df4a6012157
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623097218&Signature=3%2BdjrvXa3n5NgBc1Gsi09Vt3Ybk%3D"
       Tags:
         - Key: Name
@@ -201,7 +234,7 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
         DataVolumeSize: 100
-        ImageId: ami-01ca03df4a6012157
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
@@ -218,6 +251,7 @@ Resources:
         - Key: NodeType
           Value: DataRobot
 
+
   ModelManagementStack:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
@@ -227,7 +261,7 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
         DataVolumeSize: 100
-        ImageId: ami-01ca03df4a6012157
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
@@ -255,7 +289,7 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
         DataVolumeSize: 100
-        ImageId: ami-01ca03df4a6012157
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
@@ -272,6 +306,7 @@ Resources:
         - Key: NodeType
           Value: DataRobot
 
+
   ModelingNode2Stack:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
@@ -281,12 +316,12 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
         DataVolumeSize: 100
-        ImageId: ami-01ca03df4a6012157
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
         SSHKey: !Ref KeyPairName
-        SubnetId: !Ref PrivateSubnet1ID
+        SubnetId: !Ref PrivateSubnet2ID
         Encrypted: false
         EncryptionKey: ' '
       Tags:
@@ -298,7 +333,8 @@ Resources:
         - Key: NodeType
           Value: DataRobot
 
-# Added to allow for AutoScaling, that when used provides upto 52 total workers
+
+# Added to allow for AutoScaling
   ModelingOnlyNodeStack:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
@@ -308,7 +344,7 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
         DataVolumeSize: 100
-        ImageId: ami-01ca03df4a6012157
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.2xlarge
         MainStack: !Ref AWS::StackName
@@ -325,7 +361,8 @@ Resources:
         - Key: NodeType
           Value: DataRobot  
 
-# Added to allow for AutoScaling, that when used provides upto 52 total workers
+
+# Added to allow for AutoScaling
   DataNodeStack:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
@@ -335,7 +372,7 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
         DataVolumeSize: 100
-        ImageId: ami-01ca03df4a6012157
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.2xlarge
         MainStack: !Ref AWS::StackName
@@ -351,7 +388,6 @@ Resources:
           Value: !Ref AWS::StackName
         - Key: NodeType
           Value: DataRobot  
-
 
 
 Outputs:
