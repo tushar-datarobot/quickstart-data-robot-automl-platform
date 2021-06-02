@@ -133,7 +133,7 @@ Parameters:
     Type: "AWS::EC2::Subnet::Id"
     Description: Subnet for Load Balancer
   LBVPCID:
-    Type: "AWS::EC2::VPC"
+    Type: "AWS::EC2::VPC::Id"
     Description: VPC for Load Balancer
 
 Conditions:
@@ -774,8 +774,8 @@ Resources:
         - Ref: LBPublicSubnet1ID
         - Ref: LBPublicSubnet2ID
       Type: network
-      SecurityGroups:
-        - Ref: LBSecurityGroup
+      #SecurityGroups:
+      #  - Ref: LBSecurityGroup
   LBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -785,13 +785,13 @@ Resources:
       HealthCheckPort: '80'
       HealthCheckProtocol: HTTP
       Port: 80
-      Protocol: HTTP
+      Protocol: TCP
       UnhealthyThresholdCount: 5
-      VpcId:
-        Ref: LBVPCID
-      TargetsType: instance
+      VpcId: !Ref LBVPCID
+      TargetType: instance
       Targets:
-        - !Ref EC2Instance
+      - Id: !Ref EC2Instance
+        Port: 80
   LBListenerHTTP:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -802,18 +802,18 @@ Resources:
       LoadBalancerArn:
         Ref: FrontEndLoadBalancer
       Port: 80
-      Protocol: HTTP
-  LBSecurityGroup:
-    Type: "AWS::EC2::SecurityGroup"
-    Properties:
-      GroupDescription: "security group for LB"
-      VpcId: !Ref LBVPCID
-      SecurityGroupIngress: 
-        - 
-          CidrIp: "0.0.0.0/0"
-          FromPort: 80
-          IpProtocol: "tcp"
-          ToPort: 80
+      Protocol: TCP
+  #LBSecurityGroup:
+  #  Type: "AWS::EC2::SecurityGroup"
+  #  Properties:
+  #    GroupDescription: "security group for LB"
+  #    VpcId: !Ref LBVPCID
+  #    SecurityGroupIngress: 
+  #      - 
+  #        CidrIp: "0.0.0.0/0"
+  #        FromPort: 80
+  #        IpProtocol: "tcp"
+  #        ToPort: 80
 
 Outputs:
   InstanceId:
