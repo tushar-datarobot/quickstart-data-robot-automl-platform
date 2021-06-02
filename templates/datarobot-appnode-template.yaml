@@ -126,6 +126,15 @@ Parameters:
     Type: String
     Description: CloudWatch AutoScaling Metric Namespace
     Default: "DataRobot/AutoScaling/Testing"
+  LBPublicSubnet1ID:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: Subnet for Load Balancer
+  LBPublicSubnet2ID:
+    Type: "AWS::EC2::Subnet::Id"
+    Description: Subnet for Load Balancer
+  LBVPCID:
+    Type: "AWS::EC2::VPC"
+    Description: VPC for Load Balancer
 
 Conditions:
   UseKey: !And
@@ -755,6 +764,57 @@ Resources:
           # Signal template completion
           /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource EC2Instance --region ${Region}
 
+  FrontEndLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    DependsOn:
+      - EC2Instance
+    Properties:
+      IpAddressType: ipv4
+      Subnets:
+        - Ref: LBPublicSubnet1ID
+        - Ref: LBPublicSubnet2ID
+      Type: network
+      SecurityGroups:
+        - Ref: LBSecurityGroup
+  LBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      HealthCheckPort: '80'
+      HealthCheckProtocol: HTTP
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      VpcId:
+        Ref: LBVPCID
+      TargetsType: instance
+      Targets:
+        - !Ref EC2Instance
+  LBListenerHTTP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn:
+            Ref: LBTargetGroup
+      LoadBalancerArn:
+        Ref: FrontEndLoadBalancer
+      Port: 80
+      Protocol: HTTP
+  LBSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "security group for LB"
+      VpcId: !Ref LBVPCID
+      SecurityGroupIngress: 
+        - 
+          CidrIp: "0.0.0.0/0"
+          FromPort: 80
+          IpProtocol: "tcp"
+          ToPort: 80
+
 Outputs:
   InstanceId:
     Description: "InstanceId of the newly created EC2 instance"
@@ -762,3 +822,13 @@ Outputs:
   PrivateIP:
     Description: "PrivateIP IP address of the newly created EC2 instance"
     Value: !GetAtt EC2Instance.PrivateIp
+  ELBURL:
+    Description: The URL of the ELB. Point your domain to it by using a CNAME/ALIAS
+      DNS record
+    Value:
+      Fn::Join:
+      - ''
+      - - 'http://'
+        - Fn::GetAtt:
+          - FrontEndLoadBalancer
+          - DNSName

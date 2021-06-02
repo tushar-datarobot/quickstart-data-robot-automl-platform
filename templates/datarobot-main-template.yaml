@@ -79,10 +79,10 @@ Parameters:
       please create it before continuing.
     Type: 'AWS::EC2::KeyPair::KeyName'
   DRS3InstallationBucket:
-    Default: datarobot-weswagner-east2
+    Default: datarobot-weswagner-quickstart-7.0.2-cloudformation
     Description:
       Name of the S3 bucket you want to install DataRobot into. It should not be public
-      and the account you are running the quickstart will need the ability to assigne
+      and the account you are running the quickstart will need the ability to assign
       permissions for access to a role for EC2 instances.
     Type: String
   DRS3CreateBucket:
@@ -204,8 +204,12 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-appnode-template.yaml
       TimeoutInMinutes: 120
       Parameters:
+        Region: !Ref "AWS::Region"
         MainStack: !Ref AWS::StackName
         SubnetId: !Ref PrivateSubnet1ID
+        LBPublicSubnet1ID: !Ref PublicSubnet1ID
+        LBPublicSubnet2ID: !Ref PublicSubnet2ID
+        LBVPCID: !Ref VPCID
         Encrypted: false
         EncryptionKey: ' '
         SSHKey: !Ref KeyPairName
@@ -233,6 +237,7 @@ Resources:
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
+        Region: !Ref "AWS::Region"
         DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
@@ -260,6 +265,7 @@ Resources:
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
+        Region: !Ref "AWS::Region"
         DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
@@ -288,6 +294,7 @@ Resources:
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
+        Region: !Ref "AWS::Region"
         DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
@@ -315,6 +322,7 @@ Resources:
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
+        Region: !Ref "AWS::Region"
         DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
@@ -343,6 +351,7 @@ Resources:
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
+        Region: !Ref "AWS::Region"
         DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
@@ -371,6 +380,7 @@ Resources:
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
       Parameters:
+        Region: !Ref "AWS::Region"
         DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
