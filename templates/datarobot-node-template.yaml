@@ -98,6 +98,14 @@ Parameters:
     Description: "Cron tab formatted schedule. Default: '0 0 * * 1-5' or Monday - Friday at midnight"
     Default: "0 0 * * 1-5"
     # Default: "30 * * * *"
+  ServerName:
+    Type: String
+    Description: "Logical Name for the Server"
+  AmiSignalHandle:
+    Type: String
+    Description: "presigned url for ami creation handle"
+    Default: " "
+
 
 Conditions:
   UseKey: !And
@@ -450,6 +458,65 @@ Resources:
                 MAIN_STACK: !Ref MainStack
                 TAG_DATA_VOL: !Ref TagDataVol
 
+            5a-CreateAMI:
+              command: !Sub |
+
+                # Build AMI if correct type
+                echo "Will build an AMI if modelingonly node"
+                
+                my_name=$(aws ec2 describe-instances --region $AWS_REGION --instance-ids $(curl --silent http://169.254.169.254/latest/meta-data/instance-id) --query "Reservations[*].Instances[*].[Tags[?Key=='Name'].Value]" --output text)
+                my_name=${!my_name##*-}
+
+                echo "My name is ($my_name)"
+              
+
+                if [[ $my_name == ModelingOnly* ]]; then
+                  #Wait to see a spare key from app node indicating that install is complete
+                  param=$(aws ssm describe-parameters --region $AWS_REGION --query "Parameters[].Name" --output text --filters "Key=Name,Values=/$MAIN_STACK/datarobot-ami-key")
+                  while [ ! -n "$param" ]; do
+                    sleep 30
+                    echo "Waiting 30 seconds for the spare ami key to arrive"
+                    param=$(aws ssm describe-parameters --region $AWS_REGION --query "Parameters[].Name" --output text --filters "Key=Name,Values=/$MAIN_STACK/datarobot-ami-key")
+                  done
+
+                  echo "Creating AMI for ModelingOnly Node"
+                  my_instance_id=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
+                  my_ami_name=$MainStack + $my_name
+                  my_ami_json=$(aws ec2 create-image --instance-id $my_instance_id --name $my_ami_name --no-reboot)
+                  # my_ami_json will return a json immedately like: { "ImageId": "ami-########"}
+                  my_ami=$(echo ($my_ami_json) | python3 -c "import sys, json; print(json.load(sys.stdin)['ImageId'])")
+                  
+                  echo "AMI created is ($my_ami)"
+
+                  # delete the key used as a signal
+                  aws ssm delete-parameter --region $AWS_REGION --name "/$MAIN_STACK/datarobot-ami-key"
+
+                  # code to wait for AMI to be done
+                  lc_count = aws ec2 describe-images --region $AWS_REGION --image-ids $my_ami | grep available | wc -l
+                  while [ lc_count < 1 ]; do
+                    echo "lc = $lc_count"
+                    sleep 30
+                    lc_count = aws ec2 describe-images --region $AWS_REGION --image-ids $my_ami | grep available | wc -l
+                  done
+
+                  # write ami to ssm
+                  aws ssm put-parameter --name "drami" --value "$my_ami" --region $AWS_REGION --type String --overwrite
+
+                  # flag URL that AMI is complete
+                  curl -X PUT -H 'Content-Type:' --data-binary '{"Status" : "SUCCESS","Reason" : "Configuration Complete","UniqueId" : "IDAMIDONE","Data" : "AMI Complete"}' "$AMI_SIGNAL"
+ 
+                else
+                  echo "Skipping nodes other than ModelingOnly"
+                fi
+
+              
+              ignoreErrors: "true"
+              env:
+                AWS_REGION: !Ref Region
+                MAIN_STACK: !Ref MainStack
+                TAG_DATA_VOL: !Ref TagDataVol
+                AMI_SIGNAL: !Ref AmiSignalHandle
+
     Properties: 
       ImageId:  !Ref ImageId
       InstanceType: !Ref InstanceType
@@ -522,6 +589,8 @@ Outputs:
   InstanceId:
     Description: "InstanceId of the newly created EC2 instance"
     Value: !Ref EC2Instance
+    Export:
+      Name: !Sub '${MainStack}-${ServerName}-EC2InstanceID'
   PrivateIP:
     Description: "PrivateIP IP address of the newly created EC2 instance"
     Value: !GetAtt EC2Instance.PrivateIp

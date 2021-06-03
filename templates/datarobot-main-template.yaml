@@ -79,7 +79,7 @@ Parameters:
       please create it before continuing.
     Type: 'AWS::EC2::KeyPair::KeyName'
   DRS3InstallationBucket:
-    Default: datarobot-weswagner-quickstart-7.0.2-cloudformation
+    Default: weswagner-oregon-qs
     Description:
       Name of the S3 bucket you want to install DataRobot into. It should not be public
       and the account you are running the quickstart will need the ability to assign
@@ -148,6 +148,30 @@ Mappings:
     
 
 Resources:
+
+  AMIWaitHandle:
+    Type: AWS::CloudFormation::WaitConditionHandle
+  AMIWaitCondition:
+    Type: AWS::CloudFormation::WaitCondition
+    Properties:
+      Handle: !Ref AMIWaitHandle
+      Timeout: '6000'
+      Count: 1
+
+  CreateModelAutoscale:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: AMIWaitCondition
+    Properties:
+      TimeoutInMinutes: 120
+      PrivateSubnet1ID: !Ref PrivateSubnet1ID
+      PrivateSubnet2ID: !Ref PrivateSubnet2ID
+      MaxModelingNodes: 5
+      MainStack: !Ref AWS::StackName
+      KeyPairName: !Ref KeyPairName
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-autoscale-template.yaml
+      
+        
+
   BastionStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -229,7 +253,7 @@ Resources:
       - SecurityStack    
 
 
-  DedicatedPredictionServerStack:
+  DedicatedPredictionServerStack1:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
       - IAMStack
@@ -243,14 +267,45 @@ Resources:
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
+        ServerName: DedicatedPredictionServer1
         SSHKey: !Ref KeyPairName
         SubnetId: !Ref PrivateSubnet1ID
         Encrypted: false
         EncryptionKey: ' '
+        AmiSignalHandle: ' '
       Tags:
         # DataRobot tags
         - Key: Name
-          Value: !Sub ${AWS::StackName}-DedicatedPredictionServer
+          Value: !Sub ${AWS::StackName}-DedicatedPredictionServer1
+        - Key: MainStack
+          Value: !Ref AWS::StackName
+        - Key: NodeType
+          Value: DataRobot
+
+  DedicatedPredictionServerStack2:
+    Type: "AWS::CloudFormation::Stack"
+    DependsOn: 
+      - IAMStack
+      - SecurityStack
+    Properties:
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
+      Parameters:
+        Region: !Ref "AWS::Region"
+        DataVolumeSize: 100
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
+        InstallationBucket: !Ref DRS3InstallationBucket
+        InstanceType: r5.xlarge
+        MainStack: !Ref AWS::StackName
+        ServerName: DedicatedPredictionServer2
+        SSHKey: !Ref KeyPairName
+        SubnetId: !Ref PrivateSubnet2ID
+        Encrypted: false
+        EncryptionKey: ' '
+        AmiSignalHandle: ' '
+      Tags:
+        # DataRobot tags
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-DedicatedPredictionServer2
         - Key: MainStack
           Value: !Ref AWS::StackName
         - Key: NodeType
@@ -271,10 +326,12 @@ Resources:
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
+        ServerName: ModelManagement
         SSHKey: !Ref KeyPairName
         SubnetId: !Ref PrivateSubnet1ID
         Encrypted: false
         EncryptionKey: ' '
+        AmiSignalHandle: ' '
       Tags:
         # DataRobot tags
         - Key: Name
@@ -300,10 +357,12 @@ Resources:
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
+        ServerName: ModelingNode1
         SSHKey: !Ref KeyPairName
         SubnetId: !Ref PrivateSubnet1ID
         Encrypted: false
         EncryptionKey: ' '
+        AmiSignalHandle: ' '
       Tags:
         # DataRobot tags
         - Key: Name
@@ -328,10 +387,12 @@ Resources:
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
+        ServerName: ModelingNode2
         SSHKey: !Ref KeyPairName
         SubnetId: !Ref PrivateSubnet2ID
         Encrypted: false
         EncryptionKey: ' '
+        AmiSignalHandle: ' '
       Tags:
         # DataRobot tags
         - Key: Name
@@ -357,10 +418,14 @@ Resources:
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.2xlarge
         MainStack: !Ref AWS::StackName
+        ServerName: ModelingOnly
         SSHKey: !Ref KeyPairName
         SubnetId: !Ref PrivateSubnet1ID
         Encrypted: false
         EncryptionKey: ' '
+        AmiSignalHandle: !Join
+          - ''
+          - - !Ref AMIWaitHandle 
       Tags:
         # DataRobot tags
         - Key: Name
@@ -386,10 +451,12 @@ Resources:
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.2xlarge
         MainStack: !Ref AWS::StackName
+        ServerName: DataNode
         SSHKey: !Ref KeyPairName
         SubnetId: !Ref PrivateSubnet1ID
         Encrypted: false
         EncryptionKey: ' '
+        AmiSignalHandle: !Ref AMIWaitHandle
       Tags:
         # DataRobot tags
         - Key: Name

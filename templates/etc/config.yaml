@@ -213,7 +213,8 @@ servers:
   - modmonrsyslogmaster
   - predictionspooler
   hosts:
-  - DedicatedPredictionServer
+  - DedicatedPredictionServer1
+  - DedicatedPredictionServer2
   app_configuration:
     # Recommended configuration for dedicated prediction server
     dedicated_prediction_server: true

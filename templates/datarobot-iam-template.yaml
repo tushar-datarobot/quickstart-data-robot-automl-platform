@@ -46,6 +46,9 @@ Resources:
             Action:
               - 'ec2:DescribeInstances'
               - 'ec2:DescribeInstanceStatus'
+              - 'ec2:DescribeImage'
+              - 'ec2:CreateImage'
+              - 'ec2:CreateSnapshot'
               - 'elasticloadbalancing:*'
               - 'lambda:CreateFunction'
               - 'lambda:DeleteFunction'
@@ -81,6 +84,8 @@ Resources:
               - 'ssm:DeleteParameter'
             Resource:
               - arn:aws:ssm:*:*:parameter/*/datarobot-public-key
+              - arn:aws:ssm:*:*:parameter/*/datarobot-ami-key
+              - arn:aws:ssm:*:*:parameter/drami
               - !Sub 'arn:aws:s3:::${S3Bucket}'
               - !Sub 'arn:aws:s3:::${S3Bucket}/*'
               - !Sub 'arn:aws:cloudformation:*:*:stack/${MainStack}/*'

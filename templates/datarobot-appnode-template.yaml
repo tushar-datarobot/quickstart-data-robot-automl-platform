@@ -627,67 +627,23 @@ Resources:
                 echo " "
                 echo "SSM Parameter clean up /$MAIN_STACK/datarobot-public-key in $AWS_REGION"
                 aws ssm delete-parameter --region $AWS_REGION --name "/$MAIN_STACK/datarobot-public-key"
-              test: "aws ssm describe-parameters --output text --region $AWS_REGION --query Parameters[].Name --filters 'Key=Name,Values=/$MAIN_STACK/datarobot-public-key'"
-              ignoreErrors: "false"
+              
+              ignoreErrors: "true"
               env:
                 AWS_REGION: !Ref Region
                 MAIN_STACK: !Ref MainStack
 
-            6-EnableBeats:
+            6-CreateModelAMI:
               command: !Sub |
 
-                # Set the IP for now
-                elk=$(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:Name,Values=$MAIN_STACK-ELKNode" --query "Reservations[].Instances[].[PrivateIpAddress]")
-                echo "Using ELK IP :> '$elk'"
-
-                # Install metricbeats ###
-                echo "Downloading metricbeat package :> https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-oss-7.2.0-x86_64.rpm"
-                curl --silent --output /tmp/metricbeat-oss-7.2.0-x86_64.rpm -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-oss-7.2.0-x86_64.rpm
-                rpm -vi /tmp/metricbeat-oss-7.2.0-x86_64.rpm
-
-                # Update the metricbeat configuration
-                sed -i "s/#host: \"localhost:5601\"/host: \"$elk:5601\"/" /etc/metricbeat/metricbeat.yml
-                sed -i "s/hosts: \[\"localhost:9200\"\]/hosts: \[\"$elk:9200\"\]/" /etc/metricbeat/metricbeat.yml
-
-                # Turn on metricbeat
-                /bin/metricbeat modules enable system
-                /bin/metricbeat setup
-                systemctl enable metricbeat
-                systemctl start metricbeat
-
-                # Clean up metricbeat rpm
-                rm /tmp/metricbeat-oss-7.2.0-x86_64.rpm
-
-                # TODO: Set as default index
-
-                ### Install FileBeats ###
-                echo "Downloading filebeats package :> https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.1.1-x86_64.rpm"
-                curl --silent --output /tmp/filebeat-oss-7.1.1-x86_64.rpm -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.1.1-x86_64.rpm
-                rpm -vi /tmp/filebeat-oss-7.1.1-x86_64.rpm
-
-                # Update the filebeat configuration
-                sed -i "s/#host: \"localhost:5601\"/host: \"$elk:5601\"/" /etc/filebeat/filebeat.yml
-                sed -i "s/hosts: \[\"localhost:9200\"\]/hosts: \[\"$elk:9200\"\]/" /etc/filebeat/filebeat.yml
-
-                # Target specific files
-                sed -i 's+- /var/log/\*.log+#- /var/log/\*.log\n    - /var/log/daemon.log\n    - /var/log/messages+' /etc/filebeat/filebeat.yml
-                sudo sed -i 's+- c:\\programdata\\elasticsearch\\logs\\\*+#- c:\\programdata\\elasticsearch\\logs\\\*\n    - /opt/datarobot/DataRobot-${DRVersion}/debug.log\n    - /opt/datarobot/logs/all.log\n    - /opt/datarobot/logs/audit.log\n    - /opt/datarobot/logs/datarobot.log\n    - /opt/datarobot/logs/datasets-service.log\n    - /opt/datarobot/logs/nginx.log\n    - /opt/datarobot/logs/pngexport.log\n+' /etc/filebeat/filebeat.yml
-
-                # Turn on filebeat
-                /bin/filebeat modules enable system
-                /bin/filebeat setup
-                systemctl enable filebeat
-                systemctl start filebeat
-
-                # Clean up filebeat rpm
-                rm /tmp/filebeat-oss-7.1.1-x86_64.rpm
-
-              test: "test ${LOG_SERVER} = 'ELK'"
+                # Force new line in the log
+                echo " "
+                # Pushing a key as a signal that the software install is done
+                aws ssm put-parameter --name "/$MAIN_STACK/datarobot-ami-key" --value "$(cat /home/datarobot/.ssh/id_rsa.pub)" --region $AWS_REGION --type String --overwrite
+              
               ignoreErrors: "false"
               env:
-                DR_VERSION: !Ref DRVersion
                 AWS_REGION: !Ref Region
-                LOG_SERVER: !Ref LogServer
                 MAIN_STACK: !Ref MainStack
 
     Properties: 
@@ -779,14 +735,10 @@ Resources:
   LBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      HealthCheckIntervalSeconds: 30
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 2
       HealthCheckPort: '80'
       HealthCheckProtocol: HTTP
       Port: 80
       Protocol: TCP
-      UnhealthyThresholdCount: 5
       VpcId: !Ref LBVPCID
       TargetType: instance
       Targets:

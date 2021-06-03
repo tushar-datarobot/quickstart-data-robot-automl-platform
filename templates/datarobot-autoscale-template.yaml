@@ -1,0 +1,63 @@
+
+Parameters:
+  KeyPairName:
+    Description: Name of an existing public/private key pair. If you do not have one in this AWS Region,
+      please create it before continuing.
+    Type: 'AWS::EC2::KeyPair::KeyName'
+  MaxModelingNodes:
+    Default: '1'
+    Description: The number of modelling nodes to allow max.
+    Type: String
+  PrivateSubnet1ID:
+    Description: ID of the private subnets they may be deployed
+    Type: 'AWS::EC2::Subnet::Id'
+  PrivateSubnet2ID:
+    Description: ID of the private subnets they may be deployed
+    Type: 'AWS::EC2::Subnet::Id'
+  MainStack:
+    Type: String
+
+Resources:
+
+  ModelLaunchTemplate:
+    Type: 'AWS::EC2::LaunchTemplate'
+    Properties:
+      LaunchTemplateData:
+        InstanceType: r5.2xlarge
+        ImageId: '{{resolve:ssm:drami:1}}'
+        SecurityGroupIds: 
+          - !ImportValue 
+            'Fn::Sub': '${MainStack}-EC2SecurityGroup'
+        IamInstanceProfile: !ImportValue 
+          'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
+        KeyName: !Ref KeyPairName
+
+
+  ModelAutoScalingGroup:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      VPCZoneIdentifier:
+        - !Ref PrivateSubnet1ID
+        - !Ref PrivateSubnet2ID
+      MinSize: 1
+      MaxSize: !Ref MaxModelingNodes
+      Cooldown: '300'
+      DesiredCapacity: 1
+      LaunchTemplate: 
+        LaunchTemplateId: !Ref ModelLaunchTemplate
+        Version: !GetAtt
+          - ModelLaunchTemplate
+          - LatestVersionNumber
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: PT60M
+      AutoScalingCreationPolicy:
+        MinSuccessfulInstancesPercent: 100
+ 
+Outputs:
+  ModelAutoScalingGroup:
+    Description: Auto Scaling group reference ID.
+    Value: !Ref ModelAutoScalingGroup
+    Export:
+      Name: !Sub '${MainStack}-ModelAutoScalingGroup'
