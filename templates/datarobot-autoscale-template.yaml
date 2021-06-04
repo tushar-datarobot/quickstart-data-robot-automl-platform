@@ -28,8 +28,9 @@ Resources:
         SecurityGroupIds: 
           - !ImportValue 
             'Fn::Sub': '${MainStack}-EC2SecurityGroup'
-        IamInstanceProfile: !ImportValue 
-          'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
+        IamInstanceProfile:
+          Name: !ImportValue
+            'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
         KeyName: !Ref KeyPairName
 
 

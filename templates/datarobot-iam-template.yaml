@@ -46,7 +46,7 @@ Resources:
             Action:
               - 'ec2:DescribeInstances'
               - 'ec2:DescribeInstanceStatus'
-              - 'ec2:DescribeImage'
+              - 'ec2:DescribeImages'
               - 'ec2:CreateImage'
               - 'ec2:CreateSnapshot'
               - 'elasticloadbalancing:*'
@@ -106,4 +106,10 @@ Outputs:
     Export:
       Name: 
         'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
+  EC2InstanceSecurityProfileARN:
+    Description: SecurityGroup settings when using an S3 Bucket
+    Value: !GetAtt InstanceProfile.Arn
+    Export:
+      Name: 
+        'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfileArn'
   
