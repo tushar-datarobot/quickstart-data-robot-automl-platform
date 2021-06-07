@@ -10,7 +10,7 @@
 # https://s3.amazonaws.com/cloudformation-templates-us-east-1/CloudWatch_Logs.template
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. 
+Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-????) 
 Parameters:
   MainStack:
     Type: String
