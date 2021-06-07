@@ -44,16 +44,16 @@ Resources:
 
 ### Debug settings, comment out or remove as required.
         - IpProtocol: tcp
-          FromPort: '22'
-          ToPort: '22'
+          FromPort: 22
+          ToPort: 22
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: '80'
-          ToPort: '80'
+          FromPort: 80
+          ToPort: 80
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: '443'
-          ToPort: '443'
+          FromPort: 443
+          ToPort: 443
           CidrIp: 0.0.0.0/0          
 
 ### Allow for access from "your IP"
@@ -73,279 +73,279 @@ Resources:
 ### Required DataRobot ports
         - Description: Application Web
           IpProtocol: udp
-          FromPort: '1514'
-          ToPort: '1514'
+          FromPort: 1514
+          ToPort: 1514
           CidrIp: !Ref CidrBlock
 
         - Description: Model Management
           IpProtocol: tcp
-          FromPort: '1514'
-          ToPort: '1514'
+          FromPort: 1514
+          ToPort: 1514
           CidrIp: !Ref CidrBlock
 
         - Description: Prediction Optimization User Interface
           IpProtocol: tcp
-          FromPort: '3000'
-          ToPort: '3000'
+          FromPort: 3000
+          ToPort: 3000
           CidrIp: !Ref CidrBlock
 
         - Description: Tableau Extensions Service
           IpProtocol: tcp
-          FromPort: '3003'
-          ToPort: '3003'
+          FromPort: 3003
+          ToPort: 3003
           CidrIp: !Ref CidrBlock
 
         - Description: Docker Registry
           IpProtocol: tcp
-          FromPort: '5000'
-          ToPort: '5000'
+          FromPort: 5000
+          ToPort: 5000
           CidrIp: !Ref CidrBlock
           
         ### Allows acces tot he ELK stack, remove as required.
         - Description: ELK Stack access
           IpProtocol: udp
-          FromPort: '5000'
-          ToPort: '5000'
+          FromPort: 5000
+          ToPort: 5000
           CidrIp: !Ref CidrBlock
 
         - Description: IDE Client Broker and Worker
           IpProtocol: tcp
-          FromPort: '5445'
-          ToPort: '5446'
+          FromPort: 5445
+          ToPort: 5446
           CidrIp: !Ref CidrBlock
 
         - Description: Secure Worker Broker Client and Worker
           IpProtocol: tcp
-          FromPort: '5555'
-          ToPort: '5556'
+          FromPort: 5555
+          ToPort: 5556
           CidrIp: !Ref CidrBlock
 
         - Description: Secure Worker Broker Client
           IpProtocol: tcp
-          FromPort: '5558'
-          ToPort: '5558'
+          FromPort: 5558
+          ToPort: 5558
           CidrIp: !Ref CidrBlock
 
         - Description: RabbitMQ TLS / HAProxy HA RabbitMQ TLS
           IpProtocol: tcp
-          FromPort: '5671'
-          ToPort: '5671'
+          FromPort: 5671
+          ToPort: 5671
           CidrIp: !Ref CidrBlock
 
         - Description: RabbitMQ / HAProxy HA RabbitMQ*
           IpProtocol: tcp
-          FromPort: '5672'
-          ToPort: '5672'
+          FromPort: 5672
+          ToPort: 5672
           CidrIp: !Ref CidrBlock
 
         - Description: Redis
           IpProtocol: tcp
-          FromPort: '6379'
-          ToPort: '6379'
+          FromPort: 6379
+          ToPort: 6379
           CidrIp: !Ref CidrBlock
 
         - Description: Resource Monitor
           IpProtocol: tcp
-          FromPort: '7558'
-          ToPort: '7558'
+          FromPort: 7558
+          ToPort: 7558
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot Flask Application
           IpProtocol: tcp 
-          FromPort: '8000' 
-          ToPort: '8000'
+          FromPort: 8000 
+          ToPort: 8000
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot v0 and v1 API routes
           IpProtocol: tcp
-          FromPort: '8001'
-          ToPort: '8002'
+          FromPort: 8001
+          ToPort: 8002
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot v2 API
           IpProtocol: tcp 
-          FromPort: '8004'
-          ToPort: '8004'
+          FromPort: 8004
+          ToPort: 8004
 
         - Description: DataRobot OAuth2 API
           IpProtocol: tcp 
-          FromPort: '8008'
-          ToPort: '8008'          
+          FromPort: 8008
+          ToPort: 8008          
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot Socket.IO Server
           IpProtocol: tcp
-          FromPort: '8011'
-          ToPort: '8011'
+          FromPort: 8011
+          ToPort: 8011
           CidrIp: !Ref CidrBlock
 
         - Description: Analytics Broker
           IpProtocol: udp 
-          FromPort: '8018' 
-          ToPort: '8018'
+          FromPort: 8018 
+          ToPort: 8018
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot Upload Server
           IpProtocol: tcp
-          FromPort: '8023'
-          ToPort: '8023'
+          FromPort: 8023
+          ToPort: 8023
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot Diagnostics Server
           IpProtocol: tcp
-          FromPort: '8033'
-          ToPort: '8033'
+          FromPort: 8033
+          ToPort: 8033
           CidrIp: !Ref CidrBlock
 
         - Description: Tile Server GL
           IpProtocol: tcp
-          FromPort: '8051'
-          ToPort: '8051'
+          FromPort: 8051
+          ToPort: 8051
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot Prediction Optimization Application
           IpProtocol: tcp
-          FromPort: '8097'
-          ToPort: '8097'
+          FromPort: 8097
+          ToPort: 8097
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot Datasets Service API
           IpProtocol: tcp
-          FromPort: '8100'
-          ToPort: '8100'
+          FromPort: 8100
+          ToPort: 8100
           CidrIp: !Ref CidrBlock
 
         - Description: Datarobot diagnostics (TLS)
           IpProtocol: tcp
-          FromPort: '8433'
-          ToPort: '8433'
+          FromPort: 8433
+          ToPort: 8433
           CidrIp: !Ref CidrBlock
 
         - Description: Datarobot diagnostics (not secure)
           IpProtocol: tcp
-          FromPort: '8833'
-          ToPort: '8833'
+          FromPort: 8833
+          ToPort: 8833
           CidrIp: !Ref CidrBlock
 
         - Description: Chart Export Service
           IpProtocol: tcp
-          FromPort: '9001'
-          ToPort: '9001'
+          FromPort: 9001
+          ToPort: 9001
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot Availability Monitor
           IpProtocol: tcp
-          FromPort: '9090'
-          ToPort: '9090'
+          FromPort: 9090
+          ToPort: 9090
           CidrIp: !Ref CidrBlock
 
         - Description: Elasticsearch for AI Catalog
           IpProtocol: tcp
-          FromPort: '9200'
-          ToPort: '9200'
+          FromPort: 9200
+          ToPort: 9200
           CidrIp: !Ref CidrBlock
 
         - Description: Elasticsearch Internode Communication
           IpProtocol: tcp
-          FromPort: '9300'
-          ToPort: '9300'
+          FromPort: 9300
+          ToPort: 9300
           CidrIp: !Ref CidrBlock
 
         - Description: DataRobot PNGExport Service
           IpProtocol: tcp
-          FromPort: '9494'
-          ToPort: '9494'
+          FromPort: 9494
+          ToPort: 9494
           CidrIp: !Ref CidrBlock
 
         - Description: RabbitMQ Management HTTPS and HTTP Interface
           IpProtocol: tcp
-          FromPort: '15671'
-          ToPort: '15672'
+          FromPort: 15671
+          ToPort: 15672
           CidrIp: !Ref CidrBlock
 
         - Description: Redis Sentinel
           IpProtocol: tcp
-          FromPort: '26379'
-          ToPort: '26379'
+          FromPort: 26379
+          ToPort: 26379
           CidrIp: !Ref CidrBlock
 
         - Description: MongoDB
           IpProtocol: tcp
-          FromPort: '27017'
-          ToPort: '27017'
+          FromPort: 27017
+          ToPort: 27017
           CidrIp: !Ref CidrBlock
 
         - Description: Redis Proxy Server
           IpProtocol: tcp
-          FromPort: '46379'
-          ToPort: '46379'
+          FromPort: 46379
+          ToPort: 46379
           CidrIp: !Ref CidrBlock
 
 ### These ports are required for HA Mode
         - Description: Patroni Zookeeper
           IpProtocol: tcp
-          FromPort: '2888'
-          ToPort: '2888'
+          FromPort: 2888
+          ToPort: 2888
           CidrIp: !Ref CidrBlock
 
         - Description: Patroni Zookeeper
           IpProtocol: tcp
-          FromPort: '3181'
-          ToPort: '3181'
+          FromPort: 3181
+          ToPort: 3181
           CidrIp: !Ref CidrBlock
 
         - Description: Patroni Zookeeper
           IpProtocol: tcp
-          FromPort: '3888'
-          ToPort: '3888'
+          FromPort: 3888
+          ToPort: 3888
           CidrIp: !Ref CidrBlock
 
         - Description: HA Postgres/Patroni
           IpProtocol: tcp
-          FromPort: '4000'
-          ToPort: '4000'
+          FromPort: 4000
+          ToPort: 4000
           CidrIp: !Ref CidrBlock
 
         - Description: HAProxy HA RabbitMQ
           IpProtocol: tcp
-          FromPort: '4369'
-          ToPort: '4369'
+          FromPort: 4369
+          ToPort: 4369
           CidrIp: !Ref CidrBlock
 
         - Description: HA Postgres/Patroni
           IpProtocol: tcp
-          FromPort: '5432'
-          ToPort: '5434'
+          FromPort: 5432
+          ToPort: 5434
           CidrIp: !Ref CidrBlock
 
         - Description: HA RabbitMQ
           IpProtocol: tcp
-          FromPort: '5673'
-          ToPort: '5673'
+          FromPort: 5673
+          ToPort: 5673
           CidrIp: !Ref CidrBlock
 
         - Description: HA Proxy Instance
           IpProtocol: tcp
-          FromPort: '7001'
-          ToPort: '7001'
+          FromPort: 7001
+          ToPort: 7001
           CidrIp: !Ref CidrBlock
 
         - Description: MinIO HA Port
           IpProtocol: tcp
-          FromPort: '9002'
-          ToPort: '9002'
+          FromPort: 9002
+          ToPort: 9002
           CidrIp: !Ref CidrBlock
 
         - Description: HA RabbitMQ Management HTTP(S) Interface
           IpProtocol: tcp
-          FromPort: '15673'
-          ToPort: '15673'
+          FromPort: 15673
+          ToPort: 15673
           CidrIp: !Ref CidrBlock
 
         - Description: HA RabbitMQ inter-node communication*
           IpProtocol: tcp
-          FromPort: '25672'
-          ToPort: '25672'
+          FromPort: 25672
+          ToPort: 25672
           CidrIp: !Ref CidrBlock
 
 Outputs:
@@ -353,7 +353,11 @@ Outputs:
     Description: SecurityGroup settings when using an S3 Bucket
     Value: 
       Ref: InstanceSecurityGroup
+    Export:
+      Name: !Sub '${MainStack}-EC2InstanceSecurityGroup'
   EC2SecurityGroupId:
     Description: "Group ID of the newly created security group"
     Value: !GetAtt InstanceSecurityGroup.GroupId
+    Export:
+      Name: !Sub '${MainStack}-EC2SecurityGroupId'
 

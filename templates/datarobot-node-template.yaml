@@ -13,9 +13,9 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-????) 
 Parameters:
   EC2InstanceSecurityProfile:
-    Type: 'AWS::IAM::InstanceProfile'
+    Type: 'String'
   EC2SecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
+    Type: 'AWS::EC2::SecurityGroup::Id'
   MainStack:
     Type: String
   DRVersion:
@@ -68,10 +68,6 @@ Parameters:
     Description: Should this node have a Public IP
     Default: false
     AllowedValues: [ true, false ]
-  IAmProfile:
-    Type: String
-    Description: Profile ID for the IAM Role we will be using
-    Default: ""
   StorageDir:
     Type: String
     Description: Where to store the verte4x files in our S3 bucket
@@ -528,8 +524,7 @@ Resources:
     Properties: 
       ImageId:  !Ref ImageId
       InstanceType: !Ref InstanceType
-      IamInstanceProfile: !ImportValue 
-        'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
+      IamInstanceProfile: !Ref EC2InstanceSecurityProfile
       KeyName: !Ref SSHKey
       Monitoring: true
       EbsOptimized: true
@@ -563,7 +558,6 @@ Resources:
           CurrentStackName=${AWS::StackName}
           Encrypted=${Encrypted}
           #EncryptionKey=${EncryptionKey}
-          IAmProfile=${IAmProfile}
           InstallationBucket=${InstallationBucket}
           InstanceType=${InstanceType}
           ImageId=${ImageId}

@@ -183,7 +183,7 @@ Resources:
         MainStack: !Ref AWS::StackName
         KeyPairName: !Ref KeyPairName
         IamArn: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfileARN'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
 
       
       
@@ -235,8 +235,8 @@ Resources:
         DRInstallationBucket: !Ref DRS3InstallationBucket
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623696772&Signature=XiZexQeWjCwtw%2Fru4XUIFkoHE94%3D"
-        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-AppNode
@@ -269,8 +269,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
-        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
       Tags:
         # DataRobot tags
         - Key: Name
@@ -300,8 +300,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
-        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'    
       Tags:
         # DataRobot tags
         - Key: Name
@@ -332,8 +332,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
-        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
       Tags:
         # DataRobot tags
         - Key: Name
@@ -365,8 +365,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
-        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
       Tags:
         # DataRobot tags
         - Key: Name
@@ -397,8 +397,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
-        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
       Tags:
         # DataRobot tags
         - Key: Name
@@ -432,8 +432,8 @@ Resources:
         AmiSignalHandle: !Join
           - ''
           - - !Ref AMIWaitHandle
-        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup' 
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId' 
       Tags:
         # DataRobot tags
         - Key: Name
@@ -465,8 +465,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: !Ref AMIWaitHandle
-        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
       Tags:
         # DataRobot tags
         - Key: Name

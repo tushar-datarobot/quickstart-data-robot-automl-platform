@@ -13,9 +13,9 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-????) 
 Parameters:
   EC2InstanceSecurityProfile:
-    Type: 'AWS::IAM::InstanceProfile'
+    Type: String
   EC2SecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
+    Type: 'AWS::EC2::SecurityGroup::Id'
   MainStack:
     Type: String
   DRVersion:
