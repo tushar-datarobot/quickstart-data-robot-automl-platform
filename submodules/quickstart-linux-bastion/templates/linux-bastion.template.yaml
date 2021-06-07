@@ -529,7 +529,7 @@ Resources:
         Count: !Ref NumBastionHosts
         Timeout: PT60M
       AutoScalingCreationPolicy:
-        MinSuccessfulInstancesPercent: 100
+        MinSuccessfulInstancesPercent: 0
     UpdatePolicy:
       AutoScalingReplacingUpdate:
         WillReplace: true

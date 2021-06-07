@@ -12,6 +12,10 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-????) 
 Parameters:
+  EC2InstanceSecurityProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+  EC2SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
   MainStack:
     Type: String
   DRVersion:
@@ -31,11 +35,6 @@ Parameters:
   SubnetId:
     Type: "AWS::EC2::Subnet::Id"
     Description: Subnet for cluster
-#  SecurityGroupIds:
-#    Type: List<AWS::EC2::SecurityGroup::Id>
-#    Description: Cluster Security Group Id
-#    Default: !ImportValue 
-#      'Fn::Sub': '${MainStack}-EC2SecurityGroup'
   ImageId:
     Type: AWS::EC2::Image::Id
     Description: RHEL or CentOS AMI Id
@@ -649,8 +648,7 @@ Resources:
     Properties: 
       ImageId:  !Ref ImageId
       InstanceType: !Ref InstanceType
-      IamInstanceProfile: !ImportValue 
-        'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
+      IamInstanceProfile: !Ref EC2InstanceSecurityProfile
       KeyName: !Ref SSHKey
       Monitoring: true
       EbsOptimized: true
@@ -672,8 +670,7 @@ Resources:
           AssociatePublicIpAddress: !Ref PublicIpAddress
           SubnetId: !Ref SubnetId
           GroupSet: 
-            - !ImportValue
-                'Fn::Sub': '${MainStack}-EC2SecurityGroup'
+            - !Ref EC2SecurityGroup
 
 
       UserData:

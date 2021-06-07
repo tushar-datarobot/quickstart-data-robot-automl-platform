@@ -107,13 +107,6 @@ Outputs:
     Description: SecurityGroup settings when using an S3 Bucket
     Value: 
       Ref: InstanceProfile
-    Export:
-      Name: 
-        'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
   EC2InstanceSecurityProfileARN:
     Description: SecurityGroup settings when using an S3 Bucket
-    Value: !GetAtt InstanceProfile.Arn
-    Export:
-      Name: 
-        'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfileArn'
-  
+    Value: !GetAtt InstanceProfile.Arn  

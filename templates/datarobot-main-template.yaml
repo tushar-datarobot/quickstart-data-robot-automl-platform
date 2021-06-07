@@ -174,13 +174,18 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: AMIWaitCondition
     Properties:
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-autoscale-template.yaml
       TimeoutInMinutes: 120
-      PrivateSubnet1ID: !Ref PrivateSubnet1ID
-      PrivateSubnet2ID: !Ref PrivateSubnet2ID
-      MaxModelingNodes: 5
-      MainStack: !Ref AWS::StackName
-      KeyPairName: !Ref KeyPairName
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-autoscale-template.yaml
+      Parameters:
+        PrivateSubnet1ID: !Ref PrivateSubnet1ID
+        PrivateSubnet2ID: !Ref PrivateSubnet2ID
+        MaxModelingNodes: 5
+        MainStack: !Ref AWS::StackName
+        KeyPairName: !Ref KeyPairName
+        IamArn: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfileARN'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
+
+      
       
   S3Bucket:
     Type: AWS::S3::Bucket
@@ -193,7 +198,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TimeoutInMinutes: 5
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-securitygroup-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-securitygroup-template.yaml
       Parameters:
         MainStack: !Ref AWS::StackName
         VpcId: !Ref VPCID
@@ -205,7 +210,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TimeoutInMinutes: 10
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-iam-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-iam-template.yaml
       Parameters:
         MainStack: !Ref AWS::StackName
         S3Bucket: !Ref DRS3InstallationBucket
@@ -214,7 +219,7 @@ Resources:
   AppNode:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-appnode-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-appnode-template.yaml
       TimeoutInMinutes: 120
       Parameters:
         Region: !Ref "AWS::Region"
@@ -229,7 +234,9 @@ Resources:
         QSInstallationBucket: weswagner-quickstart-dr
         DRInstallationBucket: !Ref DRS3InstallationBucket
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
-        DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623097218&Signature=3%2BdjrvXa3n5NgBc1Gsi09Vt3Ybk%3D"
+        DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623696772&Signature=XiZexQeWjCwtw%2Fru4XUIFkoHE94%3D"
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-AppNode
@@ -248,7 +255,7 @@ Resources:
       - IAMStack
       - SecurityStack
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
         DataVolumeSize: 100
@@ -262,6 +269,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
       Tags:
         # DataRobot tags
         - Key: Name
@@ -277,7 +286,7 @@ Resources:
       - IAMStack
       - SecurityStack
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
         DataVolumeSize: 100
@@ -291,6 +300,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
       Tags:
         # DataRobot tags
         - Key: Name
@@ -307,7 +318,7 @@ Resources:
       - IAMStack
       - SecurityStack
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
         DataVolumeSize: 100
@@ -321,6 +332,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
       Tags:
         # DataRobot tags
         - Key: Name
@@ -338,7 +351,7 @@ Resources:
       - IAMStack
       - SecurityStack
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
         DataVolumeSize: 100
@@ -352,6 +365,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
       Tags:
         # DataRobot tags
         - Key: Name
@@ -368,7 +383,7 @@ Resources:
       - IAMStack
       - SecurityStack
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
         DataVolumeSize: 100
@@ -382,6 +397,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: ' '
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
       Tags:
         # DataRobot tags
         - Key: Name
@@ -399,7 +416,7 @@ Resources:
       - IAMStack
       - SecurityStack
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
         DataVolumeSize: 100
@@ -414,7 +431,9 @@ Resources:
         EncryptionKey: ' '
         AmiSignalHandle: !Join
           - ''
-          - - !Ref AMIWaitHandle 
+          - - !Ref AMIWaitHandle
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup' 
       Tags:
         # DataRobot tags
         - Key: Name
@@ -432,7 +451,7 @@ Resources:
       - IAMStack
       - SecurityStack
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/templates/datarobot-node-template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
         DataVolumeSize: 100
@@ -446,6 +465,8 @@ Resources:
         Encrypted: false
         EncryptionKey: ' '
         AmiSignalHandle: !Ref AMIWaitHandle
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.InstanceProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2InstanceSecurityGroup'
       Tags:
         # DataRobot tags
         - Key: Name

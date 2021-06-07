@@ -228,10 +228,12 @@ Resources:
         QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-linux-bastion/'
         BastionAMIOS:
           Ref: BastionAMIOS
+        BastionHostName: 'DRBastion'
         BastionInstanceType:
           Ref: BastionInstanceType
         KeyPairName:
           Ref: KeyPairName
+        NumBastionHosts: 2
         PublicSubnet1ID:
           Fn::GetAtt:
           - VPCStack

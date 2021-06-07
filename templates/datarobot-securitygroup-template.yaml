@@ -349,13 +349,11 @@ Resources:
           CidrIp: !Ref CidrBlock
 
 Outputs:
-  InstanceSecurityGroup:
+  EC2InstanceSecurityGroup:
     Description: SecurityGroup settings when using an S3 Bucket
     Value: 
       Ref: InstanceSecurityGroup
   EC2SecurityGroupId:
-    Description: "PrivateIP IP address of the newly created EC2 instance"
+    Description: "Group ID of the newly created security group"
     Value: !GetAtt InstanceSecurityGroup.GroupId
-    Export:
-      Name:
-        'Fn::Sub': '${MainStack}-EC2SecurityGroup'
+

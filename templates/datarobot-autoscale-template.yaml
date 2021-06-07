@@ -12,6 +12,10 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-????) 
 Parameters:
+  IamArn:
+    Type: String
+  EC2SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
   KeyPairName:
     Description: Name of an existing public/private key pair. If you do not have one in this AWS Region,
       please create it before continuing. 
@@ -38,11 +42,9 @@ Resources:
         InstanceType: r5.2xlarge
         ImageId: '{{resolve:ssm:drami:1}}'
         SecurityGroupIds: 
-          - !ImportValue 
-            'Fn::Sub': '${MainStack}-EC2SecurityGroup'
+          - !Ref EC2SecurityGroup
         IamInstanceProfile:
-          Name: !ImportValue
-            'Fn::Sub': '${MainStack}-EC2InstanceSecurityProfile'
+          Name: !Ref IamArn
         KeyName: !Ref KeyPairName
 
 
