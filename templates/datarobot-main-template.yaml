@@ -148,15 +148,33 @@ Conditions:
     - !Ref DRS3CreateBucket
     - "True"
 
-# Use Centos 8.0.2.2004 as most stable version for Data Robot 7.0.2
+# Use Centos 8.2.2004 as most stable version for Data Robot 7.0.2
 Mappings: 
   RegionMap: 
     us-east-1: 
       "Centos": "ami-01ca03df4a6012157"
     us-east-2: 
       "Centos": "ami-000e7ce4dd68e7a11"
+    us-west-1:
+      "Centos": "ami-04179d30492b778ad"
     us-west-2:
       "Centos": "ami-0157b1e4eefd91fd7"
+    eu-west-1:
+      "Centos": "ami-0bfa4fefe067b7946"
+    eu-west-2:
+      "Centos": "ami-0eee2548cd75b4877"
+    eu-west-3:
+      "Centos": "ami-05786aa5add3ca7c8"
+    eu-south-1:
+      "Centos": "ami-00fd0c9036a37a48e"   
+    eu-north-1:
+      "Centos": "ami-0474ce84d449ee66f"
+    sa-east-1:
+      "Centos": "ami-005c6439e527f2704"
+    ap-northeast-1:
+      "Centos": "ami-089a156ea4f52a0a3"
+    ap-northeast-2:
+      "Centos": "ami-09cdc4034bbb65412"
     
 
 Resources:
@@ -310,7 +328,6 @@ Resources:
         - Key: NodeType
           Value: DataRobot
 
-
   ModelManagementStack:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
@@ -442,9 +459,7 @@ Resources:
         - Key: NodeType
           Value: DataRobot  
 
-
-# Added to allow for AutoScaling
-  DataNodeStack:
+  DataNodeStack1:
     Type: "AWS::CloudFormation::Stack"
     DependsOn: 
       - IAMStack
@@ -456,9 +471,9 @@ Resources:
         DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.2xlarge
+        InstanceType: r5.large
         MainStack: !Ref AWS::StackName
-        ServerName: DataNode
+        ServerName: DataNode1
         SSHKey: !Ref KeyPairName
         SubnetId: !Ref PrivateSubnet1ID
         Encrypted: false
@@ -475,6 +490,67 @@ Resources:
         - Key: NodeType
           Value: DataRobot  
 
+  DataNodeStack2:
+    Type: "AWS::CloudFormation::Stack"
+    DependsOn: 
+      - IAMStack
+      - SecurityStack
+    Properties:
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
+      Parameters:
+        Region: !Ref "AWS::Region"
+        DataVolumeSize: 100
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
+        InstallationBucket: !Ref DRS3InstallationBucket
+        InstanceType: r5.large
+        MainStack: !Ref AWS::StackName
+        ServerName: DataNode1
+        SSHKey: !Ref KeyPairName
+        SubnetId: !Ref PrivateSubnet2ID
+        Encrypted: false
+        EncryptionKey: ' '
+        AmiSignalHandle: !Ref AMIWaitHandle
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+      Tags:
+        # DataRobot tags
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-DataNode
+        - Key: MainStack
+          Value: !Ref AWS::StackName
+        - Key: NodeType
+          Value: DataRobot  
+
+  DataNodeStack3:
+    Type: "AWS::CloudFormation::Stack"
+    DependsOn: 
+      - IAMStack
+      - SecurityStack
+    Properties:
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
+      Parameters:
+        Region: !Ref "AWS::Region"
+        DataVolumeSize: 100
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
+        InstallationBucket: !Ref DRS3InstallationBucket
+        InstanceType: r5.large
+        MainStack: !Ref AWS::StackName
+        ServerName: DataNode1
+        SSHKey: !Ref KeyPairName
+        SubnetId: !Ref PrivateSubnet1ID
+        Encrypted: false
+        EncryptionKey: ' '
+        AmiSignalHandle: !Ref AMIWaitHandle
+        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+      Tags:
+        # DataRobot tags
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-DataNode
+        - Key: MainStack
+          Value: !Ref AWS::StackName
+        - Key: NodeType
+          Value: DataRobot  
 
 Outputs:
   MasterTemplate:

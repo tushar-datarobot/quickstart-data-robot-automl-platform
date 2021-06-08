@@ -164,14 +164,27 @@ servers:
   #     DEFAULT_SENDER: someemailaddress@yourdomain.com  # Email address shown in your email app.
   #     DEFAULT_SUPPORT: someemailaddress@yourdomain.com # Email address shown with in the text of the email.
 
-# Data node
+# Data nodes
 - services:
   # - minio
   # - gluster
   - mongo
   - redis
+  - sentinel
+  - zookeeper
   hosts:
-  - DataNode
+  - DataNode1
+  - DataNode2
+
+- services:
+  # - minio
+  # - gluster
+  - mongo
+  - sentinel
+  - zookeeper
+  hosts:
+  - DataNode3
+
 
 # Modeling node(s)
 - services:

@@ -249,7 +249,7 @@ Resources:
           - VPCStack
           - Outputs.VPCID
   DataRobotStack:
-    DependsOn: BastionStack
+    DependsOn: VPCStack
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: 'https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-main-template.yaml'
