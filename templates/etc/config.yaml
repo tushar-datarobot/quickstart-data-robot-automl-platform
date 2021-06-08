@@ -2,12 +2,7 @@
 # This example configuration should be used for deploying
 # A Proof of Concept DataRobot DataRobot 7.0.2 cluster
 #
-# This configuration contains:
-#   * 1 Application and Data node
-#   * 1 ElasticSearch and Mongo Connector node
-#   * 2 Modeling nodes
-#   * 1 Model Management node
-#   * 1 Dedicated Prediction node
+
 
 os_configuration:
   # DataRobot service user and keys
@@ -40,8 +35,8 @@ os_configuration:
   
   
 
-  # Prediction server configuration -- on quickstart put on appdatanode
-  prediction_endpoint: DedicatedPredictionServer
+  # Prediction server configuration -- on quickstart put on load balancer
+  prediction_endpoint: PREDICTIONLB
   prediction_ssl:
     enabled: false # Set to false if you will not use SSL certificates
     # Paths relative to certs/ directory

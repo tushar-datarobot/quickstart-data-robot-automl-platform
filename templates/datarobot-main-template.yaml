@@ -1,22 +1,19 @@
 ###########################################################################
-#  Copyright 2020 DataRobot Inc. All Rights Reserved.                     #
+#  Copyright 2021 DataRobot Inc. All Rights Reserved.                     #
 #                                                                         #
 #  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES       #
 #  OR CONDITIONS OF ANY KIND, express or implied.                         #
 ###########################################################################
-#
-# TODO: View CloudFormation Logs in the Console
-# https://aws.amazon.com/blogs/devops/view-cloudformation-logs-in-the-console/
-# https://s3.amazonaws.com/cloudformation-templates-us-east-1/CloudWatch_Logs.template
+
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-????) 
+Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-1xxxxxxxx) 
 Metadata:
   QuickStartDocumentation:
     EntrypointName: Launch into an existing VPC
     Order: "5"
   QSLint:
-    Exclusions: [ W9002, W9003, W9004, W9006 ]
+    Exclusions: [ W9002, W9003, W9006 ]
   cfn-lint:
     config:
       ignore_checks:
@@ -125,7 +122,7 @@ Parameters:
       The Quick Start S3 key prefix can include numbers, lowercase letters,
       uppercase letters, hyphens (-), and forward slashes (/). The prefix should
       end with a forward slash (/).
-    Default: templates/
+    Default: quickstart-data-robot-automl-platform/
     Description:
       S3 key prefix that is used to simulate a directory for your copy of the 
       Quick Start assets. Keep the default prefix unless you are customizing 
@@ -146,7 +143,8 @@ Parameters:
 Conditions:
   CreateS3BucketCondition: !Equals 
     - !Ref DRS3CreateBucket
-    - "True"
+    - "True"    
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 
 # Use Centos 8.2.2004 as most stable version for Data Robot 7.0.2
 Mappings: 
@@ -192,7 +190,10 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: AMIWaitCondition
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-autoscale-template.yaml
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/datarobot-autoscale-template.yaml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       TimeoutInMinutes: 120
       Parameters:
         PrivateSubnet1ID: !Ref PrivateSubnet1ID
@@ -220,7 +221,6 @@ Resources:
         MainStack: !Ref AWS::StackName
         VpcId: !Ref VPCID
         CidrBlock: 0.0.0.0/0
-        ExternalIPAddress: 0.0.0.0/0
 
 
   IAMStack:
@@ -239,6 +239,8 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-appnode-template.yaml
       TimeoutInMinutes: 120
       Parameters:
+        DRVersion: '7.0.2'
+        InstanceType: r5.xlarge
         Region: !Ref "AWS::Region"
         MainStack: !Ref AWS::StackName
         SubnetId: !Ref PrivateSubnet1ID
@@ -254,6 +256,7 @@ Resources:
         DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623696772&Signature=XiZexQeWjCwtw%2Fru4XUIFkoHE94%3D"
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        PredictionName: !GetAtt 'PredictionLoadBalancer.Outputs.DNSName' 
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-AppNode
@@ -268,9 +271,6 @@ Resources:
 
   DedicatedPredictionServerStack1:
     Type: "AWS::CloudFormation::Stack"
-    DependsOn: 
-      - IAMStack
-      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
@@ -299,9 +299,6 @@ Resources:
 
   DedicatedPredictionServerStack2:
     Type: "AWS::CloudFormation::Stack"
-    DependsOn: 
-      - IAMStack
-      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
@@ -330,9 +327,6 @@ Resources:
 
   ModelManagementStack:
     Type: "AWS::CloudFormation::Stack"
-    DependsOn: 
-      - IAMStack
-      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
@@ -363,9 +357,6 @@ Resources:
 # Configured for 4 workers each, total of 8
   ModelingNode1Stack:
     Type: "AWS::CloudFormation::Stack"
-    DependsOn: 
-      - IAMStack
-      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
@@ -395,9 +386,6 @@ Resources:
 
   ModelingNode2Stack:
     Type: "AWS::CloudFormation::Stack"
-    DependsOn: 
-      - IAMStack
-      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
@@ -428,9 +416,6 @@ Resources:
 # Added to allow for AutoScaling
   ModelingOnlyNodeStack:
     Type: "AWS::CloudFormation::Stack"
-    DependsOn: 
-      - IAMStack
-      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
@@ -461,9 +446,6 @@ Resources:
 
   DataNodeStack1:
     Type: "AWS::CloudFormation::Stack"
-    DependsOn: 
-      - IAMStack
-      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
@@ -492,9 +474,6 @@ Resources:
 
   DataNodeStack2:
     Type: "AWS::CloudFormation::Stack"
-    DependsOn: 
-      - IAMStack
-      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
@@ -523,9 +502,6 @@ Resources:
 
   DataNodeStack3:
     Type: "AWS::CloudFormation::Stack"
-    DependsOn: 
-      - IAMStack
-      - SecurityStack
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
@@ -550,7 +526,43 @@ Resources:
         - Key: MainStack
           Value: !Ref AWS::StackName
         - Key: NodeType
-          Value: DataRobot  
+          Value: DataRobot
+
+##### Load Balancer for Dedicated Predicion Servers
+  PredictionLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: ipv4
+      Subnets:
+        - Ref: PublicSubnet1ID
+        - Ref: PublicSubnet2ID
+      Type: network
+  PredictionTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckPort: '80'
+      HealthCheckProtocol: HTTP
+      Port: 80
+      Protocol: TCP
+      VpcId: !Ref VPCID
+      TargetType: instance
+      Targets:
+        - Id: !GetAtt 'DedicatedPredictionServerStack1.Outputs.EC2InstanceID'
+          Port: 80        
+        - Id: !GetAtt 'DedicatedPredictionServerStack2.Outputs.EC2InstanceID'
+          Port: 80
+  LBListenerHTTP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn:
+            Ref: PredictionTargetGroup
+      LoadBalancerArn:
+        Ref: PredictionLoadBalancer
+      Port: 80
+      Protocol: TCP
+  
 
 Outputs:
   MasterTemplate:

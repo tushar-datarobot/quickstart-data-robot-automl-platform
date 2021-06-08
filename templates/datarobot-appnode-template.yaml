@@ -1,23 +1,35 @@
 ###########################################################################
-#  Copyright 2020 DataRobot Inc. All Rights Reserved.                     #
+#  Copyright 2021 DataRobot Inc. All Rights Reserved.                     #
 #                                                                         #
 #  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES       #
 #  OR CONDITIONS OF ANY KIND, express or implied.                         #
 ###########################################################################
-#
-# TODO: View CloudFormation Logs in the Console
-# https://aws.amazon.com/blogs/devops/view-cloudformation-logs-in-the-console/
-# https://s3.amazonaws.com/cloudformation-templates-us-east-1/CloudWatch_Logs.template
+
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-????) 
+Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-1xxxxxxxx)
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: Launch into an existing VPC
+    Order: "5"
+  QSLint:
+    Exclusions: [ W9002, W9003, W9006 ]
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
+
+
 Parameters:
   EC2InstanceSecurityProfile:
+    Description: EC2 Security Profile to use for assumed role
     Type: String
   EC2SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup::Id'
+    Description: EC2 Security Group for EC2 Instance
   MainStack:
     Type: String
+    Description: Name of Parent Stack
   DRVersion:
     Type: String
     Description: DataRobot version to install
@@ -103,6 +115,9 @@ Parameters:
   DownloadURL:
     Type: String
     Description: Link to the time expiring DataRobot installation archive
+  PredictionName:
+    Type: String
+    Description: DNS Name of the prediction LB
   ClusterType:
     Type: String
     Description: Type of cluster to build.
@@ -384,6 +399,9 @@ Resources:
                   sed -i -- "s/$name/$ip/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 done
 
+                # Update the prediction server name with the load balancer DNS Name
+                sed -i -- "s/PREDICTIONLB/$PREDICTION_NAME/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
+
                 # Apply the Secrets
                 echo "Apply the Secrets :> $SECRETS"
                 sed -i -- "s/SecretsEnforced/$SECRETS/" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
@@ -438,6 +456,7 @@ Resources:
                 USE_LOG_SERVER: !If [ "UseLogServer", "true", "false" ]
                 USE_DPELB: !Ref UseDPELoadBalancer
                 METRIC_NAMESPACE: !Ref MetricNamespace
+                PREDICTION_NAME: !Ref PredictionName
 
             3c-DownloadTarballs:
               command: !Sub |
@@ -752,17 +771,6 @@ Resources:
         Ref: FrontEndLoadBalancer
       Port: 80
       Protocol: TCP
-  #LBSecurityGroup:
-  #  Type: "AWS::EC2::SecurityGroup"
-  #  Properties:
-  #    GroupDescription: "security group for LB"
-  #    VpcId: !Ref LBVPCID
-  #    SecurityGroupIngress: 
-  #      - 
-  #        CidrIp: "0.0.0.0/0"
-  #        FromPort: 80
-  #        IpProtocol: "tcp"
-  #        ToPort: 80
 
 Outputs:
   InstanceId:

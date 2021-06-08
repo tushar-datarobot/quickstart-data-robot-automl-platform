@@ -1,19 +1,28 @@
 ###########################################################################
-#  Copyright 2020 DataRobot Inc. All Rights Reserved.                     #
+#  Copyright 2021 DataRobot Inc. All Rights Reserved.                     #
 #                                                                         #
 #  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES       #
 #  OR CONDITIONS OF ANY KIND, express or implied.                         #
 ###########################################################################
-#
-# TODO: View CloudFormation Logs in the Console
-# https://aws.amazon.com/blogs/devops/view-cloudformation-logs-in-the-console/
-# https://s3.amazonaws.com/cloudformation-templates-us-east-1/CloudWatch_Logs.template
+
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-????) 
+Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-1xxxxxxxx)
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: Launch into an existing VPC
+    Order: "5"
+  QSLint:
+    Exclusions: [ W9002, W9003, W9006 ]
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
+
 Parameters:
   MainStack:
     Type: String
+    Description: Name of Main Stack
   S3Bucket:
     Type: String
     Description: CloudFormation repository S3 bucket name
@@ -53,12 +62,14 @@ Resources:
               - 'ec2:DescribeImages'
               - 'ec2:CreateImage'
               - 'ec2:CreateSnapshot'
-              - 'elasticloadbalancing:*'
-              - 'lambda:CreateFunction'
-              - 'lambda:DeleteFunction'
-              - 'lambda:GetFunctionConfiguration'
+              # - 'elasticloadbalancing:*'
               - 'ssm:DescribeParameters'
               - 'autoscaling:*'
+            Resource:
+              - '*'
+
+          - Effect: Allow
+            Action:
               - 'cloudwatch:PutMetricData'
               - 'cloudwatch:GetMetricData'
               - 'cloudwatch:DescribeAlarmsForMetric'
@@ -67,24 +78,18 @@ Resources:
               - 'cloudwatch:GetMetricWidgetImage'
               - 'cloudwatch:ListMetrics'
             Resource:
-              - '*'
-
-          - Effect: Allow
-            Action:
-              - 'cloudwatch:*'
-            Resource:
-              - 'arn:aws:cloudwatch::*:dashboard/*'
-              - 'arn:aws:cloudwatch::*:dashboard/*'
+              - !Sub 'arn:${AWS::Partition}:cloudwatch::*:dashboard/*'
+              - !Sub 'arn:${AWS::Partition}:cloudwatch::*:dashboard/*'
 
           - Effect: Allow
             Action:
               - 's3:ListAllMyBuckets'
               - 's3:Get*'
             Resource:
-              - !Sub 'arn:aws:s3:::${S3Bucket}'
-              - !Sub 'arn:aws:s3:::${S3Bucket}/*'
-              - 'arn:aws:s3:::weswagner-quickstart-dr'
-              - 'arn:aws:s3:::weswagner-quickstart-dr/*'
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
+              - !Sub 'arn:${AWS::Partition}:s3:::weswagner-quickstart-dr'
+              - !Sub 'arn:${AWS::Partition}:s3:::weswagner-quickstart-dr/*'
 
           - Effect: Allow
             Action:
@@ -102,18 +107,18 @@ Resources:
               - 'ssm:GetParameter'
               - 'ssm:DeleteParameter'
             Resource:
-              - arn:aws:ssm:*:*:parameter/*/datarobot-public-key
-              - arn:aws:ssm:*:*:parameter/*/datarobot-ami-key
-              - arn:aws:ssm:*:*:parameter/drami
-              - !Sub 'arn:aws:s3:::${S3Bucket}'
-              - !Sub 'arn:aws:s3:::${S3Bucket}/*'
-              - !Sub 'arn:aws:cloudformation:*:*:stack/${MainStack}/*'
+              - !Sub arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-public-key
+              - !Sub arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-ami-key
+              - !Sub arn:${AWS::Partition}:ssm:*:*:parameter/drami
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
+              - !Sub 'arn:${AWS::Partition}:cloudformation:*:*:stack/${MainStack}/*'
 
           - Effect: Allow
             Action:
               - 'ec2:CreateTags'
             Resource:
-              - arn:aws:ec2:*:*:volume/*
+              - !Sub arn:${AWS::Partition}:ec2:*:*:volume/*
 
       Roles:
         - !Ref DataRobotIAMRole      

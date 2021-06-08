@@ -1,23 +1,33 @@
 ###########################################################################
-#  Copyright 2020 DataRobot Inc. All Rights Reserved.                     #
+#  Copyright 2021 DataRobot Inc. All Rights Reserved.                     #
 #                                                                         #
 #  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES       #
 #  OR CONDITIONS OF ANY KIND, express or implied.                         #
 ###########################################################################
-#
-# TODO: View CloudFormation Logs in the Console
-# https://aws.amazon.com/blogs/devops/view-cloudformation-logs-in-the-console/
-# https://s3.amazonaws.com/cloudformation-templates-us-east-1/CloudWatch_Logs.template
+
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-????) 
+Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-1xxxxxxxx) 
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: Launch into an existing VPC
+    Order: "5"
+  QSLint:
+    Exclusions: [ W9002, W9003, W9006 ]
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
 Parameters:
   EC2InstanceSecurityProfile:
     Type: 'String'
+    Description: EC2 Security Role
   EC2SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup::Id'
+    Description: Security group for EC2 allowed traffic
   MainStack:
     Type: String
+    Description: Main Stack Name
   DRVersion:
     Type: String
     Description: DataRobot version to install

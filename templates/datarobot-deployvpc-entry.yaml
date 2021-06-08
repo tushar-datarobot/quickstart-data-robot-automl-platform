@@ -1,13 +1,9 @@
 ###########################################################################
-#  Copyright 2020 DataRobot Inc. All Rights Reserved.                     #
+#  Copyright 2021 DataRobot Inc. All Rights Reserved.                     #
 #                                                                         #
 #  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES       #
 #  OR CONDITIONS OF ANY KIND, express or implied.                         #
 ###########################################################################
-#
-# TODO: View CloudFormation Logs in the Console
-# https://aws.amazon.com/blogs/devops/view-cloudformation-logs-in-the-console/
-# https://s3.amazonaws.com/cloudformation-templates-us-east-1/CloudWatch_Logs.template
 
 AWSTemplateFormatVersion: "2010-09-09"
 Description: This master template creates a VPC infrastructure for a 2-AZ, multi-tier
@@ -15,8 +11,17 @@ Description: This master template creates a VPC infrastructure for a 2-AZ, multi
   behind ELBs and autoscaling groups. The cluster is configured to use an S3 bucket for 
   storage  **WARNING** This template creates EC2 instances and related resources. You 
   will be billed for the AWS resources used if you create a stack from this template.
-  (qs-????)
+  (qs-1xxxxxxxx)
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: Launch into an existing VPC
+    Order: "5"
+  QSLint:
+    Exclusions: [ W9002, W9003, W9006 ]
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
   AWS::CloudFormation::Interface:
     ParameterGroups:
     - Label:
@@ -186,15 +191,15 @@ Parameters:
     Type: String
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
+
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: 'https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml'
-      #  #!Sub
-      #  #  - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml'
-      #  #  - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
-      #  #    S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         AvailabilityZones:
           Fn::Join:
@@ -212,14 +217,12 @@ Resources:
         VPCCIDR:
           Ref: VPCCIDR
   BastionStack:
-    DependsOn: VPCStack
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: 'https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/submodules/quickstart-linux-bastion/templates/linux-bastion.template.yaml'
-      #  #!Sub
-      #  #  - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template'
-      #  #  - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
-      #  #    S3Bucket: !Ref QSS3BucketName
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         QSS3BucketName: 
           Ref: QSS3BucketName
@@ -249,14 +252,12 @@ Resources:
           - VPCStack
           - Outputs.VPCID
   DataRobotStack:
-    DependsOn: VPCStack
     Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: 'https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-main-template.yaml'
-      #  #!Sub
-      #  #  - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/quickstart-aws-vpc/templates/datarobot-main-template.yaml'
-      #  #  - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
-      #  #    S3Bucket: !Ref QSS3BucketName
+    Properties: 
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/datarobot-main-template.yaml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         KeyPairName:
           Ref: KeyPairName
