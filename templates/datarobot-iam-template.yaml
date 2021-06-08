@@ -58,8 +58,23 @@ Resources:
               - 'lambda:DeleteFunction'
               - 'lambda:GetFunctionConfiguration'
               - 'ssm:DescribeParameters'
+              - 'autoscaling:*'
+              - 'cloudwatch:PutMetricData'
+              - 'cloudwatch:GetMetricData'
+              - 'cloudwatch:DescribeAlarmsForMetric'
+              - 'cloudwatch:ListDashboards'
+              - 'cloudwatch:GetMetricStatistics'
+              - 'cloudwatch:GetMetricWidgetImage'
+              - 'cloudwatch:ListMetrics'
             Resource:
               - '*'
+
+          - Effect: Allow
+            Action:
+              - 'cloudwatch:*'
+            Resource:
+              - 'arn:aws:cloudwatch::*:dashboard/*'
+              - 'arn:aws:cloudwatch::*:dashboard/*'
 
           - Effect: Allow
             Action:

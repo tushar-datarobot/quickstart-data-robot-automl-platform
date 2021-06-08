@@ -372,7 +372,7 @@ Resources:
                 ## Download the proper config file
                 type="$DR_VERSION-$CLUSTER_TYPE" 
                 echo "Creating for :> $type"
-                aws s3 cp s3://$S3QUICKSTART_BUCKET/templates/etc/config.yaml /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
+                aws s3 cp s3://$S3QUICKSTART_BUCKET/quickstart-data-robot-automl-platform/templates/etc/config.yaml /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 chown -R datarobot:datarobot /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 echo "Downloaded Config file :> $(ls -la /opt/datarobot/DataRobot-$DR_VERSION/config.yaml)"
 

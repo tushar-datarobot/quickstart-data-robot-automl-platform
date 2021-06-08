@@ -15,13 +15,13 @@ Parameters:
   IamArn:
     Type: String
   EC2SecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
+    Type: 'AWS::EC2::SecurityGroup::Id'
   KeyPairName:
     Description: Name of an existing public/private key pair. If you do not have one in this AWS Region,
       please create it before continuing. 
     Type: 'AWS::EC2::KeyPair::KeyName'
   MaxModelingNodes:
-    Default: '1'
+    Default: '3'
     Description: The number of modelling nodes to allow max.
     Type: String
   PrivateSubnet1ID:
@@ -54,10 +54,10 @@ Resources:
       VPCZoneIdentifier:
         - !Ref PrivateSubnet1ID
         - !Ref PrivateSubnet2ID
-      MinSize: 1
+      MinSize: '1'
       MaxSize: !Ref MaxModelingNodes
       Cooldown: '300'
-      DesiredCapacity: 1
+      DesiredCapacity: '1'
       LaunchTemplate: 
         LaunchTemplateId: !Ref ModelLaunchTemplate
         Version: !GetAtt
@@ -69,6 +69,58 @@ Resources:
         Timeout: PT60M
       AutoScalingCreationPolicy:
         MinSuccessfulInstancesPercent: 100
+
+  WorkerScaleOutPolicy:
+    Type: 'AWS::AutoScaling::ScalingPolicy'
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref ModelAutoScalingGroup
+      ScalingAdjustment: 1
+
+  WorkerScaleInPolicy:
+    Type: 'AWS::AutoScaling::ScalingPolicy'
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref ModelAutoScalingGroup
+      ScalingAdjustment: -1
+
+  AlertScaleUp:
+    Type: 'AWS::CloudWatch::Alarm'
+    DependsOn: ModelAutoScalingGroup
+    Properties:
+      ActionsEnabled: True
+      EvaluationPeriods: 2
+      Namespace: 'DataRobot/AutoScaling/Testing'
+      MetricName: 'ClusterUtilization'
+      Threshold: 2
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref WorkerScaleOutPolicy
+      AlarmDescription: 'Alarm if demand for workers exceeds existing capacity for workers'
+      TreatMissingData: missing
+      Period: 60
+
+  AlertScaleDown:
+    Type: 'AWS::CloudWatch::Alarm'
+    DependsOn: ModelAutoScalingGroup
+    Properties:
+      ActionsEnabled: True
+      EvaluationPeriods: 20
+      Namespace: 'DataRobot/AutoScaling/Testing'
+      MetricName: 'ClusterUtilization'
+      Threshold: 0.5
+      ComparisonOperator: LessThanThreshold
+      AlarmActions:
+        - !Ref WorkerScaleInPolicy
+      AlarmDescription: 'Alarm if supply of workers exceeds existing demand for workers'
+      TreatMissingData: missing
+      Period: 60    
+
+
+
+
+
+
  
 Outputs:
   ModelAutoScalingGroup:

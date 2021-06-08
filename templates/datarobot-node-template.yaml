@@ -32,11 +32,6 @@ Parameters:
   SubnetId:
     Type: "AWS::EC2::Subnet::Id"
     Description: Subnet for cluster
-  #SecurityGroupIds:
-  # Import for quickstart
-  #  Type: List<AWS::EC2::SecurityGroup::Id>
-  #  Description: Cluster Security Group Id
-  #  # Default: sg-<some securitygroup id>
   ImageId:
     Type: AWS::EC2::Image::Id
     Description: RHEL or CentOS AMI Id

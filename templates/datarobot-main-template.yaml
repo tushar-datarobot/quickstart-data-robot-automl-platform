@@ -184,8 +184,7 @@ Resources:
         KeyPairName: !Ref KeyPairName
         IamArn: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfileARN'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
-
-      
+        
       
   S3Bucket:
     Type: AWS::S3::Bucket
