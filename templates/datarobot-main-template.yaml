@@ -5,7 +5,6 @@
 #  OR CONDITIONS OF ANY KIND, express or implied.                         #
 ###########################################################################
 
-
 AWSTemplateFormatVersion: "2010-09-09"
 Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-1xxxxxxxx) 
 Metadata:
@@ -216,7 +215,7 @@ Resources:
   SecurityStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TimeoutInMinutes: 5
+      TimeoutInMinutes: 10
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-securitygroup-template.yaml
       Parameters:
         MainStack: !Ref AWS::StackName
@@ -227,7 +226,7 @@ Resources:
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TimeoutInMinutes: 10
+      TimeoutInMinutes: 15
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-iam-template.yaml
       Parameters:
         MainStack: !Ref AWS::StackName
@@ -280,9 +279,6 @@ Resources:
           Value: !Ref AWS::StackName
         - Key: NodeType
           Value: DataRobot
-    DependsOn: 
-      - IAMStack
-      - SecurityStack    
 
 
   DedicatedPredictionServerStack1:
@@ -568,7 +564,7 @@ Resources:
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.large
         MainStack: !Ref AWS::StackName
-        ServerName: DataNode1
+        ServerName: DataNode2
         SSHKey: !Ref KeyPairName
         SubnetId: !Ref PrivateSubnet2ID
         Encrypted: false
@@ -606,7 +602,7 @@ Resources:
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.large
         MainStack: !Ref AWS::StackName
-        ServerName: DataNode1
+        ServerName: DataNode3
         SSHKey: !Ref KeyPairName
         SubnetId: !Ref PrivateSubnet1ID
         Encrypted: false
@@ -653,9 +649,9 @@ Resources:
       VpcId: !Ref VPCID
       TargetType: instance
       Targets:
-        - Id: !GetAtt 'DedicatedPredictionServerStack1.Outputs.EC2InstanceID'
+        - Id: !GetAtt 'DedicatedPredictionServerStack1.Outputs.InstanceId'
           Port: 80        
-        - Id: !GetAtt 'DedicatedPredictionServerStack2.Outputs.EC2InstanceID'
+        - Id: !GetAtt 'DedicatedPredictionServerStack2.Outputs.InstanceId'
           Port: 80
   LBListenerHTTP:
     Type: AWS::ElasticLoadBalancingV2::Listener

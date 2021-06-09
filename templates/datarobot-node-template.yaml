@@ -478,9 +478,17 @@ Resources:
                 my_name=${!my_name##*-}
 
                 echo "My name is ($my_name)"
-              
-
+                
                 if [[ $my_name == ModelingOnly* ]]; then
+
+                  # cleanup drami from other runs of quickstart so drami key version remains 1
+                  param=$(aws ssm describe-parameters --region $AWS_REGION --query "Parameters[].Name" --output text --filters "Key=Name,Values=drami")
+                  if [ -n "$param"]; then
+                    aws ssm delete-parameter --region $AWS_REGION --name "drami"
+                  else
+                    echo " no key to cleanup"
+                  fi
+
                   #Wait to see a spare key from app node indicating that install is complete
                   param=$(aws ssm describe-parameters --region $AWS_REGION --query "Parameters[].Name" --output text --filters "Key=Name,Values=/$MAIN_STACK/datarobot-ami-key")
                   while [ ! -n "$param" ]; do
@@ -514,11 +522,14 @@ Resources:
 
                   # flag URL that AMI is complete
                   curl -X PUT -H 'Content-Type:' --data-binary '{"Status" : "SUCCESS","Reason" : "Configuration Complete","UniqueId" : "IDAMIDONE","Data" : "AMI Complete"}' "$AMI_SIGNAL"
+
+                  # shutdown this instance not in a scaling group
+
+                  shutdown +15
  
                 else
                   echo "Skipping nodes other than ModelingOnly"
                 fi
-
               
               ignoreErrors: "true"
               env:

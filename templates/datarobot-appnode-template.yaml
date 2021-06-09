@@ -385,6 +385,10 @@ Resources:
                 chown -R datarobot:datarobot /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 echo "Downloaded Config file :> $(ls -la /opt/datarobot/DataRobot-$DR_VERSION/config.yaml)"
 
+                # Create S3 Bucket
+
+                aws s3api put-object --bucket $S3_BUCKET --key $STORAGE/
+
                 # Update the config with the IP addresses of the cluster
                 aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:MainStack,Values=$MAIN_STACK" "Name=instance-state-name,Values=running" --query "Reservations[].Instances[].[PrivateIpAddress,Tags[?Key=='Name'].Value[]]" | sed '$!N;s/\n/ /' | while read x; do
                   ip=`echo "$x" | cut -d " " -f 1`

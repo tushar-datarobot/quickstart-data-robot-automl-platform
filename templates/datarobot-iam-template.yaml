@@ -79,7 +79,7 @@ Resources:
               - 'cloudwatch:ListMetrics'
             Resource:
               - !Sub 'arn:${AWS::Partition}:cloudwatch::*:dashboard/*'
-              - !Sub 'arn:${AWS::Partition}:cloudwatch::*:dashboard/*'
+
 
           - Effect: Allow
             Action:
