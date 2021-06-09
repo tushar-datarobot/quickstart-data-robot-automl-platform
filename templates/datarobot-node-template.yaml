@@ -48,12 +48,12 @@ Parameters:
   InstanceType:
     Type: String
     Description: AWS Instance Type
-    AllowedValues: [ "t3.2xlarge", "m5.xlarge", "m5.2xlarge", "c5.xlarge", "c5.2xlarge", "r5.xlarge", "r5.2xlarge", "r5.4xlarge", "r5d.12xlarge" ]
+    AllowedValues: [ "t3.2xlarge", "m5.xlarge", "m5.2xlarge", "c5.xlarge", "c5.2xlarge", "r5.xlarge", "r5.2xlarge", "r5.4xlarge", "r5d.12xlarge", "r5.large" ]
   NodeVolumeSize:
     Type: Number
     Description: Hard drive size for Operating System
     AllowedValues: [ 40, 60, 80, 100 ]
-    Default: 40
+    Default: 60
   Region:
     Type: String
     Description: Region to host cluster
@@ -85,6 +85,7 @@ Parameters:
   DataVolumeSize:
     Type: Number
     Description: Hard drive size for the DataRobot software
+    AllowedValues: [ 40, 60, 80, 100, 200 ]
   TagDataVol:
     Type: String
     Description: Tag the data volume on this node for snapshotting

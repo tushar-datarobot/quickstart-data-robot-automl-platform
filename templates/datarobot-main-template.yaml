@@ -106,7 +106,7 @@ Parameters:
       The Quick Start bucket name can include numbers, lowercase
       letters, uppercase letters, and hyphens (-). It cannot start or end with a 
       hyphen (-).
-    Default: weswagner-quickstart-dr
+    Default: aws-quickstart
     Description:
       Name of the S3 bucket for your copy of the Quick Start assets. 
       Keep the default name unless you are customizing the template. 
@@ -190,10 +190,11 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: AMIWaitCondition
     Properties:
-      TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/datarobot-autoscale-template.yaml'
-        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
-          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-autoscale-template.yaml
+      #TemplateURL: !Sub
+      #  - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/datarobot-autoscale-template.yaml'
+      #  - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+      #    S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       TimeoutInMinutes: 120
       Parameters:
         PrivateSubnet1ID: !Ref PrivateSubnet1ID
@@ -239,7 +240,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-appnode-template.yaml
       TimeoutInMinutes: 120
       Parameters:
-        DRVersion: '7.0.2'
         InstanceType: r5.xlarge
         Region: !Ref "AWS::Region"
         MainStack: !Ref AWS::StackName
@@ -256,7 +256,23 @@ Resources:
         DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623696772&Signature=XiZexQeWjCwtw%2Fru4XUIFkoHE94%3D"
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
-        PredictionName: !GetAtt 'PredictionLoadBalancer.Outputs.DNSName' 
+        PredictionName: !GetAtt 'PredictionLoadBalancer.DNSName'
+        UseAutoScaling: "True"
+        MetricNamespace: "DataRobot/AutoScaling/Testing"
+        ClusterType: "QuickStart"  
+        StorageType: "s3bucket" 
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 200
+        PublicIpAddress: false
+        LogServer: off
+        SecretsEnforced: true
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-AppNode
@@ -275,7 +291,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
-        DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
@@ -288,6 +303,17 @@ Resources:
         AmiSignalHandle: ' '
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 100
+        PublicIpAddress: false
+        LogServer: off
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+        TagDataVol: false
       Tags:
         # DataRobot tags
         - Key: Name
@@ -303,7 +329,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
-        DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
@@ -315,7 +340,18 @@ Resources:
         EncryptionKey: ' '
         AmiSignalHandle: ' '
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'    
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 100
+        PublicIpAddress: false
+        LogServer: off
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+        TagDataVol: false    
       Tags:
         # DataRobot tags
         - Key: Name
@@ -331,7 +367,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
-        DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
@@ -344,6 +379,17 @@ Resources:
         AmiSignalHandle: ' '
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 100
+        PublicIpAddress: false
+        LogServer: off
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+        TagDataVol: false  
       Tags:
         # DataRobot tags
         - Key: Name
@@ -361,7 +407,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
-        DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
@@ -374,6 +419,17 @@ Resources:
         AmiSignalHandle: ' '
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 100
+        PublicIpAddress: false
+        LogServer: off
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+        TagDataVol: false  
       Tags:
         # DataRobot tags
         - Key: Name
@@ -390,7 +446,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
-        DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.xlarge
@@ -403,6 +458,17 @@ Resources:
         AmiSignalHandle: ' '
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 100
+        PublicIpAddress: false
+        LogServer: off
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+        TagDataVol: false  
       Tags:
         # DataRobot tags
         - Key: Name
@@ -420,7 +486,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
-        DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.2xlarge
@@ -434,7 +499,18 @@ Resources:
           - ''
           - - !Ref AMIWaitHandle
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId' 
+        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 100
+        PublicIpAddress: false
+        LogServer: off
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+        TagDataVol: false   
       Tags:
         # DataRobot tags
         - Key: Name
@@ -450,7 +526,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
-        DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.large
@@ -463,6 +538,17 @@ Resources:
         AmiSignalHandle: !Ref AMIWaitHandle
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 100
+        PublicIpAddress: false
+        LogServer: off
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+        TagDataVol: false  
       Tags:
         # DataRobot tags
         - Key: Name
@@ -478,7 +564,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
-        DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.large
@@ -491,6 +576,17 @@ Resources:
         AmiSignalHandle: !Ref AMIWaitHandle
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 100
+        PublicIpAddress: false
+        LogServer: off
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+        TagDataVol: false  
       Tags:
         # DataRobot tags
         - Key: Name
@@ -506,7 +602,6 @@ Resources:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-node-template.yaml
       Parameters:
         Region: !Ref "AWS::Region"
-        DataVolumeSize: 100
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
         InstanceType: r5.large
@@ -519,6 +614,17 @@ Resources:
         AmiSignalHandle: !Ref AMIWaitHandle
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
+        # Defaults
+        DRVersion: '7.0.2'
+        NodeVolumeSize: 60
+        DataVolumeSize: 100
+        PublicIpAddress: false
+        LogServer: off
+        BackupDir: "backup_files"
+        StorageDir: "datarobot_storage"
+        UseS3BucketBackups: true
+        S3BucketBackupSchedule: "0 0 * * 1-5"
+        TagDataVol: false  
       Tags:
         # DataRobot tags
         - Key: Name
