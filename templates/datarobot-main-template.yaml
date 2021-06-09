@@ -548,7 +548,7 @@ Resources:
       Tags:
         # DataRobot tags
         - Key: Name
-          Value: !Sub ${AWS::StackName}-DataNode
+          Value: !Sub ${AWS::StackName}-DataNode1
         - Key: MainStack
           Value: !Ref AWS::StackName
         - Key: NodeType
@@ -586,7 +586,7 @@ Resources:
       Tags:
         # DataRobot tags
         - Key: Name
-          Value: !Sub ${AWS::StackName}-DataNode
+          Value: !Sub ${AWS::StackName}-DataNode2
         - Key: MainStack
           Value: !Ref AWS::StackName
         - Key: NodeType
@@ -624,7 +624,7 @@ Resources:
       Tags:
         # DataRobot tags
         - Key: Name
-          Value: !Sub ${AWS::StackName}-DataNode
+          Value: !Sub ${AWS::StackName}-DataNode3
         - Key: MainStack
           Value: !Ref AWS::StackName
         - Key: NodeType
