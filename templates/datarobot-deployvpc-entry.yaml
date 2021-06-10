@@ -220,7 +220,7 @@ Resources:
   BastionStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/submodules/quickstart-linux-bastion/templates/linux-bastion.template.yaml
+      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/submodules/quickstart-linux-bastion/templates/linux-bastion.template
       #TemplateURL: !Sub
       #  - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template'
       #  - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
