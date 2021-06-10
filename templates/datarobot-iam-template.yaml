@@ -25,7 +25,7 @@ Parameters:
     Description: Name of Main Stack
   S3Bucket:
     Type: String
-    Description: CloudFormation repository S3 bucket name
+    Description: Datarobot bucket for storage
   
 
 Resources: 
@@ -55,77 +55,48 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Effect: Allow
-            Action:
-              - 'ec2:DescribeInstances'
-              - 'ec2:DescribeInstanceStatus'
-              - 'ec2:DescribeImages'
-              - 'ec2:CreateImage'
-              - 'ec2:CreateSnapshot'
-              # - 'elasticloadbalancing:*'
-              - 'ssm:DescribeParameters'
-            Resource:
-              - '*'
 
-          - Effect: Allow
-            Action:
-              - 'cloudwatch:*'
-            Resource:
-              - 'arn:aws:cloudwatch::*:dashboard/*'
-              - 'arn:aws:cloudwatch::*:dashboard/*'
+          #- Effect: Allow
+          #  Action:
+          #    - 'cloudwatch:*'
+          #  Resource:
+          #    - arn:aws:cloudwatch::*:dashboard/*
+          #    - arn:aws:cloudwatch:*:*:alarm:*
 
           #Start cloudwatch autoscaling permissions
           - Effect: Allow
             Action:
-            - autoscaling:CreateAutoScalingGroup
-            - autoscaling:CreateLaunchConfiguration
-            - autoscaling:CreateOrUpdateTags
-            - autoscaling:DeleteAutoScalingGroup
-            - autoscaling:DeleteLaunchConfiguration
-            - autoscaling:DeletePolicy
-            - autoscaling:PutScalingPolicy
-            - cloudwatch:DeleteAlarms
             - cloudwatch:PutMetricAlarm
-            - ec2:StartInstances
-            - ec2:StopInstances
-            - iam:CreatePolicy
-            - iam:GetInstanceProfile
-            - iam:AttachRolePolicy
             Resource:
-            - arn:aws:ec2:*:*:instance/*
-            - arn:aws:cloudwatch:*:*:alarm:*
-            - arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*
-            - arn:aws:autoscaling:*:*:launchConfiguration:*:launchConfigurationName/*
-            - arn:aws:iam::*:policy/*
-            - arn:aws:iam::*:instance-profile/*
-            - arn:aws:iam::*:role/*
-          - Effect: Allow
-            Action:
-            - cloudformation:DescribeStacks
-            - ec2:DescribeImages
-            - ec2:DeregisterImage
-            - ec2:DescribeInstances
-            - ec2:CreateImage
-            Resource: "*"
-          - Effect: Allow
-            Action:
-            - iam:PassRole
-            - iam:DeleteRolePolicy
-            Resource: arn:aws:iam::*:role/*
+            - !Sub 'arn:${AWS::Partition}:ec2:*:*:instance/*'
+            - !Sub 'arn:${AWS::Partition}:cloudwatch:*:*:alarm:*'
+            - !Sub 'arn:${AWS::Partition}:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*'
+            - !Sub 'arn:${AWS::Partition}:autoscaling:*:*:launchConfiguration:*:launchConfigurationName/*'
+            - !Sub 'arn:${AWS::Partition}:iam::*:policy/*'
+            - !Sub 'arn:${AWS::Partition}:iam::*:instance-profile/*'
+            - !Sub 'arn:${AWS::Partition}:iam::*:role/*'
 
+          #Permissions needed to build AMI for autoscaling from inside modelingonlynode
+          - Effect: Allow
+            Action:
+              - 'ec2:DescribeImages'
+              - 'ec2:DescribeInstances'
+              - 'ec2:CreateImage'
+              - 'ec2:CreateSnapshot'
+              - 'ssm:DescribeParameters'
+            Resource: "*"
+
+          # temporary for quickstart development
           - Effect: Allow
             Action:
               - 's3:ListAllMyBuckets'
               - 's3:Get*'
             Resource:
-              - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
-              - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
               - !Sub 'arn:${AWS::Partition}:s3:::weswagner-quickstart-dr'
               - !Sub 'arn:${AWS::Partition}:s3:::weswagner-quickstart-dr/*'
 
           - Effect: Allow
             Action:
-              - 'cloudformation:DescribeStacks'
               - 's3:PutObject'
               - 's3:ListBucketMultipartUploads'
               - 's3:AbortMultipartUpload'
@@ -133,19 +104,19 @@ Resources:
               - 's3:ListBucket'
               - 's3:DeleteObject'
               - 's3:GetBucketLocation'
+              - 's3:Get*'
               - 's3:ReplicateDelete'
               - 's3:ListMultipartUploadParts'
               - 'ssm:PutParameter'
               - 'ssm:GetParameter'
               - 'ssm:DeleteParameter'
             Resource:
-              - !Sub arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-public-key
-              - !Sub arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-ami-key
-              - !Sub arn:${AWS::Partition}:ssm:*:*:parameter/drami
+              - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-public-key'
+              - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-ami-key'
+              - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/drami'
               - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
               - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
-              - !Sub 'arn:${AWS::Partition}:cloudformation:*:*:stack/${MainStack}/*'
-
+           
           - Effect: Allow
             Action:
               - 'ec2:CreateTags'
@@ -154,6 +125,16 @@ Resources:
 
       Roles:
         - !Ref DataRobotIAMRole      
+
+
+
+
+
+
+
+
+
+
 Outputs:
   EC2InstanceSecurityProfile:
     Description: SecurityGroup settings when using an S3 Bucket
