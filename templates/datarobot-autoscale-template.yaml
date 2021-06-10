@@ -96,7 +96,7 @@ Resources:
     Properties:
       ActionsEnabled: True
       EvaluationPeriods: 2
-      Namespace: 'DataRobot/AutoScaling/Testing'
+      Namespace: 'DataRobot/AutoScaling/Quickstart'
       MetricName: 'ClusterUtilization'
       Statistic: Average
       Threshold: 2
@@ -113,7 +113,7 @@ Resources:
     Properties:
       ActionsEnabled: True
       EvaluationPeriods: 20
-      Namespace: 'DataRobot/AutoScaling/Testing'
+      Namespace: 'DataRobot/AutoScaling/Quickstart'
       MetricName: 'ClusterUtilization'
       Threshold: 0.5
       Statistic: Average

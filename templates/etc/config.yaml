@@ -32,8 +32,7 @@ os_configuration:
     # Paths relative to certs/ directory on installer node
     cert_file_name: cert.pem
     key_file_name: cert.key
-  
-  
+    
 
   # Prediction server configuration -- on quickstart put on load balancer
   prediction_endpoint: PREDICTIONLB
@@ -109,6 +108,7 @@ app_configuration:
     #AWSS3 MULTI_PART_S3_UPLOAD: false
     #AWSS3 S3_SIGNATURE_VERSION: s3v4
 
+    STATS_METRICS_NAMESPACE: METRICNAMESPACE
     # When using LDAP, you must include the following setting
     #USER_AUTH_SERVICE_USERNAMES: localadmin@datarobot.com,admin@datarobot.com
 

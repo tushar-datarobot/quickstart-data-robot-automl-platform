@@ -525,7 +525,7 @@ Resources:
 
                   # shutdown this instance not in a scaling group
 
-                  shutdown +15
+                  sudo /usr/sbin/shutdown +15
  
                 else
                   echo "Skipping nodes other than ModelingOnly"

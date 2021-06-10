@@ -64,22 +64,54 @@ Resources:
               - 'ec2:CreateSnapshot'
               # - 'elasticloadbalancing:*'
               - 'ssm:DescribeParameters'
-              - 'autoscaling:*'
             Resource:
               - '*'
 
           - Effect: Allow
             Action:
-              - 'cloudwatch:PutMetricData'
-              - 'cloudwatch:GetMetricData'
-              - 'cloudwatch:DescribeAlarmsForMetric'
-              - 'cloudwatch:ListDashboards'
-              - 'cloudwatch:GetMetricStatistics'
-              - 'cloudwatch:GetMetricWidgetImage'
-              - 'cloudwatch:ListMetrics'
+              - 'cloudwatch:*'
             Resource:
-              - !Sub 'arn:${AWS::Partition}:cloudwatch::*:dashboard/*'
+              - 'arn:aws:cloudwatch::*:dashboard/*'
+              - 'arn:aws:cloudwatch::*:dashboard/*'
 
+          #Start cloudwatch autoscaling permissions
+          - Effect: Allow
+            Action:
+            - autoscaling:CreateAutoScalingGroup
+            - autoscaling:CreateLaunchConfiguration
+            - autoscaling:CreateOrUpdateTags
+            - autoscaling:DeleteAutoScalingGroup
+            - autoscaling:DeleteLaunchConfiguration
+            - autoscaling:DeletePolicy
+            - autoscaling:PutScalingPolicy
+            - cloudwatch:DeleteAlarms
+            - cloudwatch:PutMetricAlarm
+            - ec2:StartInstances
+            - ec2:StopInstances
+            - iam:CreatePolicy
+            - iam:GetInstanceProfile
+            - iam:AttachRolePolicy
+            Resource:
+            - arn:aws:ec2:*:*:instance/*
+            - arn:aws:cloudwatch:*:*:alarm:*
+            - arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*
+            - arn:aws:autoscaling:*:*:launchConfiguration:*:launchConfigurationName/*
+            - arn:aws:iam::*:policy/*
+            - arn:aws:iam::*:instance-profile/*
+            - arn:aws:iam::*:role/*
+          - Effect: Allow
+            Action:
+            - cloudformation:DescribeStacks
+            - ec2:DescribeImages
+            - ec2:DeregisterImage
+            - ec2:DescribeInstances
+            - ec2:CreateImage
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - iam:PassRole
+            - iam:DeleteRolePolicy
+            Resource: arn:aws:iam::*:role/*
 
           - Effect: Allow
             Action:

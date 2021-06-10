@@ -256,8 +256,8 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         PredictionName: !GetAtt 'PredictionLoadBalancer.DNSName'
-        UseAutoScaling: "True"
-        MetricNamespace: "DataRobot/AutoScaling/Testing"
+        UseAutoScaling: "true"
+        MetricNamespace: "DataRobot/AutoScaling/Quickstart"
         ClusterType: "QuickStart"  
         StorageType: "s3bucket" 
         # Defaults

@@ -124,7 +124,8 @@ Parameters:
   UseAutoScaling:
     Type: String
     Description: Enable the metricspublisher service to turn on AutoScaling
-    Default: "False" 
+    Default: "true" 
+    AllowedValues: [ true, false ]
   StorageType:
     Type: String
     Description: How to save the data in this cluster. If using AutoScaling, you must not use minio.
@@ -133,7 +134,7 @@ Parameters:
   MetricNamespace:
     Type: String
     Description: CloudWatch AutoScaling Metric Namespace
-    Default: "DataRobot/AutoScaling/Testing"
+    Default: "DataRobot/AutoScaling/Quickstart"
   LBPublicSubnet1ID:
     Type: "AWS::EC2::Subnet::Id"
     Description: Subnet for Load Balancer
@@ -408,18 +409,6 @@ Resources:
                 echo "Configure for remote log server :> $USE_LOG_SERVER"
                 sed -i -- "s/Use_Log_Server/$USE_LOG_SERVER/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
 
-                # Enable the metricspublisher
-                echo "Enable AutoScaling :> $USE_AUTOSCALING"
-                if [ "$USE_AUTOSCALING" = "true" ]; then
-                  sed -i -- "s/# - metricspublisher/- metricspublisher/" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
-
-                  # Use the MainStack as my id
-                  msid=$(echo $MainStack | cut -d '-' -f 2,4 | sed 's/-//g')
-
-                  # Drop this id into the METRICS_NAMESPACE value
-                  sed -i -- "s@METRICNAMESPACE@$METRIC_NAMESPACE@" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
-                fi
-
                 # Configure file storage
                 echo "Configure File Storage :> $FILE_STORAGE"
                 if [ "$FILE_STORAGE" = "minio" ]; then
@@ -432,6 +421,18 @@ Resources:
                   sed -i -- "s/StorageDir/$STORAGE/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 elif [ "$FILE_STORAGE" = "gluster" ]; then
                   sed -i -- "s/# - gluster/- gluster/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
+                fi
+
+                # Enable the metricspublisher
+                echo "Enable AutoScaling :> $USE_AUTOSCALING"
+                if [ "$USE_AUTOSCALING" = "true" ]; then
+                  sed -i -- "s/# - metricspublisher/- metricspublisher/" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
+
+                  # Use the MainStack as my id
+                  msid=$(echo $MainStack | cut -d '-' -f 2,4 | sed 's/-//g')
+
+                  # Drop this id into the METRICS_NAMESPACE value
+                  sed -i -- "s@METRICNAMESPACE@$METRIC_NAMESPACE@" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 fi
 
                 # If we have the LB, enable the 3 DPEs by removiong '#LBDPE ' from the config file
