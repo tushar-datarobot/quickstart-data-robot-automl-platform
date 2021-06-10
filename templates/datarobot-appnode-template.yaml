@@ -570,6 +570,20 @@ Resources:
               env:
                 AWS_REGION: !Ref Region
                 MAIN_STACK: !Ref MainStack
+              
+            3g-CreateSelfSignedCert:
+              command: !Sub |
+                # Create self signed keys
+
+                servername=$(uname -n)
+                openssl genrsa -out /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.key 2048
+                openssl req -new -key /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.key -out /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.csr -subj '/CN=$servername'
+                openssl x509 -req -days 365 -in /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.csr -signkey /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.key -out /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.pem
+                sudo chmod 444 /opt/datarobot/DataRobot-$DR_VERSION/certs/*
+
+              ignoreErrors: "true"
+              env:
+                DR_VERSION: !Ref DRVersion
 
             ### Start DataRobot Installation ###
             4-DataRobotInstallation:
@@ -743,16 +757,19 @@ Resources:
       Subnets:
         - Ref: LBPublicSubnet1ID
         - Ref: LBPublicSubnet2ID
-      Type: network
+      Type: application
       #SecurityGroups:
       #  - Ref: LBSecurityGroup
   LBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      HealthCheckPort: '80'
-      HealthCheckProtocol: HTTP
-      Port: 80
-      Protocol: TCP
+      HealthCheckEnabled: true
+      HealthCheckPort: 443
+      HealthCheckProtocol: HTTPS
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      Port: 443
+      Protocol: HTTPS
       VpcId: !Ref LBVPCID
       TargetType: instance
       Targets:
@@ -768,7 +785,7 @@ Resources:
       LoadBalancerArn:
         Ref: FrontEndLoadBalancer
       Port: 80
-      Protocol: TCP
+      Protocol: HTTP
 
 Outputs:
   InstanceId:

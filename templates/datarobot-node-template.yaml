@@ -18,6 +18,7 @@ Metadata:
     config:
       ignore_checks:
         - E9101
+        - W1020
 Parameters:
   EC2InstanceSecurityProfile:
     Type: 'String'
@@ -379,70 +380,13 @@ Resources:
               test: "test ${USE_S3_BACKUPS} = 'true'"
               ignoreErrors: "false"
               env:
-               DR_VERSION: !Ref DRVersion
-               BACKUP_DIR: !Ref BackupDir
-               S3_BUCKET: !Ref InstallationBucket
-               SCHEDULE: !Ref S3BucketBackupSchedule
-               USE_S3_BACKUPS: !Ref UseS3BucketBackups
-
-            4b-EnableBeats:
-              command: !Sub |
-
-                # Set the IP for now
-                elk=$(aws ec2 describe-instances --region $AWS_REGION --output text --filter "Name=tag:NodeType,Values=DataRobot" "Name=tag:Name,Values=$MAIN_STACK-ELKNode" --query "Reservations[].Instances[].[PrivateIpAddress]")
-                echo "Using ELK IP :> '$elk'"
-
-                # Install metricbeats ###
-                echo "Downloading metricbeat package :> https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-oss-7.2.0-x86_64.rpm"
-                curl --silent --output /tmp/metricbeat-oss-7.2.0-x86_64.rpm -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-oss-7.2.0-x86_64.rpm
-                rpm -vi /tmp/metricbeat-oss-7.2.0-x86_64.rpm
-
-                # Update the metricbeat configuration
-                sed -i "s/#host: \"localhost:5601\"/host: \"$elk:5601\"/" /etc/metricbeat/metricbeat.yml
-                sed -i "s/hosts: \[\"localhost:9200\"\]/hosts: \[\"$elk:9200\"\]/" /etc/metricbeat/metricbeat.yml
-
-                # Turn on metricbeat
-                /bin/metricbeat modules enable system
-                /bin/metricbeat setup
-                systemctl enable metricbeat
-                systemctl start metricbeat
-
-                # Clean up metricbeat rpm
-                rm /tmp/metricbeat-oss-7.2.0-x86_64.rpm
-
-                # TODO: Set as default index
-
-                ### Install FileBeats ###
-                echo "Downloading filebeats package :> https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.1.1-x86_64.rpm"
-                curl --silent --output /tmp/filebeat-oss-7.1.1-x86_64.rpm -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.1.1-x86_64.rpm
-                rpm -vi /tmp/filebeat-oss-7.1.1-x86_64.rpm
-
-                # Update the filebeat configuration
-                sed -i "s/#host: \"localhost:5601\"/host: \"$elk:5601\"/" /etc/filebeat/filebeat.yml
-                sed -i "s/hosts: \[\"localhost:9200\"\]/hosts: \[\"$elk:9200\"\]/" /etc/filebeat/filebeat.yml
-
-                # Target specific files
-                sed -i 's+- /var/log/\*.log+#- /var/log/\*.log\n    - /var/log/daemon.log\n    - /var/log/messages+' /etc/filebeat/filebeat.yml
-                sudo sed -i 's+- c:\\programdata\\elasticsearch\\logs\\\*+#- c:\\programdata\\elasticsearch\\logs\\\*\n    - /opt/datarobot/DataRobot-${DRVersion}/debug.log\n    - /opt/datarobot/logs/all.log\n    - /opt/datarobot/logs/audit.log\n    - /opt/datarobot/logs/datarobot.log\n    - /opt/datarobot/logs/datasets-service.log\n    - /opt/datarobot/logs/nginx.log\n    - /opt/datarobot/logs/pngexport.log\n+' /etc/filebeat/filebeat.yml
-
-                # Turn on filebeat
-                /bin/filebeat modules enable system
-                /bin/filebeat setup
-                systemctl enable filebeat
-                systemctl start filebeat
-
-                # Clean up filebeat rpm
-                rm /tmp/filebeat-oss-7.1.1-x86_64.rpm
-
-              test: "test ${LOG_SERVER} = 'ELK'"
-              ignoreErrors: "true"
-              env:
                 DR_VERSION: !Ref DRVersion
-                AWS_REGION: !Ref Region
-                LOG_SERVER: !Ref LogServer
-                MAIN_STACK: !Ref MainStack
+                BACKUP_DIR: !Ref BackupDir
+                S3_BUCKET: !Ref InstallationBucket
+                SCHEDULE: !Ref S3BucketBackupSchedule
+                USE_S3_BACKUPS: !Ref UseS3BucketBackups
 
-            4c-TagTheDataVolumes:
+            4b-TagTheDataVolumes:
               command: !Sub |
 
                 # Force new line in the log
@@ -467,6 +411,26 @@ Resources:
                 AWS_REGION: !Ref Region
                 MAIN_STACK: !Ref MainStack
                 TAG_DATA_VOL: !Ref TagDataVol
+
+            4c-CreateSelfSignedCert:
+              command: !Sub |
+                # Create self signed keys
+
+                # directories will not exist most likely since app node has not caught up and created
+                mkdir /opt/datarobot/DataRobot-$DR_VERSION
+                mkdir /opt/datarobot/DataRobot-$DR_VERSION/certs
+
+                servername=$(uname -n)
+                openssl genrsa -out /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.key 2048
+                openssl req -new -key /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.key -out /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.csr -subj '/CN=$servername'
+                openssl x509 -req -days 365 -in /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.csr -signkey /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.key -out /opt/datarobot/DataRobot-$DR_VERSION/certs/cert.pem
+                sudo chmod 444 /opt/datarobot/DataRobot-$DR_VERSION/certs/*
+
+              ignoreErrors: "true"
+              env:
+                DR_VERSION: !Ref DRVersion
+                
+                
 
             5a-CreateAMI:
               command: !Sub |
@@ -500,6 +464,7 @@ Resources:
                   echo "Creating AMI for ModelingOnly Node"
                   my_instance_id=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
                   my_ami_name=$my_name
+                  my_ami_name+='-$MAIN_STACK'
                   my_ami_json=$(aws ec2 create-image --instance-id $my_instance_id --name $my_ami_name --no-reboot)
                   # my_ami_json will return a json immedately like: { "ImageId": "ami-########"}
                   my_ami=$(echo "$my_ami_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['ImageId'])")
@@ -523,9 +488,10 @@ Resources:
                   # flag URL that AMI is complete
                   curl -X PUT -H 'Content-Type:' --data-binary '{"Status" : "SUCCESS","Reason" : "Configuration Complete","UniqueId" : "IDAMIDONE","Data" : "AMI Complete"}' "$AMI_SIGNAL"
 
-                  # shutdown this instance not in a scaling group
+                  # shutdown this instance - not in a scaling group
 
-                  sudo /usr/sbin/shutdown +15
+                  # put this back in for final version
+                  # sudo /usr/sbin/shutdown +120
  
                 else
                   echo "Skipping nodes other than ModelingOnly"

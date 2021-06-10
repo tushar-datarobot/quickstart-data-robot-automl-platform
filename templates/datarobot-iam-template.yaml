@@ -70,11 +70,6 @@ Resources:
             Resource:
             - !Sub 'arn:${AWS::Partition}:ec2:*:*:instance/*'
             - !Sub 'arn:${AWS::Partition}:cloudwatch:*:*:alarm:*'
-            - !Sub 'arn:${AWS::Partition}:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*'
-            - !Sub 'arn:${AWS::Partition}:autoscaling:*:*:launchConfiguration:*:launchConfigurationName/*'
-            - !Sub 'arn:${AWS::Partition}:iam::*:policy/*'
-            - !Sub 'arn:${AWS::Partition}:iam::*:instance-profile/*'
-            - !Sub 'arn:${AWS::Partition}:iam::*:role/*'
 
           #Permissions needed to build AMI for autoscaling from inside modelingonlynode
           - Effect: Allow
@@ -110,6 +105,7 @@ Resources:
               - 'ssm:PutParameter'
               - 'ssm:GetParameter'
               - 'ssm:DeleteParameter'
+              - 'ssm:DescribeParameters'
             Resource:
               - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-public-key'
               - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-ami-key'
@@ -125,14 +121,6 @@ Resources:
 
       Roles:
         - !Ref DataRobotIAMRole      
-
-
-
-
-
-
-
-
 
 
 Outputs:

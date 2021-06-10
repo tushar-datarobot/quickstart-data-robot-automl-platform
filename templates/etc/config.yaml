@@ -28,7 +28,7 @@ os_configuration:
   # Raw, proxy, or load balancer URL that will be used to reach the web server
   webserver_hostname: AppNode
   ssl:
-    enabled: false # Set to false if you will not use SSL certificates
+    enabled: true # Set to false if you will not use SSL certificates
     # Paths relative to certs/ directory on installer node
     cert_file_name: cert.pem
     key_file_name: cert.key
@@ -37,10 +37,10 @@ os_configuration:
   # Prediction server configuration -- on quickstart put on load balancer
   prediction_endpoint: PREDICTIONLB
   prediction_ssl:
-    enabled: false # Set to false if you will not use SSL certificates
+    enabled: true # Set to false if you will not use SSL certificates
     # Paths relative to certs/ directory
-    cert_file_name: pcert.pem
-    key_file_name: pcert.key
+    cert_file_name: cert.pem
+    key_file_name: cert.key
 
   # Enable authenticated access to backend databases (required for minio)
   secrets_enforced: SecretsEnforced
@@ -65,7 +65,7 @@ app_configuration:
   drenv_override:
     # SSL and SELinux settings
     PUBLIC_API_GUNICORN_WORKERS: 8
-    ALLOW_SELF_SIGNED_CERTS: false # set to true to disable SSL verification internally
+    ALLOW_SELF_SIGNED_CERTS: true # set to true to disable SSL verification internally
     VERIFY_SSL: false
     ### Using SELINUX on quickstart for reduced security liability
     ENABLE_SELINUX: true # set to true if SELinux is Enforcing on your cluster
