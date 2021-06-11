@@ -32,10 +32,12 @@ Metadata:
         Parameters:
           - KeyPairName
       - Label:
-          default: DataRobot S3 Install Bucket
+          default: DataRobot Install Parameters
         Parameters:
           - DRS3InstallationBucket
           - DRS3CreateBucket
+          - DRSignedURL
+          - DRHTTPSetting
       - Label:
           default: AWS Quick Start Configuration
         Parameters:
@@ -43,6 +45,10 @@ Metadata:
           - QSS3KeyPrefix
           - QSS3BucketRegion
     ParameterLabels:
+      DRSignedURL:
+        default: Signed URL Provided from email set by web form  
+      DRHTTPSetting:
+        default: Select HTTPS for secure access, HTTP for port 80 insecure access for web layers
       PublicSubnet1ID:
         default: Public subnet 1 ID
       PublicSubnet2ID:
@@ -85,6 +91,13 @@ Parameters:
     Description: Name of an existing public/private key pair. If you do not have one in this AWS Region,
       please create it before continuing.
     Type: 'AWS::EC2::KeyPair::KeyName'
+  DRHTTPSetting:
+    AllowedValues:
+      - 'HTTPS'
+      - 'HTTP'
+    Default: 'HTTPS'
+    Description: Select HTTPS for secured access with certificate, or (not recommended) http for insecure port 80 access
+    Type: String
   DRS3InstallationBucket:
     Default: weswagner-oregon-qs
     Description:
@@ -99,6 +112,10 @@ Parameters:
       - "True"
     Description: Choose True if you did not already create a bucket and want it to be created by the quickstart
     Type: String
+  DRSignedURL:
+    Default: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623696772&Signature=XiZexQeWjCwtw%2Fru4XUIFkoHE94%3D"
+    Type: String
+    Description: Presigned URL to download software, must be sent by DataRobot
   QSS3BucketName:
     AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
     ConstraintDescription:
@@ -144,6 +161,12 @@ Conditions:
     - !Ref DRS3CreateBucket
     - "True"    
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
+  UseHTTPS: !Equals 
+    - !Ref DRHTTPSetting
+    - "HTTPS"
+  UseHTTP: !Equals
+    - !Ref DRHTTPSetting
+    - "HTTP"
 
 # Use Centos 8.2.2004 as most stable version for Data Robot 7.0.2
 Mappings: 
@@ -252,7 +275,7 @@ Resources:
         QSInstallationBucket: weswagner-quickstart-dr
         DRInstallationBucket: !Ref DRS3InstallationBucket
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
-        DownloadURL: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623696772&Signature=XiZexQeWjCwtw%2Fru4XUIFkoHE94%3D"
+        DownloadURL: !Ref DRSignedURL
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         PredictionName: !GetAtt 'PredictionLoadBalancer.DNSName'
@@ -260,6 +283,7 @@ Resources:
         MetricNamespace: "DataRobot/AutoScaling/Quickstart"
         ClusterType: "QuickStart"  
         StorageType: "s3bucket" 
+        DRHTTPSetting: !Ref DRHTTPSetting
         # Defaults
         DRVersion: '7.0.2'
         NodeVolumeSize: 60
@@ -631,6 +655,8 @@ Resources:
           Value: DataRobot
 
 ##### Load Balancer for Dedicated Predicion Servers
+#### Need to fix security group for load balancer!!!
+
   PredictionLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -639,21 +665,24 @@ Resources:
         - Ref: PublicSubnet1ID
         - Ref: PublicSubnet2ID
       Type: application
+  
   PredictionTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      HealthCheckPort: '443'
-      HealthCheckProtocol: HTTPS
-      Port: 443
-      Protocol: HTTPS
+      HealthCheckPort: !If [ UseHTTPS, '443', '80' ]
+      HealthCheckProtocol: !If [ UseHTTPS, 'HTTPS', 'HTTP' ]
+      Port: !If [ UseHTTPS, 443, 80 ]
+      Protocol: !If [ UseHTTPS, 'HTTPS', 'HTTP' ]
       VpcId: !Ref VPCID
       TargetType: instance
       Targets:
         - Id: !GetAtt 'DedicatedPredictionServerStack1.Outputs.InstanceId'
-          Port: 443        
+          Port: !If [ UseHTTPS, 443, 80 ]        
         - Id: !GetAtt 'DedicatedPredictionServerStack2.Outputs.InstanceId'
-          Port: 443
+          Port: !If [ UseHTTPS, 443, 80 ]
+  
   LBListenerHTTP:
+    Condition: UseHTTP
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
@@ -663,7 +692,7 @@ Resources:
       LoadBalancerArn:
         Ref: PredictionLoadBalancer
       Port: 80
-      Protocol: TCP
+      Protocol: HTTP
   
 
 Outputs:

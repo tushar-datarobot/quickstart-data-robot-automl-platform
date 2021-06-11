@@ -39,7 +39,14 @@ Parameters:
     Description: CloudFormation quickstart repository S3 bucket name
   DRInstallationBucket:
     Type: String
-    Description: DataRobot Installation Directory for Application Data 
+    Description: DataRobot Installation Directory for Application Data
+  DRHTTPSetting:
+    AllowedValues:
+      - 'HTTPS'
+      - 'HTTP'
+    Default: 'HTTPS'
+    Description: Select HTTPS for secured access with certificate, or (not recommended) http for insecure port 80 access
+    Type: String 
   SSHKey:
     Type: "AWS::EC2::KeyPair::KeyName"
     Description: Key pair to use for connectivity
@@ -149,7 +156,12 @@ Conditions:
   UseKey: !And
     - !Equals [!Ref Encrypted, true]
     - !Not [!Equals [!Ref EncryptionKey, ""]]
-
+  UseHTTPS: !Equals 
+    - !Ref DRHTTPSetting
+    - "HTTPS"
+  UseHTTP: !Equals
+    - !Ref DRHTTPSetting
+    - "HTTP"
   UseLogServer: !Not [!Equals [!Ref LogServer, off]]
 
 Resources:
@@ -748,6 +760,8 @@ Resources:
           # Signal template completion
           /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource EC2Instance --region ${Region}
 
+
+
   FrontEndLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     DependsOn:
@@ -760,23 +774,26 @@ Resources:
       Type: application
       #SecurityGroups:
       #  - Ref: LBSecurityGroup
+
   LBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckEnabled: true
-      HealthCheckPort: 80
-      HealthCheckProtocol: HTTP
+      HealthCheckPort: !If [ UseHTTPS, '443', '80' ]
+      HealthCheckProtocol: !If [ UseHTTPS, 'HTTPS', 'HTTP' ]
+      Port: !If [ UseHTTPS, 443, 80 ]
+      Protocol: !If [ UseHTTPS, 'HTTPS', 'HTTP' ]
       HealthCheckTimeoutSeconds: 10
       HealthyThresholdCount: 2
-      Port: 80
-      Protocol: HTTP
       VpcId: !Ref LBVPCID
       TargetType: instance
       Targets:
-      - Id: !Ref EC2Instance
-        Port: 80
+        - Id: !Ref EC2Instance
+          Port: !If [ UseHTTPS, 443, 80 ]   
+
   LBListenerHTTP:
     Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: UseHTTP
     Properties:
       DefaultActions:
         - Type: forward
