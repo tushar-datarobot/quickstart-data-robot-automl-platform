@@ -464,7 +464,7 @@ Resources:
                   echo "Creating AMI for ModelingOnly Node"
                   my_instance_id=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
                   my_ami_name=$my_name
-                  my_ami_name+='-$MAIN_STACK'
+                  my_ami_name+="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 8 ; echo '')"
                   my_ami_json=$(aws ec2 create-image --instance-id $my_instance_id --name $my_ami_name --no-reboot)
                   # my_ami_json will return a json immedately like: { "ImageId": "ami-########"}
                   my_ami=$(echo "$my_ami_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['ImageId'])")

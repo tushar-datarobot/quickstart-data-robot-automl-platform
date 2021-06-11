@@ -56,12 +56,34 @@ Resources:
         Version: 2012-10-17
         Statement:
 
-          #- Effect: Allow
-          #  Action:
-          #    - 'cloudwatch:*'
-          #  Resource:
-          #    - arn:aws:cloudwatch::*:dashboard/*
-          #    - arn:aws:cloudwatch:*:*:alarm:*
+          - Effect: Allow
+            Action:
+              - 'cloudwatch:*'
+            Resource:
+              - arn:aws:cloudwatch::*:dashboard/*
+              - arn:aws:cloudwatch:*:*:alarm:*
+
+          # Extra debug:
+          - Effect: Allow
+            Action:
+              - 'autoscaling:*'
+              - 'cloudwatch:PutMetricData'
+              - 'cloudwatch:GetMetricData'
+              - 'cloudwatch:DescribeAlarmsForMetric'
+              - 'cloudwatch:ListDashboards'
+              - 'cloudwatch:GetMetricStatistics'
+              - 'cloudwatch:GetMetricWidgetImage'
+              - 'cloudwatch:ListMetrics'
+              - 'ec2:DescribeInstances'
+              - 'ec2:DescribeInstanceStatus'
+              - 'elasticloadbalancing:*'
+              - 'lambda:CreateFunction'
+              - 'lambda:DeleteFunction'
+              - 'lambda:GetFunctionConfiguration'
+              - 'ssm:DescribeParameters'
+            Resource:
+              - '*'
+
 
           #Start cloudwatch autoscaling permissions
           - Effect: Allow

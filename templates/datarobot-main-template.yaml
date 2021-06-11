@@ -638,21 +638,21 @@ Resources:
       Subnets:
         - Ref: PublicSubnet1ID
         - Ref: PublicSubnet2ID
-      Type: network
+      Type: application
   PredictionTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      HealthCheckPort: '80'
-      HealthCheckProtocol: HTTP
-      Port: 80
-      Protocol: TCP
+      HealthCheckPort: '443'
+      HealthCheckProtocol: HTTPS
+      Port: 443
+      Protocol: HTTPS
       VpcId: !Ref VPCID
       TargetType: instance
       Targets:
         - Id: !GetAtt 'DedicatedPredictionServerStack1.Outputs.InstanceId'
-          Port: 80        
+          Port: 443        
         - Id: !GetAtt 'DedicatedPredictionServerStack2.Outputs.InstanceId'
-          Port: 80
+          Port: 443
   LBListenerHTTP:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:

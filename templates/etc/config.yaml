@@ -28,7 +28,7 @@ os_configuration:
   # Raw, proxy, or load balancer URL that will be used to reach the web server
   webserver_hostname: AppNode
   ssl:
-    enabled: true # Set to false if you will not use SSL certificates
+    enabled: false # Set to false if you will not use SSL certificates
     # Paths relative to certs/ directory on installer node
     cert_file_name: cert.pem
     key_file_name: cert.key
@@ -37,7 +37,7 @@ os_configuration:
   # Prediction server configuration -- on quickstart put on load balancer
   prediction_endpoint: PREDICTIONLB
   prediction_ssl:
-    enabled: true # Set to false if you will not use SSL certificates
+    enabled: false # Set to false if you will not use SSL certificates
     # Paths relative to certs/ directory
     cert_file_name: cert.pem
     key_file_name: cert.key

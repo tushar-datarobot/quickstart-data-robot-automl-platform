@@ -764,12 +764,12 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckEnabled: true
-      HealthCheckPort: 443
-      HealthCheckProtocol: HTTPS
+      HealthCheckPort: 80
+      HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 10
       HealthyThresholdCount: 2
-      Port: 443
-      Protocol: HTTPS
+      Port: 80
+      Protocol: HTTP
       VpcId: !Ref LBVPCID
       TargetType: instance
       Targets:
