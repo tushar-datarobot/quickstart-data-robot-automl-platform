@@ -772,8 +772,8 @@ Resources:
         - Ref: LBPublicSubnet1ID
         - Ref: LBPublicSubnet2ID
       Type: application
-      #SecurityGroups:
-      #  - Ref: LBSecurityGroup
+      SecurityGroups:
+        - Ref: AppLBSG
 
   LBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -803,6 +803,19 @@ Resources:
         Ref: FrontEndLoadBalancer
       Port: 80
       Protocol: HTTP
+
+  AppLBSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-AppLBSG
+      GroupDescription: !Sub ${AWS::StackName}-AppLBSecurityGroup
+      VpcId: !Ref LBVPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: !If [ UseHTTPS, 443, 80 ]
+          ToPort: !If [ UseHTTPS, 443, 80 ]
+          CidrIp: '0.0.0.0/0'
+
 
 Outputs:
   InstanceId:

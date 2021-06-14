@@ -665,6 +665,8 @@ Resources:
         - Ref: PublicSubnet1ID
         - Ref: PublicSubnet2ID
       Type: application
+      SecurityGroups:
+        - Ref: PredLBSG      
   
   PredictionTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -694,6 +696,18 @@ Resources:
       Port: 80
       Protocol: HTTP
   
+  PredLBSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-PredictionLBSG
+      GroupDescription: !Sub ${AWS::StackName}-SecurityGroup
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: !If [ UseHTTPS, 443, 80 ]
+          ToPort: !If [ UseHTTPS, 443, 80 ]
+          CidrIp: '0.0.0.0/0'
+
 
 Outputs:
   MasterTemplate:
