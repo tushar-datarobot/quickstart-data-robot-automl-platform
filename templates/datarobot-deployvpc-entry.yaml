@@ -22,6 +22,7 @@ Metadata:
     config:
       ignore_checks:
         - E9101
+        - E0002
   AWS::CloudFormation::Interface:
     ParameterGroups:
     - Label:
@@ -247,7 +248,7 @@ Resources:
           Ref: QSS3BucketName
         QSS3BucketRegion: 
           Ref: QSS3BucketRegion
-        QSS3KeyPrefix: !Sub 'quickstart-linux-bastion/'
+        QSS3KeyPrefix: 'quickstart-linux-bastion/'
         BastionAMIOS:
           Ref: BastionAMIOS
         BastionHostName: 'DRBastion'
@@ -305,12 +306,12 @@ Resources:
           Ref: DRS3CreateBucket
         DRSignedURL:
           Ref: DRSignedURL
-        QSS3BucketName:
-          Ref: QSS3BucketName
-        QSS3BucketRegion: 
-          Ref: QSS3BucketRegion
-        QSS3KeyPrefix:
-          Ref: QSS3KeyPrefix
+        QSS3BucketName: 'weswagner-quickstart-dr'
+          # Ref: QSS3BucketName
+        QSS3BucketRegion: 'us-east-1'
+          # Ref: QSS3BucketRegion
+        QSS3KeyPrefix: 'quickstart-data-robot-automl-platform/'
+          # Ref: QSS3KeyPrefix
         VPCID:
           Fn::GetAtt:
           - VPCStack

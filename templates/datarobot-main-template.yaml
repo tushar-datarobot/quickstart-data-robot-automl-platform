@@ -13,10 +13,10 @@ Metadata:
     Order: "5"
   QSLint:
     Exclusions: [ W9002, W9003, W9006 ]
-  cfn-lint:
-    config:
-      ignore_checks:
-        - E9101
+  #cfn-lint:
+    #config:
+      #ignore_checks:
+      #  - E9101
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -122,7 +122,7 @@ Parameters:
       The Quick Start bucket name can include numbers, lowercase
       letters, uppercase letters, and hyphens (-). It cannot start or end with a 
       hyphen (-).
-    Default: aws-quickstart
+    Default: weswagner-quickstart-dr
     Description:
       Name of the S3 bucket for your copy of the Quick Start assets. 
       Keep the default name unless you are customizing the template. 
@@ -710,9 +710,9 @@ Resources:
 
 
 Outputs:
-  MasterTemplate:
-    Description: Master Template Complete
-    Value: MasterTemplate
+  MainTemplate:
+    Description: Main Template Complete
+    Value: MainTemplate
 
 
 

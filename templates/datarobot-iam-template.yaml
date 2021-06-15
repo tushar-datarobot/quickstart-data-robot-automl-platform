@@ -58,14 +58,6 @@ Resources:
 
           - Effect: Allow
             Action:
-              - 'cloudwatch:*'
-            Resource:
-              - arn:aws:cloudwatch::*:dashboard/*
-              - arn:aws:cloudwatch:*:*:alarm:*
-
-          # Extra debug:
-          - Effect: Allow
-            Action:
               - 'cloudwatch:PutMetricData'
               - 'cloudwatch:GetMetricData'
               - 'cloudwatch:DescribeAlarmsForMetric'
@@ -73,12 +65,27 @@ Resources:
               - 'cloudwatch:GetMetricStatistics'
               - 'cloudwatch:GetMetricWidgetImage'
               - 'cloudwatch:ListMetrics'
-              - 'ec2:DescribeInstances'
-              - 'ec2:DescribeInstanceStatus'
-              - 'elasticloadbalancing:*'
-              - 'ssm:DescribeParameters'
             Resource:
+              - !Sub arn:${AWS::Partition}:cloudwatch::*:dashboard/*
+              - !Sub arn:${AWS::Partition}:cloudwatch:*:*:alarm:*
               - '*'
+
+          # Extra debug:
+          #- Effect: Allow
+          #   Action:
+          #    - 'cloudwatch:PutMetricData'
+          # #   - 'cloudwatch:GetMetricData'
+          #    - 'cloudwatch:DescribeAlarmsForMetric'
+          #    - 'cloudwatch:ListDashboards'
+          #    - 'cloudwatch:GetMetricStatistics'
+          #    - 'cloudwatch:GetMetricWidgetImage'
+          #    - 'cloudwatch:ListMetrics'
+          #    - 'ec2:DescribeInstances'
+          #    - 'ec2:DescribeInstanceStatus'
+          # #   # - 'elasticloadbalancing:*'
+          #    - 'ssm:DescribeParameters'
+          #  Resource:
+          #    - '*'
 
 
           #Start cloudwatch autoscaling permissions
