@@ -33,7 +33,8 @@ Parameters:
     Type: String
     Description: DataRobot version to install
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})'
-    Default: 7.0.2
+    #Default: 7.0.2
+    Default: '7.1.0'
   QSInstallationBucket:
     Type: String
     Description: CloudFormation quickstart repository S3 bucket name

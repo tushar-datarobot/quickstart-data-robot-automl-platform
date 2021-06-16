@@ -38,6 +38,9 @@ Metadata:
           - DRS3CreateBucket
           - DRSignedURL
           - DRHTTPSetting
+          - DRZone
+          - DRAppName
+          - DRPredName
       - Label:
           default: AWS Quick Start Configuration
         Parameters:
@@ -49,6 +52,12 @@ Metadata:
         default: Signed URL Provided from email set by web form  
       DRHTTPSetting:
         default: Select HTTPS for secure access, HTTP for port 80 insecure access for web layers
+      DRZone:
+        Default: 'Required for HTTPS - Enter your domain zone you want to use: e.g. example.com '
+      DRAppName:
+        default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+      DRPredName:
+        default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
       PublicSubnet1ID:
         default: Public subnet 1 ID
       PublicSubnet2ID:
@@ -98,8 +107,20 @@ Parameters:
     Default: 'HTTPS'
     Description: Select HTTPS for secured access with certificate, or (not recommended) http for insecure port 80 access
     Type: String
+  DRZone:
+    Description: Required if HTTPS - Enter a DNS zone you control, with a trailing '.' Example - example.com.
+    Type: String
+    Default: ''
+  DRAppName:
+    Description: Required if HTTPS - Please enter the domain name you want to use for the end user application server. Example - datarobot.example.com
+    Type: String
+    Default: ''
+  DRPredName:
+    Description: Required if HTTPS - Please enter the domain name you want to use for the end user application server. Example - prediction.example.com
+    Type: String
+    Default: ''
   DRS3InstallationBucket:
-    Default: weswagner-oregon-qs
+    Default: dr-temp-wesqs12345
     Description:
       Name of the S3 bucket you want to install DataRobot into. It should not be public
       and the account you are running the quickstart will need the ability to assign
@@ -112,8 +133,14 @@ Parameters:
       - "True"
     Description: Choose True if you did not already create a bucket and want it to be created by the quickstart
     Type: String
+  DRVersion:
+    Type: String
+    Description: DataRobot version to install
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})'
+    #Default: 7.0.2
+    Default: 7.1.0
   DRSignedURL:
-    Default: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623696772&Signature=XiZexQeWjCwtw%2Fru4XUIFkoHE94%3D"
+    Default: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.1.0/dockerized/DataRobot-RELEASE-7.1.0.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1624388349&Signature=jPylx228j%2FYS3kbtmjAt0f00dTs%3D"
     Type: String
     Description: Presigned URL to download software, must be sent by DataRobot
   QSS3BucketName:
@@ -278,14 +305,14 @@ Resources:
         DownloadURL: !Ref DRSignedURL
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
-        PredictionName: !GetAtt 'PredictionLoadBalancer.DNSName'
+        PredictionName: !GetAtt 'PredLoadBalancer.DNSName'
         UseAutoScaling: "true"
         MetricNamespace: "DataRobot/AutoScaling/Quickstart"
         ClusterType: "QuickStart"  
         StorageType: "s3bucket" 
         DRHTTPSetting: !Ref DRHTTPSetting
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 200
         PublicIpAddress: false
@@ -324,7 +351,7 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
@@ -362,7 +389,7 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
@@ -400,7 +427,7 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
@@ -440,7 +467,7 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
@@ -479,7 +506,7 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
@@ -521,7 +548,7 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
@@ -559,7 +586,7 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
@@ -597,7 +624,7 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
@@ -635,7 +662,7 @@ Resources:
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
         # Defaults
-        DRVersion: '7.0.2'
+        DRVersion: !Ref DRVersion
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
@@ -655,9 +682,8 @@ Resources:
           Value: DataRobot
 
 ##### Load Balancer for Dedicated Predicion Servers
-#### Need to fix security group for load balancer!!!
 
-  PredictionLoadBalancer:
+  PredLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       IpAddressType: ipv4
@@ -666,9 +692,9 @@ Resources:
         - Ref: PublicSubnet2ID
       Type: application
       SecurityGroups:
-        - Ref: PredLBSG      
+        - Ref: LBSG      
   
-  PredictionTargetGroup:
+  PredTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckPort: !If [ UseHTTPS, '443', '80' ]
@@ -683,29 +709,178 @@ Resources:
         - Id: !GetAtt 'DedicatedPredictionServerStack2.Outputs.InstanceId'
           Port: !If [ UseHTTPS, 443, 80 ]
   
-  LBListenerHTTP:
+  PredLBListenerHTTP:
     Condition: UseHTTP
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
         - Type: forward
           TargetGroupArn:
-            Ref: PredictionTargetGroup
+            Ref: PredTargetGroup
       LoadBalancerArn:
-        Ref: PredictionLoadBalancer
+        Ref: PredLoadBalancer
       Port: 80
       Protocol: HTTP
   
-  PredLBSG:
+  PredRedirect:
+    Condition: UseHTTPS
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions:
+        - Type: "redirect"
+          RedirectConfig:
+            Protocol: "HTTPS"
+            Port: '443'
+            Host: "#{host}"
+            Path: "/#{path}"
+            Query: "#{query}"
+            StatusCode: "HTTP_301"
+      LoadBalancerArn: 
+        Ref: PredLoadBalancer
+      Port: 80
+      Protocol: 'HTTP'
+
+  PredLBListenerHTTPS:
+    Condition: UseHTTPS
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn:
+            Ref: PredTargetGroup
+      LoadBalancerArn:
+        Ref: PredLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !Ref PredLBCertificate
+      SslPolicy: ELBSecurityPolicy-TLS-1-2-Ext-2018-06
+
+  PredLBCertificate:
+    Condition: UseHTTPS
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DRPredName
+      ValidationMethod: DNS
+
+  PredLBRoute53Record:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !Ref DRPredName
+      HostedZoneName: !Ref DRZone
+      ResourceRecords:
+        - !GetAtt 'PredLoadBalancer.DNSName'
+      TTL: 900
+      Type: CNAME
+
+
+##### Load Balancer for App Servers
+
+  AppLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: ipv4
+      Subnets:
+        - Ref: PublicSubnet1ID
+        - Ref: PublicSubnet2ID
+      Type: application
+      SecurityGroups:
+        - Ref: LBSG      
+  
+  AppTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckPort: !If [ UseHTTPS, '443', '80' ]
+      HealthCheckProtocol: !If [ UseHTTPS, 'HTTPS', 'HTTP' ]
+      Port: !If [ UseHTTPS, 443, 80 ]
+      Protocol: !If [ UseHTTPS, 'HTTPS', 'HTTP' ]
+      VpcId: !Ref VPCID
+      TargetType: instance
+      Targets:
+        - Id: !GetAtt 'AppNode.Outputs.InstanceId'
+          Port: !If [ UseHTTPS, 443, 80 ]        
+        
+  AppLBListenerHTTP:
+    Condition: UseHTTP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn:
+            Ref: AppTargetGroup
+      LoadBalancerArn:
+        Ref: AppLoadBalancer
+      Port: 80
+      Protocol: HTTP
+  
+  AppRedirect:
+    Condition: UseHTTPS
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions:
+        - Type: "redirect"
+          RedirectConfig:
+            Protocol: "HTTPS"
+            Port: '443'
+            Host: "#{host}"
+            Path: "/#{path}"
+            Query: "#{query}"
+            StatusCode: "HTTP_301"
+      LoadBalancerArn: 
+        Ref: AppLoadBalancer
+      Port: 80
+      Protocol: 'HTTP'
+
+  AppLBListenerHTTPS:
+    Condition: UseHTTPS
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn:
+            Ref: AppTargetGroup
+      LoadBalancerArn:
+        Ref: AppLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !Ref AppLBCertificate
+      SslPolicy: ELBSecurityPolicy-TLS-1-2-Ext-2018-06
+
+  AppLBCertificate:
+    Condition: UseHTTPS
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DRAppName
+      ValidationMethod: DNS
+
+  AppLBRoute53Record:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !Ref DRAppName
+      HostedZoneName: !Ref DRZone
+      ResourceRecords:
+        - !GetAtt 'AppLoadBalancer.DNSName'
+      TTL: 900
+      Type: CNAME
+
+      
+
+
+  LBSG:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupName: !Sub ${AWS::StackName}-PredictionLBSG
+      GroupName: !Sub ${AWS::StackName}-LBSG
       GroupDescription: !Sub ${AWS::StackName}-SecurityGroup
       VpcId: !Ref VPCID
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: !If [ UseHTTPS, 443, 80 ]
-          ToPort: !If [ UseHTTPS, 443, 80 ]
+          FromPort: 443
+          ToPort: 443
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
           CidrIp: '0.0.0.0/0'
 
 

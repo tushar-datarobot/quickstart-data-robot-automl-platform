@@ -48,6 +48,9 @@ Metadata:
           - DRS3CreateBucket
           - DRSignedURL
           - DRHTTPSetting
+          - DRZone
+          - DRAppName
+          - DRPredName
     - Label:
         default: AWS Quick Start configuration
       Parameters:
@@ -63,6 +66,12 @@ Metadata:
         default: Bastion instance type
       DRHTTPSetting:
         default: Select HTTPS for secure access, HTTP for port 80 insecure access for web layers
+      DRZone:
+        Default: 'Required for HTTPS - Enter your domain zone you want to use: e.g. example.com '
+      DRAppName:
+        default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+      DRPredName:
+        default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
       DRSignedURL:
         default: Signed URL Provided from email set by web form  
       KeyPairName:
@@ -124,8 +133,20 @@ Parameters:
     Default: 'HTTPS'
     Description: Select HTTPS for secured access with certificate, or (not recommended) http for insecure port 80 access
     Type: String
+  DRZone:
+    Description: Required if HTTPS - Enter a DNS zone you control with a trailing '.' Example - example.com.
+    Type: String
+    Default: ''
+  DRAppName:
+    Description: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+    Type: String
+    Default: ''
+  DRPredName:
+    Description: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+    Type: String
+    Default: ''
   DRS3InstallationBucket:
-    Default: weswagner-oregon-qs
+    Default: dr-temp-wesqs12345
     Description:
       Name of the S3 bucket you want to install DataRobot into. It should not be public
       and the account you are running the quickstart will need the ability to assign
@@ -139,7 +160,7 @@ Parameters:
     Description: Choose True if you did not already create a bucket and want it to be created by the quickstart
     Type: String
   DRSignedURL:
-    Default: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.0.2/dockerized/DataRobot-RELEASE-7.0.2.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1623696772&Signature=XiZexQeWjCwtw%2Fru4XUIFkoHE94%3D"
+    Default: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.1.0/dockerized/DataRobot-RELEASE-7.1.0.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1624388349&Signature=jPylx228j%2FYS3kbtmjAt0f00dTs%3D"
     Type: String
     Description: Presigned URL to download software, must be sent by DataRobot
   KeyPairName:
@@ -300,6 +321,12 @@ Resources:
           - Outputs.PublicSubnet2ID
         DRHTTPSetting:
           Ref: DRHTTPSetting
+        DRZone:
+          Ref: DRZone
+        DRAppName:
+          Ref: DRAppName
+        DRPredName:
+          Ref: DRPredName  
         DRS3InstallationBucket:
           Ref: DRS3InstallationBucket
         DRS3CreateBucket:
