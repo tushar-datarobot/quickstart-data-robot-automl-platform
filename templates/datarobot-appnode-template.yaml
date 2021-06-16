@@ -122,9 +122,12 @@ Parameters:
   DownloadURL:
     Type: String
     Description: Link to the time expiring DataRobot installation archive
-  PredictionName:
+  AppName:
     Type: String
-    Description: DNS Name of the prediction LB
+    Description: DNS Name of the app LB or Domain Name
+  PredName:
+    Type: String
+    Description: DNS Name of the prediction LB or Domain Name
   ClusterType:
     Type: String
     Description: Type of cluster to build.
@@ -448,10 +451,14 @@ Resources:
                   sed -i -- "s@METRICNAMESPACE@$METRIC_NAMESPACE@" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 fi
 
-                # If we have the LB, enable the 3 DPEs by removiong '#LBDPE ' from the config file
-                if [ "$USE_DPELB" = "true" ]; then
-                  sed -i -- "s/#LBDPE //g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
+                # Setup http or https
+                if [ $DR_HTTPS -eq 'true' ]; then
+                  sed -i -- "s/SSLENABLED/true/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
+                else
+                  sed -i -- "s/SSLENABLED/true/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 fi
+                sed -i -- "s/APPLB/$APP_NAME/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
+                sed -i -- "s/PREDLB/$PRED_NAME/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
 
               test: test ! -f /opt/datarobot/DataRobot-${DRVersion}/config.yaml
               env:
@@ -467,7 +474,9 @@ Resources:
                 USE_AUTOSCALING: !Ref UseAutoScaling
                 USE_LOG_SERVER: !If [ "UseLogServer", "true", "false" ]
                 METRIC_NAMESPACE: !Ref MetricNamespace
-                PREDICTION_NAME: !Ref PredictionName
+                PREDICTION_NAME: !Ref PredName
+                APP_NAME: !Ref AppName
+                DR_HTTPS: !Ref DRHTTPSetting
 
             3c-DownloadTarballs:
               command: !Sub |

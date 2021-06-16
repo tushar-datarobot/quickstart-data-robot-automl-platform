@@ -305,7 +305,8 @@ Resources:
         DownloadURL: !Ref DRSignedURL
         EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
         EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
-        PredictionName: !GetAtt 'PredLoadBalancer.DNSName'
+        PredName: !If [UseHTTPS, !Ref DRPredName , !GetAtt 'PredLoadBalancer.DNSName' ]
+        AppName: !If [UseHTTPS, !Ref DRAppName , !GetAtt 'AppLoadBalancer.DNSName' ]
         UseAutoScaling: "true"
         MetricNamespace: "DataRobot/AutoScaling/Quickstart"
         ClusterType: "QuickStart"  
@@ -575,7 +576,7 @@ Resources:
         Region: !Ref "AWS::Region"
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.large
+        InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
         ServerName: DataNode1
         SSHKey: !Ref KeyPairName
@@ -613,7 +614,7 @@ Resources:
         Region: !Ref "AWS::Region"
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.large
+        InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
         ServerName: DataNode2
         SSHKey: !Ref KeyPairName
@@ -651,7 +652,7 @@ Resources:
         Region: !Ref "AWS::Region"
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.large
+        InstanceType: r5.xlarge
         MainStack: !Ref AWS::StackName
         ServerName: DataNode3
         SSHKey: !Ref KeyPairName
