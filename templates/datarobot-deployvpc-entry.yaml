@@ -73,7 +73,7 @@ Metadata:
       DRPredName:
         default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
       DRSignedURL:
-        default: Signed URL Provided from email set by web form  
+        default: Signed URL Provided from the email sent to you by DataRobot
       KeyPairName:
         default: Key pair name
       PrivateSubnet1CIDR:

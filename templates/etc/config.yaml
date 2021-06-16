@@ -58,13 +58,13 @@ os_configuration:
 # Global application configuration settings
 app_configuration:
   EDA_WORKERS: 1 # EDA worker processes per execmanager container
-  SECURE_WORKER_FIT_WORKERS: 4 # Modeling worker processes per execmanager container
+  SECURE_WORKER_FIT_WORKERS: 2 # Modeling worker processes per execmanager container
   PREDICTION_API_WORKERS: 1
 
   # Less common configuration settings
   drenv_override:
     # SSL and SELinux settings
-    PUBLIC_API_GUNICORN_WORKERS: 8
+    PUBLIC_API_GUNICORN_WORKERS: 2
     ALLOW_SELF_SIGNED_CERTS: true # set to true to disable SSL verification internally
     VERIFY_SSL: false
     ### Using SELINUX on quickstart for reduced security liability

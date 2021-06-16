@@ -634,7 +634,7 @@ Resources:
                 aws s3 sync /home/datarobot/secrets s3://$S3_BUCKET/$BACKUP_DIR/secrets/secrets
 
                 echo "Generating the initial admin user password"
-                password=$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 24 | head -n 1)
+                password=$LOCALPASSWORD
                 username=localadmin@datarobot.com
 
                 # Executing the command
@@ -647,6 +647,7 @@ Resources:
                 DR_VERSION: !Ref DRVersion
                 BACKUP_DIR: !Ref BackupDir
                 S3_BUCKET: !Ref DRInstallationBucket
+                LOCALPASSWORD: '{{resolve:secretsmanager:DataRobotUserPassword:SecretString:password}}'
 
             4f-SetNodeCrontabSet:
               command: !Sub |
@@ -772,61 +773,6 @@ Resources:
 
 
 
-  FrontEndLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    DependsOn:
-      - EC2Instance
-    Properties:
-      IpAddressType: ipv4
-      Subnets:
-        - Ref: LBPublicSubnet1ID
-        - Ref: LBPublicSubnet2ID
-      Type: application
-      SecurityGroups:
-        - Ref: AppLBSG
-
-  LBTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      HealthCheckEnabled: true
-      HealthCheckPort: !If [ UseHTTPS, '443', '80' ]
-      HealthCheckProtocol: !If [ UseHTTPS, 'HTTPS', 'HTTP' ]
-      Port: !If [ UseHTTPS, 443, 80 ]
-      Protocol: !If [ UseHTTPS, 'HTTPS', 'HTTP' ]
-      HealthCheckTimeoutSeconds: 10
-      HealthyThresholdCount: 2
-      VpcId: !Ref LBVPCID
-      TargetType: instance
-      Targets:
-        - Id: !Ref EC2Instance
-          Port: !If [ UseHTTPS, 443, 80 ]   
-
-  LBListenerHTTP:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Condition: UseHTTP
-    Properties:
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn:
-            Ref: LBTargetGroup
-      LoadBalancerArn:
-        Ref: FrontEndLoadBalancer
-      Port: 80
-      Protocol: HTTP
-
-  AppLBSG:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      GroupName: !Sub ${AWS::StackName}-AppLBSG
-      GroupDescription: !Sub ${AWS::StackName}-AppLBSecurityGroup
-      VpcId: !Ref LBVPCID
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: !If [ UseHTTPS, 443, 80 ]
-          ToPort: !If [ UseHTTPS, 443, 80 ]
-          CidrIp: '0.0.0.0/0'
-
-
 Outputs:
   InstanceId:
     Description: "InstanceId of the newly created EC2 instance"
@@ -834,13 +780,3 @@ Outputs:
   PrivateIP:
     Description: "PrivateIP IP address of the newly created EC2 instance"
     Value: !GetAtt EC2Instance.PrivateIp
-  ELBURL:
-    Description: The URL of the ELB. Point your domain to it by using a CNAME/ALIAS
-      DNS record
-    Value:
-      Fn::Join:
-      - ''
-      - - 'http://'
-        - Fn::GetAtt:
-          - FrontEndLoadBalancer
-          - DNSName

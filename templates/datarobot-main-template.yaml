@@ -49,7 +49,7 @@ Metadata:
           - QSS3BucketRegion
     ParameterLabels:
       DRSignedURL:
-        default: Signed URL Provided from email set by web form  
+        default: Signed URL Provided from the email sent to you by DataRobot
       DRHTTPSetting:
         default: Select HTTPS for secure access, HTTP for port 80 insecure access for web layers
       DRZone:
@@ -57,7 +57,7 @@ Metadata:
       DRAppName:
         default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
       DRPredName:
-        default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+        default: Required if HTTPS - Please enter the domain name you want to use for the prediction servers
       PublicSubnet1ID:
         default: Public subnet 1 ID
       PublicSubnet2ID:
@@ -116,7 +116,7 @@ Parameters:
     Type: String
     Default: ''
   DRPredName:
-    Description: Required if HTTPS - Please enter the domain name you want to use for the end user application server. Example - prediction.example.com
+    Description: Required if HTTPS - Please enter the domain name you want to use for the prediction servers. Example - prediction.example.com
     Type: String
     Default: ''
   DRS3InstallationBucket:
@@ -285,11 +285,12 @@ Resources:
 
   AppNode:
     Type: AWS::CloudFormation::Stack
+    DependsOn: AppPasswd
     Properties:
       TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-appnode-template.yaml
       TimeoutInMinutes: 120
       Parameters:
-        InstanceType: r5.xlarge
+        InstanceType: r5.2xlarge
         Region: !Ref "AWS::Region"
         MainStack: !Ref AWS::StackName
         SubnetId: !Ref PrivateSubnet1ID
@@ -457,7 +458,7 @@ Resources:
         Region: !Ref "AWS::Region"
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.xlarge
+        InstanceType: r5.2xlarge
         MainStack: !Ref AWS::StackName
         ServerName: ModelingNode1
         SSHKey: !Ref KeyPairName
@@ -496,7 +497,7 @@ Resources:
         Region: !Ref "AWS::Region"
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.xlarge
+        InstanceType: r5.2xlarge
         MainStack: !Ref AWS::StackName
         ServerName: ModelingNode2
         SSHKey: !Ref KeyPairName
@@ -576,7 +577,7 @@ Resources:
         Region: !Ref "AWS::Region"
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.xlarge
+        InstanceType: c5.xlarge
         MainStack: !Ref AWS::StackName
         ServerName: DataNode1
         SSHKey: !Ref KeyPairName
@@ -614,7 +615,7 @@ Resources:
         Region: !Ref "AWS::Region"
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.xlarge
+        InstanceType: c5.xlarge
         MainStack: !Ref AWS::StackName
         ServerName: DataNode2
         SSHKey: !Ref KeyPairName
@@ -652,7 +653,7 @@ Resources:
         Region: !Ref "AWS::Region"
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.xlarge
+        InstanceType: c5.xlarge
         MainStack: !Ref AWS::StackName
         ServerName: DataNode3
         SSHKey: !Ref KeyPairName
@@ -883,6 +884,18 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: '0.0.0.0/0'
+
+  AppPasswd:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: 'DataRobotUserPassword'
+      Description: "This is a dynamic random password for localadmin@datarobot.com"
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "localadmin@datarobot.com"}'
+        GenerateStringKey: "password"
+        PasswordLength: 16
+        ExcludeCharacters: '"@/\'
+
 
 
 Outputs:
