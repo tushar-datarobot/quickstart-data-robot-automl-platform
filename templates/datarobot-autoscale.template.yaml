@@ -105,7 +105,7 @@ Resources:
         - !Ref WorkerScaleOutPolicy
       AlarmDescription: 'Alarm if demand for workers exceeds existing capacity for workers'
       TreatMissingData: missing
-      Period: 60
+      Period: 15
 
   AlertScaleDown:
     Type: 'AWS::CloudWatch::Alarm'

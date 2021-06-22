@@ -155,6 +155,8 @@ Parameters:
   LBVPCID:
     Type: "AWS::EC2::VPC::Id"
     Description: VPC for Load Balancer
+  AdminPassword:
+    Type: String
 
 Conditions:
   UseKey: !And
@@ -452,10 +454,10 @@ Resources:
                 fi
 
                 # Setup http or https
-                if [ $DR_HTTPS -eq 'true' ]; then
+                if [ $DR_HTTPS = 'HTTPS' ]; then
                   sed -i -- "s/SSLENABLED/true/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 else
-                  sed -i -- "s/SSLENABLED/true/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
+                  sed -i -- "s/SSLENABLED/false/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 fi
                 sed -i -- "s/APPLB/$APP_NAME/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
                 sed -i -- "s/PREDLB/$PRED_NAME/g" /opt/datarobot/DataRobot-$DR_VERSION/config.yaml
@@ -647,7 +649,7 @@ Resources:
                 DR_VERSION: !Ref DRVersion
                 BACKUP_DIR: !Ref BackupDir
                 S3_BUCKET: !Ref DRInstallationBucket
-                LOCALPASSWORD: '{{resolve:secretsmanager:DataRobotUserPassword:SecretString:password}}'
+                LOCALPASSWORD: !Ref AdminPassword
 
             4f-SetNodeCrontabSet:
               command: !Sub |

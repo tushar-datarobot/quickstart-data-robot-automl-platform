@@ -101,10 +101,18 @@ Resources:
             Action:
               - 'ec2:DescribeImages'
               - 'ec2:DescribeInstances'
-              - 'ec2:CreateImage'
-              - 'ec2:CreateSnapshot'
               - 'ssm:DescribeParameters'
             Resource: "*"
+
+          - Effect: Allow
+            Action:
+              - 'ec2:CreateSnapshot'
+            Resource: !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:volume/*'
+
+          - Effect: Allow
+            Action:
+              - 'ec2:CreateImage'
+            Resource: !Sub 'arn:${AWS::Partition}:ec2:*::image/*'
 
           # temporary for quickstart development
           - Effect: Allow
