@@ -47,13 +47,7 @@ os_configuration:
 
   # Configure endpoint to send JSON-formatted logs (optional)
   logs:
-    enabled: Use_Log_Server
-    server: ELKNode
-    port: 5544 # protocol will be UDP
-    #filebeat: true
-
-    # add to app node
-    # - logtailer
+    enabled: false
 
 # Global application configuration settings
 app_configuration:

@@ -107,12 +107,12 @@ Resources:
           - Effect: Allow
             Action:
               - 'ec2:CreateSnapshot'
-            Resource: !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:volume/*'
+            Resource: !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}::volume/*'
 
           - Effect: Allow
             Action:
               - 'ec2:CreateImage'
-            Resource: !Sub 'arn:${AWS::Partition}:ec2:*::image/*'
+            Resource: !Sub 'arn:${AWS::Partition}:ec2:*:*:*'
 
           # temporary for quickstart development
           - Effect: Allow

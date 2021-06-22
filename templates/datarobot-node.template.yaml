@@ -78,11 +78,6 @@ Parameters:
     Type: String
     Description: Where to store the verte4x files in our S3 bucket
     Default: "datarobot_storage"
-  LogServer:
-    Type: String
-    Description: Type of Log Aggrigation Server to configure. Current options are off or Elastic/Logstacsh/Kibana. Splunk is on the way.
-    AllowedValues: [ off, ELK ]
-    Default: off
   DataVolumeSize:
     Type: Number
     Description: Hard drive size for the DataRobot software
@@ -449,6 +444,7 @@ Resources:
                   param=$(aws ssm describe-parameters --region $AWS_REGION --query "Parameters[].Name" --output text --filters "Key=Name,Values=drami")
                   if [ -n "$param"]; then
                     aws ssm delete-parameter --region $AWS_REGION --name "drami"
+                    echo "Deleted old temporary key"
                   else
                     echo " no key to cleanup"
                   fi
@@ -542,7 +538,6 @@ Resources:
           InstallationBucket=${InstallationBucket}
           InstanceType=${InstanceType}
           ImageId=${ImageId}
-          LogServer=${LogServer}
           NodeVolumeSize=${NodeVolumeSize}
           PublicIpAddress=${PublicIpAddress}
           Region=${Region}

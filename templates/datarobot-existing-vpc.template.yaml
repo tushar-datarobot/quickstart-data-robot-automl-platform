@@ -336,7 +336,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 200
         PublicIpAddress: false
-        LogServer: off
         SecretsEnforced: true
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
@@ -378,7 +377,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
-        LogServer: off
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
         UseS3BucketBackups: true
@@ -419,7 +417,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
-        LogServer: off
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
         UseS3BucketBackups: true
@@ -460,7 +457,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
-        LogServer: off
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
         UseS3BucketBackups: true
@@ -503,7 +499,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
-        LogServer: off
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
         UseS3BucketBackups: true
@@ -545,7 +540,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
-        LogServer: off
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
         UseS3BucketBackups: true
@@ -590,7 +584,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
-        LogServer: off
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
         UseS3BucketBackups: true
@@ -631,7 +624,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
-        LogServer: off
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
         UseS3BucketBackups: true
@@ -672,7 +664,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
-        LogServer: off
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
         UseS3BucketBackups: true
@@ -713,7 +704,6 @@ Resources:
         NodeVolumeSize: 60
         DataVolumeSize: 100
         PublicIpAddress: false
-        LogServer: off
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
         UseS3BucketBackups: true
