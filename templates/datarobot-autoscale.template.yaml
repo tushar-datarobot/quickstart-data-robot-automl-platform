@@ -99,13 +99,13 @@ Resources:
       Namespace: 'DataRobot/AutoScaling/Quickstart'
       MetricName: 'ClusterUtilization'
       Statistic: Average
-      Threshold: 2
+      Threshold: 1.25
       ComparisonOperator: GreaterThanThreshold
       AlarmActions:
         - !Ref WorkerScaleOutPolicy
       AlarmDescription: 'Alarm if demand for workers exceeds existing capacity for workers'
       TreatMissingData: missing
-      Period: 15
+      Period: 60
 
   AlertScaleDown:
     Type: 'AWS::CloudWatch::Alarm'
