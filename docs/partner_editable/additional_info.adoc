@@ -12,7 +12,11 @@ The password can be found in the account used to install run the quickstart insi
 == Best practices for using {partner-product-short-name} on AWS
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
 
-_Add any best practices for using the software._
+Do not use or share the localadmin@datarobot.com, use it to create seperate accounts for each user and assign appropriate permissions by role.
+Keep training data relatively small. Often there are very small incremental gains by increasing the size of training data.
+A helpful Quickstart Guide can be found here: https://api-docs.datarobot.com/docs/quickstart-guide 
+It has helpful tutorial and will provide a basic introduction to the DataRobot Platform.
+
 
 == Security
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
