@@ -10,5 +10,7 @@
 |Auto Scaling groups |1
 |Application Load Balancers |2
 |Network Load Balancers |0
-|<type> instances |<n>
-|===
+|c5.xlarge instances |3
+|r5.xlarge instances |3
+|r5.2xlarge instances |4
+|r5.2xlarge instances |0-4 from autoscaling
