@@ -22,7 +22,7 @@ It has helpful tutorial and will provide a basic introduction to the DataRobot P
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
 
 Do not use or share the localadmin@datarobot.com, use it to create seperate accounts for each user and assign appropriate permissions by role.
-If you initially chose an HTTP installation, we highly recommend that you edit the front end load balancers to change the listeners to port 443 and add a certificate you control to secure the installation.
+If you initially chose an HTTP installation, we highly recommend that you edit the front end load balancers to change the listeners to port 443 and add certificates you control to secure the installation.
 The installation leverages your default EBS encryption key for the region into which it was installed. Rotate this key to a different key if your security policies require it.
 The base install creates a crontab entry to dump the data into a backups directory on the S3 bucket at midnight. We recommend changing this to your backup and retention processes/policies.
 
