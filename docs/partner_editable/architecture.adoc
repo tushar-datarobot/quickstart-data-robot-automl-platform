@@ -20,10 +20,21 @@ best practices, to provide you with your own virtual network on AWS.*
 internet access for resources in the private subnets.*
 ** A Linux bastion host in an Auto Scaling group to allow inbound Secure
 Shell (SSH) access to EC2 instances in public and private subnets.*
+** An application load balancer to front end the application server
+** An application load balancer to front end the dedicated prediction servers
 * In the private subnets:
-** <item>.
-** <item>.
+** EC2 Instances for:
+*** Application Server
+*** Model Management Server 
+*** HA Pair of Exploratory Data Analysis Servers
+*** HA (3 nodes) Data Backend running mongo and redis
+*** HA Pair of Prediction Servers (For running model predictions real-time/batch)
+*** Autoscaling (1 to 5 nodes) of worker nodes for machine learning
+** Cloudwatch alarms for autoscaling based on load
+** Non-public S3 Bucket for data storage and ingest operations
+** HTTPS Option: Certificates in AWS Certificate Manager for Application Load Balancers
+** HTTPS Option: Route53 Zone records if applicable
 // Add bullet points for any additional components that are included in the deployment. Make sure that the additional components are also represented in the architecture diagram. End each bullet with a period.
-* <describe any additional components>.
+
 
 [.small]#* The template that deploys the Quick Start into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#
