@@ -510,6 +510,8 @@ Resources:
           Ebs:
             DeleteOnTermination: true
             VolumeType: gp3
+            Encrypted: !Ref Encrypted
+            KmsKeyId: !If [ "UseKey", !Ref "EncryptionKey", !Ref "AWS::NoValue" ]
             VolumeSize: !Ref NodeVolumeSize
         - DeviceName: /dev/sdb
           Ebs:
