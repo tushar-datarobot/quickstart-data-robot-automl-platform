@@ -320,7 +320,7 @@ Resources:
         Encrypted: true
         EncryptionKey: ' '
         SSHKey: !Ref KeyPairName
-        QSInstallationBucket: weswagner-quickstart-dr
+        QSInstallationBucket: !Ref QSS3BucketName
         DRInstallationBucket: !Ref DRS3InstallationBucket
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
         DownloadURL: !Ref DRSignedURL
