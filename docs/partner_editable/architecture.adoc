@@ -24,11 +24,10 @@ Shell (SSH) access to EC2 instances in public and private subnets.*
 ** An application load balancer to front end the dedicated prediction servers
 * In the private subnets:
 ** EC2 Instances for:
-*** Application Server
-*** Model Management Server 
-*** HA Pair of Exploratory Data Analysis Servers
-*** HA (3 nodes) Data Backend running mongo and redis
-*** HA Pair of Prediction Servers (For running model predictions real-time/batch)
+*** Application Node
+*** HA Pair of Exploratory Data Analysis Nodes
+*** HA (3 nodes) Data Backend running Mongo and Redis
+*** HA Pair of Prediction Nodes (For running model predictions real-time/batch loads)
 *** Autoscaling (1 to 5 nodes) of worker nodes for machine learning
 ** Cloudwatch alarms for autoscaling based on load
 ** Non-public S3 Bucket for data storage and ingest operations
