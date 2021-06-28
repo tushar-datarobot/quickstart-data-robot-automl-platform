@@ -114,14 +114,11 @@ Resources:
               - 'ec2:CreateImage'
             Resource: !Sub 'arn:${AWS::Partition}:ec2:*:*:*'
 
-          # temporary for quickstart development
           - Effect: Allow
             Action:
               - 's3:ListAllMyBuckets'
-              - 's3:Get*'
             Resource:
-              - !Sub 'arn:${AWS::Partition}:s3:::weswagner-quickstart-dr'
-              - !Sub 'arn:${AWS::Partition}:s3:::weswagner-quickstart-dr/*'
+              - '*'
 
           - Effect: Allow
             Action:
