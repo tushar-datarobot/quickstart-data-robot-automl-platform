@@ -440,14 +440,6 @@ Resources:
                 
                 if [[ $my_name == ModelingOnly* ]]; then
 
-                  # cleanup drami from other runs of quickstart so drami key version remains 1
-                  param=$(aws ssm describe-parameters --region $AWS_REGION --query "Parameters[].Name" --output text --filters "Key=Name,Values=drami")
-                  if [ -n "$param"]; then
-                    aws ssm delete-parameter --region $AWS_REGION --name "drami"
-                    echo "Deleted old temporary key"
-                  else
-                    echo " no key to cleanup"
-                  fi
 
                   #Wait to see a spare key from app node indicating that install is complete
                   param=$(aws ssm describe-parameters --region $AWS_REGION --query "Parameters[].Name" --output text --filters "Key=Name,Values=/$MAIN_STACK/datarobot-ami-key")

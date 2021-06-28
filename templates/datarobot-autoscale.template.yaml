@@ -52,7 +52,7 @@ Resources:
     Properties:
       LaunchTemplateData:
         InstanceType: r5.2xlarge
-        ImageId: '{{resolve:ssm:drami:1}}'
+        ImageId: '{{resolve:ssm:drami}}'
         SecurityGroupIds: 
           - !Ref EC2SecurityGroup
         IamInstanceProfile:
