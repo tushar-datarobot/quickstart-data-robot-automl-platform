@@ -307,7 +307,7 @@ Resources:
   DataRobotStack:
     Type: AWS::CloudFormation::Stack
     Properties: 
-      TemplateURL: https://weswagner-quickstart-dr.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-existing-vpc-template.yaml
+      TemplateURL: https://dr-temp-wesquickstart-code.s3.amazonaws.com/quickstart-data-robot-automl-platform/templates/datarobot-existing-vpc.template.yaml
       #TemplateURL: !Sub
       #  - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/datarobot-main-template.yaml'
       #  - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]

@@ -134,11 +134,15 @@ servers:
   - taskmanager
   - tileservergl
   - metricspublisher
+  - pgsql
+  - modmonworker
+  - modmonscheduler
   hosts:
   - AppNode
   drenv_override:
     WORKER_MODEL_CACHE: 16 # Models to cache in memory at once. Tune this for your use case
     MODEL_CACHE_MODE: LRU # Mode for caching models. Options: LRU, latest
+    MMM_PREDICTIONS_DATA_MODEL_LOADER_CACHE_SIZE: 4
   # app_configuration:
   #   drenv_override:
   #     # Used to redirect an app node request
@@ -194,19 +198,6 @@ servers:
   - execmanagersw
   hosts:
   - ModelingOnlyNode
-
-# Model Management node (optional)
-- services:
-  - pgsql
-  - modmonworker
-  - modmonscheduler
-  hosts:
-  - ModelManagement
-  app_configuration:
-    drenv_override:
-      # Models to cache in Modmon memory at once. Tune this for your use case.
-      # Keep less or equal to WORKER_MODEL_CACHE configuration on dedicated prediction server.
-      MMM_PREDICTIONS_DATA_MODEL_LOADER_CACHE_SIZE: 4
 
 # Dedicated high-performance prediction server (optional)
 - services:

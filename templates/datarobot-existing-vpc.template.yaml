@@ -146,7 +146,7 @@ Parameters:
     #Default: 7.0.2
     Default: 7.1.1
   DRSignedURL:
-    Default: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.1.1/dockerized/DataRobot-RELEASE-7.1.1.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1625151313&Signature=7x8f84pbgllHchiiHm7mZg3h0CI%3D"
+    Default: "https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.1.1/dockerized/DataRobot-RELEASE-7.1.1.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1625496444&Signature=zdAEaUbsfxw0HPKfbA5N%2BoMaUgo%3D"
     Type: String
     Description: Presigned URL to download software, must be sent by DataRobot
   DRLbCidr:
