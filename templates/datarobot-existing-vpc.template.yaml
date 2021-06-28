@@ -434,47 +434,6 @@ Resources:
         - Key: NodeType
           Value: DataRobot
 
-  ModelManagementStack:
-    Type: "AWS::CloudFormation::Stack"
-    Properties:
-      TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/datarobot-node.template.yaml'
-        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
-          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-      Parameters:
-        Region: !Ref "AWS::Region"
-        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
-        InstallationBucket: !Ref DRS3InstallationBucket
-        InstanceType: r5.xlarge
-        MainStack: !Ref AWS::StackName
-        ServerName: ModelManagement
-        SSHKey: !Ref KeyPairName
-        SubnetId: !Ref PrivateSubnet1ID
-        Encrypted: true
-        EncryptionKey: ' '
-        AmiSignalHandle: ' '
-        EC2InstanceSecurityProfile: !GetAtt 'IAMStack.Outputs.EC2InstanceSecurityProfile'
-        EC2SecurityGroup: !GetAtt 'SecurityStack.Outputs.EC2SecurityGroupId'
-        # Defaults
-        DRVersion: !Ref DRVersion
-        NodeVolumeSize: 60
-        DataVolumeSize: 100
-        PublicIpAddress: false
-        BackupDir: "backup_files"
-        StorageDir: "datarobot_storage"
-        UseS3BucketBackups: true
-        S3BucketBackupSchedule: "0 0 * * 1-5"
-        TagDataVol: false  
-      Tags:
-        # DataRobot tags
-        - Key: Name
-          Value: !Sub ${AWS::StackName}-ModelManagement
-        - Key: MainStack
-          Value: !Ref AWS::StackName
-        - Key: NodeType
-          Value: DataRobot
-
-
 # Configured for 4 workers each, total of 8
   ModelingNode1Stack:
     Type: "AWS::CloudFormation::Stack"
