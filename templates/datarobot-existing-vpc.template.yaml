@@ -856,6 +856,7 @@ Resources:
 
   AppLBRoute53Record:
     Type: AWS::Route53::RecordSet
+    Condition: UseHTTPS
     Properties:
       Name: !Ref DRAppName
       HostedZoneName: !Ref DRZone
