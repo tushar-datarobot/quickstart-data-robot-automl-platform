@@ -764,6 +764,7 @@ Resources:
 
   PredLBRoute53Record:
     Type: AWS::Route53::RecordSet
+    Condition: UseHTTPS
     Properties:
       Name: !Ref DRPredName
       HostedZoneName: !Ref DRZone
