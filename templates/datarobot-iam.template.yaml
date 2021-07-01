@@ -142,6 +142,8 @@ Resources:
               - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/drami'
               - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
               - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
+              - !Sub 'arn:${AWS::Partition}:s3:::dr-temp-wesquickstart-code'
+              - !Sub 'arn:${AWS::Partition}:s3:::dr-temp-wesquickstart-code/*'
            
           - Effect: Allow
             Action:

@@ -141,28 +141,14 @@ Parameters:
     Type: String
     Description: CloudWatch AutoScaling Metric Namespace
     Default: "DataRobot/AutoScaling/Quickstart"
-  LBPublicSubnet1ID:
-    Type: "AWS::EC2::Subnet::Id"
-    Description: Subnet for Load Balancer
-  LBPublicSubnet2ID:
-    Type: "AWS::EC2::Subnet::Id"
-    Description: Subnet for Load Balancer
-  LBVPCID:
-    Type: "AWS::EC2::VPC::Id"
-    Description: VPC for Load Balancer
   AdminPassword:
     Type: String
+    NoEcho: true
 
 Conditions:
   UseKey: !And
     - !Equals [!Ref Encrypted, true]
     - !Not [!Equals [!Ref EncryptionKey, ""]]
-  UseHTTPS: !Equals 
-    - !Ref DRHTTPSetting
-    - "HTTPS"
-  UseHTTP: !Equals
-    - !Ref DRHTTPSetting
-    - "HTTP"
 
 Resources:
   EC2Instance:

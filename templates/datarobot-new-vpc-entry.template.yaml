@@ -41,20 +41,20 @@ Metadata:
       - KeyPairName
       - BastionAMIOS
       - BastionInstanceType
-      - Label:
-          default: DataRobot Install Parameters
-        Parameters:
-          - DRS3InstallationBucket
-          - DRS3CreateBucket
-          - DRSignedURL
-      - Label:
-          default: DataRobot Front End Load Balancer Settings
-        Parameters:
-          - DRHTTPSetting
-          - DRZone
-          - DRAppName
-          - DRPredName
-          - DRLbCidr
+    - Label:
+        default: DataRobot Install Parameters
+      Parameters:
+        - DRS3InstallationBucket
+        - DRS3CreateBucket
+        - DRSignedURL
+    - Label:
+        default: DataRobot Front End Load Balancer Settings
+      Parameters:
+        - DRHTTPSetting
+        - DRZone
+        - DRAppName
+        - DRPredName
+        - DRLbCidr
     - Label:
         default: AWS Quick Start configuration
       Parameters:
@@ -154,7 +154,7 @@ Parameters:
   DRS3InstallationBucket:
     Default: dr-temp-wesqs12345
     Description:
-      Name of the S3 bucket you want to install DataRobot into. It should not be public
+      Name of the S3 bucket you want to use for uploaded data and to store configuration. It should not be public
       and the account you are running the quickstart will need the ability to assign
       permissions for access to a role for EC2 instances.
     Type: String
@@ -172,7 +172,6 @@ Parameters:
   DRLbCidr:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]{1}|[1-2][0-8]{2}))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/0-28
-    Default: '0.0.0.0/0'
     Description: CIDR block to allow access to front end application and prediction services
     Type: String
   KeyPairName:
