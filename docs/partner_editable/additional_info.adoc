@@ -7,14 +7,15 @@
 Login to the application by targeting your hostname you provided for the application server (or the AWS generated DNS name for the port 80 front end load balancer if you chose an insecure installation)
 
 The initial admin username is: localadmin@datarobot.com
-The password can be found in the account used to install run the quickstart inside secrets manager.
+The password can be found in the account used to install the quickstart, inside secrets manager.
 
-When you have logged in, leverage the menu in the upper right hand corner to find the drop down to allow you to insert the license key you received from DataRobot.
+When you have logged in, leverage the menu in the upper right hand corner to find the drop down which will allow you to insert the license key you received from DataRobot.
 
 == Best practices for using {partner-product-short-name} on AWS
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
 
 Do not use or share the localadmin@datarobot.com, use it to create seperate accounts for each user and assign appropriate permissions by role.
+
 Keep training data relatively small. Often there are very small incremental gains by increasing the size of training data.
 A helpful Quickstart Guide can be found here: https://api-docs.datarobot.com/docs/quickstart-guide 
 It has helpful tutorial and will provide a basic introduction to the DataRobot Platform.

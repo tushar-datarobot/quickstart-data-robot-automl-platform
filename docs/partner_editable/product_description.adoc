@@ -2,4 +2,6 @@
 // Briefly describe the software. Use consistent and clear branding. 
 // Include the benefits of using the software on AWS, and provide details on usage scenarios.
 
-<Describe how the software works on AWS.>
+DataRobot accelerates your AI success by putting the power of cutting-edge machine learning technology into the hands of the team you already have in place. The platform incorporates the knowledge, experience, and best practices of the world's leading data scientists, delivering unmatched levels of automation, accuracy, and transparency to help your business transform into an AI-driven enterprise.
+
+Leveraging this AWS Quickstart will allow you to deploy DataRobot AutoML software (also available as a SaaS model hosted on AWS) into your own account and VPC. By leveraging AWS you have flexibility in deploying in the global region(s) of your choice and a high-availability environment backed by AWS's architecture and well-defined shared-responsibility model for security. 
