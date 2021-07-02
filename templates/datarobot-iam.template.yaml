@@ -55,7 +55,6 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-
           - Effect: Allow
             Action:
               - 'cloudwatch:PutMetricData'
@@ -69,24 +68,6 @@ Resources:
               - !Sub arn:${AWS::Partition}:cloudwatch::*:dashboard/*
               - !Sub arn:${AWS::Partition}:cloudwatch:*:*:alarm:*
               - '*'
-
-          # Extra debug:
-          #- Effect: Allow
-          #   Action:
-          #    - 'cloudwatch:PutMetricData'
-          # #   - 'cloudwatch:GetMetricData'
-          #    - 'cloudwatch:DescribeAlarmsForMetric'
-          #    - 'cloudwatch:ListDashboards'
-          #    - 'cloudwatch:GetMetricStatistics'
-          #    - 'cloudwatch:GetMetricWidgetImage'
-          #    - 'cloudwatch:ListMetrics'
-          #    - 'ec2:DescribeInstances'
-          #    - 'ec2:DescribeInstanceStatus'
-          # #   # - 'elasticloadbalancing:*'
-          #    - 'ssm:DescribeParameters'
-          #  Resource:
-          #    - '*'
-
 
           #Start cloudwatch autoscaling permissions
           - Effect: Allow
