@@ -85,7 +85,6 @@ Parameters:
   EncryptionKey:
     Type: String
     Description: AWS KMS key used to encrypt the DataRobot App drive at /opt/datarobot
-    # Default: <your key gord here>
   SecretsEnforced:
     Type: String
     Description: Enable secrets and passwords for Mongo and Gluster?

@@ -476,6 +476,8 @@ Resources:
                   # flag URL that AMI is complete
                   curl -X PUT -H 'Content-Type:' --data-binary '{"Status" : "SUCCESS","Reason" : "Configuration Complete","UniqueId" : "IDAMIDONE","Data" : "AMI Complete"}' "$AMI_SIGNAL"
 
+                  # ' Random apostrophe to fix a formatting error in vscode where it gets confused by too many nested "" and ''
+
                   # shutdown this instance in 15 minutes - let scaling group build complete and take over
                   sudo /usr/sbin/shutdown +15
  

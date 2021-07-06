@@ -544,7 +544,7 @@ Resources:
         PublicIpAddress: false
         BackupDir: "backup_files"
         StorageDir: "datarobot_storage"
-        UseS3BucketBackups: true
+        UseS3BucketBackups: false
         S3BucketBackupSchedule: "0 0 * * 1-5"
         TagDataVol: false   
       Tags:
