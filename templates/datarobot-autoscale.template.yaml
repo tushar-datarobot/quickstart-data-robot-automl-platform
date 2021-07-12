@@ -8,11 +8,8 @@
 
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-1xxxxxxxx) 
+Description: Deploy Auto Scaling resources for DataRobot. (qs-1s36qjm4o) 
 Metadata:
-  QuickStartDocumentation:
-    EntrypointName: Build Autoscaling for Model Workers
-    Order: "5"
   QSLint:
     Exclusions: [ W9002, W9003, W9006 ]
   cfn-lint:

@@ -7,11 +7,8 @@
 
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-1xxxxxxxx)
+Description: Deploy IAM resources for DataRobot. (qs-1s36qjm50)
 Metadata:
-  QuickStartDocumentation:
-    EntrypointName: Launch into an existing VPC
-    Order: "5"
   QSLint:
     Exclusions: [ W9002, W9003, W9006 ]
   cfn-lint:
