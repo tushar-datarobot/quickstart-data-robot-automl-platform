@@ -372,6 +372,7 @@ Resources:
                   echo 'Adding ($SCHEDULE) cronjob syncing /opt/datarobot/data to s3://$S3_BUCKET/$BACKUP_DIR/data/$my_name'                  
                   printf '%s docker stop $(docker ps -aq) && aws s3 sync --no-progress /opt/datarobot/data s3://%s/%s/data/%s && docker start $(docker ps -aq)\n' "$SCHEDULE" "$S3_BUCKET" "$BACKUP_DIR" "$my_name" | tee -a /var/spool/cron/datarobot
                 fi
+
               test: "test ${USE_S3_BACKUPS} = 'true'"
               ignoreErrors: "false"
               env:

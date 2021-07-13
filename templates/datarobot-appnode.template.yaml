@@ -590,6 +590,9 @@ Resources:
                 aws s3 cp /home/datarobot/.secrets-key s3://$S3_BUCKET/$BACKUP_DIR/secrets/.secrets-key
                 aws s3 sync /home/datarobot/secrets s3://$S3_BUCKET/$BACKUP_DIR/secrets/secrets
 
+                echo "Creating data backup directory"
+                aws s3api put-object --bucket $S3_BUCKET --key $BACKUP_DIR/data/
+
                 echo "Generating the initial admin user password"
                 password=$LOCALPASSWORD
                 username=localadmin@datarobot.com
