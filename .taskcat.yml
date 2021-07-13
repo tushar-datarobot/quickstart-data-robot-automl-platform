@@ -14,10 +14,10 @@ project:
     # - eu-west-2
     # - eu-west-3
     # - sa-east-1
-    - us-east-1
+    # - us-east-1
     # - us-east-2
     # - us-west-1
-    # - us-west-2
+    - us-west-2
     # - ca-central-1
 tests:
   default:
@@ -30,10 +30,9 @@ tests:
     #  DRZone: '' # HTTPS only
     #  DRS3InstallationBucket: ''
      DRS3CreateBucket: "True"
-    #  DRSignedURL: 'https://datarobot-enterprise-releases.s3.amazonaws.com/promoted/7.1.1/dockerized/DataRobot-RELEASE-7.1.1.tar.gz?AWSAccessKeyId=AKIAQ6I23A22NIXIMKVW&Expires=1626361102&Signature=EW2Xc92ztFSU1jB3wTjQnqFbA8o%3D'
-     DRSignedURL: 'https://dylanowe-ia.s3.us-west-1.amazonaws.com/quickstart/data-robot/DataRobot-RELEASE-7.1.1.tar'
-     DRLbCidr: "0.0.0.0/0"
-     RemoteAccessCIDR: "0.0.0.0/0"
+     DRSignedURL: 'override'
+     DRLbCidr: "10.0.0.0/0"
+     RemoteAccessCIDR: "10.0.0.0/0"
      KeyPairName: $[taskcat_getkeypair]
      QSS3KeyPrefix: "quickstart-data-robot-automl-platform/"
      QSS3BucketName: $[taskcat_autobucket]
