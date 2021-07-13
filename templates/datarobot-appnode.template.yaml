@@ -611,7 +611,7 @@ Resources:
                 # Force new line in the log
                 echo " "
 
-                my_name=$(aws ec2 describe-instances --region us-east-1 --instance-ids $(curl --silent http://169.254.169.254/latest/meta-data/instance-id) --query "Reservations[*].Instances[*].[Tags[?Key=='Name'].Value]" --output text)
+                my_name=$(aws ec2 describe-instances --region $AWS_REGION --instance-ids $(curl --silent http://169.254.169.254/latest/meta-data/instance-id) --query "Reservations[*].Instances[*].[Tags[?Key=='Name'].Value]" --output text)
                 my_name=${!my_name##*-}
 
                 if [[ $my_name == ModelingNode* ]]; then
@@ -623,6 +623,7 @@ Resources:
               test: "test ${USE_S3_BACKUPS} = 'true'"
               ignoreErrors: "false"
               env:
+               AWS_REGION: !Ref Region
                DR_VERSION: !Ref DRVersion
                BACKUP_DIR: !Ref BackupDir
                S3_BUCKET: !Ref DRInstallationBucket
