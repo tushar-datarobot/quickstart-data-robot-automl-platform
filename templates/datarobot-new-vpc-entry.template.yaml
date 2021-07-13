@@ -357,3 +357,11 @@ Resources:
           Fn::GetAtt:
           - VPCStack
           - Outputs.VPCCIDR
+
+Outputs:
+  AppLoadBalancerURL:
+    Description: "URL of the application load balancer - use this to access the app"
+    Value: !GetAtt 'DataRobotStack.Outputs.AppLoadBalancerURL'
+  AdminPasswordSecretName:
+    Description: "The name of the secret that holds the password for localadmin@datarobot.com"
+    Value: 'DataRobotUserPassword'

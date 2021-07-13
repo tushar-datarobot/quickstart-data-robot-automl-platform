@@ -911,6 +911,13 @@ Outputs:
   MainTemplate:
     Description: Main Template Complete
     Value: MainTemplate
+  AppLoadBalancerURL:
+    Description: "URL of the application load balancer - use this to access the app"
+    Value: !GetAtt AppLoadBalancer.DNSName
+  AdminPasswordSecretName:
+    Description: "The name of the secret that holds the password for localadmin@datarobot.com"
+    Value: 'DataRobotUserPassword'
+
 
 
 
