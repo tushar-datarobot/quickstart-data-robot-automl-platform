@@ -366,7 +366,10 @@ Resources:
                 my_name=$(aws ec2 describe-instances --region us-east-1 --instance-ids $(curl --silent http://169.254.169.254/latest/meta-data/instance-id) --query "Reservations[*].Instances[*].[Tags[?Key=='Name'].Value]" --output text)
                 my_name=${!my_name##*-}
 
-                if [[ $my_name == ModelingNode* ]]; then
+                # Create bucket for backups
+                aws s3api put-object --bucket $S3_BUCKET --key $BACKUP_DIR/data/$my_name
+
+                if [[ $my_name == Model* ]]; then
                   echo "Skipping Modeling nodes"
                 else
                   echo 'Adding ($SCHEDULE) cronjob syncing /opt/datarobot/data to s3://$S3_BUCKET/$BACKUP_DIR/data/$my_name'                  
