@@ -6,17 +6,10 @@
 ###########################################################################
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-1xxxxxxxx) 
+Description: Deploy DataRobot into an existing VPC. (qs-1s36qjm1l) 
 Metadata:
-  QuickStartDocumentation:
-    EntrypointName: Launch into an existing VPC
-    Order: "5"
   QSLint:
     Exclusions: [ W9002, W9003, W9006 ]
-  #cfn-lint:
-    #config:
-      #ignore_checks:
-      #  - E9101
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -167,7 +160,7 @@ Parameters:
       The Quick Start bucket name can include numbers, lowercase
       letters, uppercase letters, and hyphens (-). It cannot start or end with a 
       hyphen (-).
-    Default: dr-temp-wesquickstart-code
+    Default: aws-quickstart
     Description:
       Name of the S3 bucket for your copy of the Quick Start assets. 
       Keep the default name unless you are customizing the template. 
@@ -193,7 +186,7 @@ Parameters:
       a forward slash. See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
       and https://aws-quickstart.github.io/option1.html.
   QSS3BucketRegion:
-    Default: 'us-west-2'
+    Default: 'us-east-1'
     Description: 'AWS Region where the Quick Start S3 bucket (QSS3BucketName) is 
       hosted. Keep the default Region unless you are customizing the template. 
       Changing this Region updates code references to point to a new Quick Start location. 
@@ -305,6 +298,7 @@ Resources:
         MainStack: !Ref AWS::StackName
         # S3Bucket: !Ref DRS3InstallationBucket
         S3Bucket: !If [CreateS3BucketCondition, !Ref 'S3Bucket', !Ref DRS3InstallationBucket]
+        QSS3BucketName: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         
   AppNode:
     Type: AWS::CloudFormation::Stack

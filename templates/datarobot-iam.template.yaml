@@ -7,11 +7,8 @@
 
 
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DataRobot CloudFormation stack to create the EC2 instances for the cluster. (qs-1xxxxxxxx)
+Description: Deploy IAM resources for DataRobot. (qs-1s36qjm50)
 Metadata:
-  QuickStartDocumentation:
-    EntrypointName: Launch into an existing VPC
-    Order: "5"
   QSLint:
     Exclusions: [ W9002, W9003, W9006 ]
   cfn-lint:
@@ -26,7 +23,9 @@ Parameters:
   S3Bucket:
     Type: String
     Description: Datarobot bucket for storage
-  
+  QSS3BucketName:
+    Type: String
+    Description: Name of the S3 bucket for your copy of the Quick Start assets.
 
 Resources: 
   DataRobotIAMRole:
@@ -123,8 +122,8 @@ Resources:
               - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/drami'
               - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
               - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
-              - !Sub 'arn:${AWS::Partition}:s3:::dr-temp-wesquickstart-code'
-              - !Sub 'arn:${AWS::Partition}:s3:::dr-temp-wesquickstart-code/*'
+              - !Sub 'arn:${AWS::Partition}:s3:::${QSS3BucketName}'
+              - !Sub 'arn:${AWS::Partition}:s3:::${QSS3BucketName}/*'
            
           - Effect: Allow
             Action:

@@ -14,10 +14,10 @@ project:
     # - eu-west-2
     # - eu-west-3
     # - sa-east-1
-    - us-east-1
+    # - us-east-1
     # - us-east-2
     # - us-west-1
-    # - us-east-2
+    - us-west-2
     # - ca-central-1
 tests:
   default:
@@ -25,9 +25,12 @@ tests:
    parameters:
      AvailabilityZones: $[taskcat_genaz_2]
      DRHTTPSetting: 'HTTP'
+    #  DRAppName: '' # HTTPS only
+    #  DRPredName: '' # HTTPS only
+    #  DRZone: '' # HTTPS only
     #  DRS3InstallationBucket: ''
      DRS3CreateBucket: "True"
-     DRSignedURL: 'https://dylanowe-ia.s3.us-west-1.amazonaws.com/quickstart/data-robot/DataRobot-RELEASE-7.1.1.tar'
+     DRSignedURL: 'override'
      DRLbCidr: "10.0.0.0/0"
      RemoteAccessCIDR: "10.0.0.0/0"
      KeyPairName: $[taskcat_getkeypair]
