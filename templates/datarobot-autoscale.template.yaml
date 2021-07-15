@@ -1,0 +1,135 @@
+
+###########################################################################
+#  Copyright 2021 DataRobot Inc. All Rights Reserved.                     #
+#                                                                         #
+#  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES       #
+#  OR CONDITIONS OF ANY KIND, express or implied.                         #
+###########################################################################
+
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Deploy Auto Scaling resources for DataRobot. (qs-1s36qjm4o) 
+Metadata:
+  QSLint:
+    Exclusions: [ W9002, W9003, W9006 ]
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
+
+Parameters:
+  IamArn:
+    Type: String
+    Description: IAM Arn needed for autoscale launch profile
+  EC2SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup::Id'
+    Description: EC2 Security group ID for autoscale instances
+  KeyPairName:
+    Description: Name of an existing public/private key pair. If you do not have one in this AWS Region,
+      please create it before continuing. 
+    Type: 'AWS::EC2::KeyPair::KeyName'
+  MaxModelingNodes:
+    Default: '3'
+    Description: The number of modelling nodes to allow max.
+    Type: String
+  PrivateSubnet1ID:
+    Description: ID of the private subnets they may be deployed
+    Type: 'AWS::EC2::Subnet::Id'
+  PrivateSubnet2ID:
+    Description: ID of the private subnets they may be deployed
+    Type: 'AWS::EC2::Subnet::Id'
+  MainStack:
+    Type: String
+    Description: Name of main parent stack
+
+Resources:
+
+  ModelLaunchTemplate:
+    Type: 'AWS::EC2::LaunchTemplate'
+    Properties:
+      LaunchTemplateData:
+        InstanceType: r5.2xlarge
+        ImageId: '{{resolve:ssm:drami}}'
+        SecurityGroupIds: 
+          - !Ref EC2SecurityGroup
+        IamInstanceProfile:
+          Arn: !Ref IamArn
+        KeyName: !Ref KeyPairName
+
+
+  ModelAutoScalingGroup:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      VPCZoneIdentifier:
+        - !Ref PrivateSubnet1ID
+        - !Ref PrivateSubnet2ID
+      MinSize: '1'
+      MaxSize: !Ref MaxModelingNodes
+      Cooldown: '300'
+      DesiredCapacity: '1'
+      LaunchTemplate: 
+        LaunchTemplateId: !Ref ModelLaunchTemplate
+        Version: !GetAtt
+          - ModelLaunchTemplate
+          - LatestVersionNumber
+
+  WorkerScaleOutPolicy:
+    Type: 'AWS::AutoScaling::ScalingPolicy'
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref ModelAutoScalingGroup
+      ScalingAdjustment: 1
+
+  WorkerScaleInPolicy:
+    Type: 'AWS::AutoScaling::ScalingPolicy'
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref ModelAutoScalingGroup
+      ScalingAdjustment: -1
+
+  AlertScaleUp:
+    Type: 'AWS::CloudWatch::Alarm'
+    DependsOn: ModelAutoScalingGroup
+    Properties:
+      ActionsEnabled: True
+      EvaluationPeriods: 2
+      Namespace: 'DataRobot/AutoScaling/Quickstart'
+      MetricName: 'ClusterUtilization'
+      Statistic: Average
+      Threshold: 1.25
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref WorkerScaleOutPolicy
+      AlarmDescription: 'Alarm if demand for workers exceeds existing capacity for workers'
+      TreatMissingData: missing
+      Period: 60
+
+  AlertScaleDown:
+    Type: 'AWS::CloudWatch::Alarm'
+    DependsOn: ModelAutoScalingGroup
+    Properties:
+      ActionsEnabled: True
+      EvaluationPeriods: 20
+      Namespace: 'DataRobot/AutoScaling/Quickstart'
+      MetricName: 'ClusterUtilization'
+      Threshold: 0.5
+      Statistic: Average
+      ComparisonOperator: LessThanThreshold
+      AlarmActions:
+        - !Ref WorkerScaleInPolicy
+      AlarmDescription: 'Alarm if supply of workers exceeds existing demand for workers'
+      TreatMissingData: missing
+      Period: 60    
+
+
+
+
+
+
+ 
+Outputs:
+  ModelAutoScalingGroup:
+    Description: Auto Scaling group reference ID.
+    Value: !Ref ModelAutoScalingGroup
+    Export:
+      Name: !Sub '${MainStack}-ModelAutoScalingGroup'
