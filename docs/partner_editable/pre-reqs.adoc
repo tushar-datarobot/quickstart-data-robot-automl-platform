@@ -1,13 +1,9 @@
 // If no preperation is required, remove all content from here
 
-==== Prepare your AWS account
-
-_Describe any setup required in the AWS account prior to template launch_
-
-==== Prepare your {partner-company-name} account
-
-_Describe any setup required in the partner portal/account prior to template launch_
-
 ==== Prepare for the deployment
 
-_Describe any preparation required to complete the product build, such as obtaining licenses or placing files in S3_
+Prior to deployment, you will need to fill out a web form at:  <insert url> in order to obtain a download link and a license key.  
+
+The download link is required by the installation process and you need to input the presigned URL you receive into the cloudformation template.
+
+The software license will be used in the post-install process.
