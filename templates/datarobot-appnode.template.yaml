@@ -1,12 +1,5 @@
-###########################################################################
-#  Copyright 2021 DataRobot Inc. All Rights Reserved.                     #
-#                                                                         #
-#  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES       #
-#  OR CONDITIONS OF ANY KIND, express or implied.                         #
-###########################################################################
-
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DCreate the EC2 instances for the application node. (qs-1s36qjm4c)
+Description: Create the EC2 instances for the application node. (qs-1s36qjm4c)
 Metadata:
   QSLint:
     Exclusions: [ W9002, W9003 ]
