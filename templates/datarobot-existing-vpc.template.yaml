@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Deploy DataRobot into an existing VPC. (qs-1s36qjm1l) 
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Launch into an existing VPC"
+    Order: "2"
   QSLint:
     Exclusions: [ W9002, W9003, W9006 ]
   AWS::CloudFormation::Interface:
