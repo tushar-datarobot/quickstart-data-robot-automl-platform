@@ -14,3 +14,4 @@
 |r5.xlarge instances |2
 |r5.2xlarge instances |3
 |r5.2xlarge instances |1-5 from autoscaling
+|===
