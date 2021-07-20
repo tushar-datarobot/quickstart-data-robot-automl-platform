@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Deploy IAM resources for DataRobot. (qs-1s36qjm50)
+Metadata:
+  QSLint:
+    Exclusions: [ W9002, W9003, W9006 ]
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
+
+Parameters:
+  MainStack:
+    Type: String
+    Description: Name of Main Stack
+  S3Bucket:
+    Type: String
+    Description: Datarobot bucket for storage
+  QSS3BucketName:
+    Type: String
+    Description: Name of the S3 bucket for your copy of the Quick Start assets.
+
+Resources: 
+  DataRobotIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+
+  InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref DataRobotIAMRole
+
+  RolePolicies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: DataRobotIAMPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'cloudwatch:PutMetricData'
+              - 'cloudwatch:GetMetricData'
+              - 'cloudwatch:DescribeAlarmsForMetric'
+              - 'cloudwatch:ListDashboards'
+              - 'cloudwatch:GetMetricStatistics'
+              - 'cloudwatch:GetMetricWidgetImage'
+              - 'cloudwatch:ListMetrics'
+            Resource:
+              - !Sub arn:${AWS::Partition}:cloudwatch::*:dashboard/*
+              - !Sub arn:${AWS::Partition}:cloudwatch:*:*:alarm:*
+              - '*'
+
+          #Start cloudwatch autoscaling permissions
+          - Effect: Allow
+            Action:
+            - cloudwatch:PutMetricAlarm
+            Resource:
+            - !Sub 'arn:${AWS::Partition}:ec2:*:*:instance/*'
+            - !Sub 'arn:${AWS::Partition}:cloudwatch:*:*:alarm:*'
+
+          #Permissions needed to build AMI for autoscaling from inside modelingonlynode
+          - Effect: Allow
+            Action:
+              - 'ec2:DescribeImages'
+              - 'ec2:DescribeInstances'
+              - 'ssm:DescribeParameters'
+            Resource: "*"
+
+          - Effect: Allow
+            Action:
+              - 'ec2:CreateSnapshot'
+            Resource: !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}::volume/*'
+
+          - Effect: Allow
+            Action:
+              - 'ec2:CreateImage'
+            Resource: !Sub 'arn:${AWS::Partition}:ec2:*:*:*'
+
+          - Effect: Allow
+            Action:
+              - 's3:ListAllMyBuckets'
+            Resource:
+              - '*'
+
+          - Effect: Allow
+            Action:
+              - 's3:PutObject'
+              - 's3:ListBucketMultipartUploads'
+              - 's3:AbortMultipartUpload'
+              - 's3:ListBucketVersions'
+              - 's3:ListBucket'
+              - 's3:DeleteObject'
+              - 's3:GetBucketLocation'
+              - 's3:Get*'
+              - 's3:ReplicateDelete'
+              - 's3:ListMultipartUploadParts'
+              - 'ssm:PutParameter'
+              - 'ssm:GetParameter'
+              - 'ssm:DeleteParameter'
+              - 'ssm:DescribeParameters'
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-public-key'
+              - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/*/datarobot-ami-key'
+              - !Sub 'arn:${AWS::Partition}:ssm:*:*:parameter/drami'
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
+              - !Sub 'arn:${AWS::Partition}:s3:::${QSS3BucketName}'
+              - !Sub 'arn:${AWS::Partition}:s3:::${QSS3BucketName}/*'
+           
+          - Effect: Allow
+            Action:
+              - 'ec2:CreateTags'
+            Resource:
+              - !Sub arn:${AWS::Partition}:ec2:*:*:volume/*
+
+      Roles:
+        - !Ref DataRobotIAMRole      
+
+
+Outputs:
+  EC2InstanceSecurityProfile:
+    Description: SecurityGroup settings when using an S3 Bucket
+    Value: 
+      Ref: InstanceProfile
+    Export:
+      Name: !Sub '${MainStack}-EC2InstanceSecurityProfile' 
+  EC2InstanceSecurityProfileARN:
+    Description: SecurityGroup settings when using an S3 Bucket
+    Value: !GetAtt InstanceProfile.Arn
+    Export:
+      Name: !Sub '${MainStack}-EC2InstanceSecurityProfileARN'  

@@ -1,0 +1,39 @@
+project:
+  name: quickstart-data-robot-automl-platform
+  owner: quickstart-eng@amazon.com
+  s3_regional_buckets: true
+  shorten_stack_name: true
+  regions:
+    # - ap-northeast-1
+    # - ap-northeast-2
+    # - ap-south-1
+    # - ap-southeast-1
+    # - ap-southeast-2
+    # - eu-central-1
+    # - eu-north-1
+    # - eu-west-2
+    # - eu-west-3
+    # - sa-east-1
+    # - us-east-1
+    # - us-east-2
+    # - us-west-1
+    - us-west-2
+    # - ca-central-1
+tests:
+  default:
+   template: ./templates/datarobot-new-vpc-entry.template.yaml
+   parameters:
+     AvailabilityZones: $[taskcat_genaz_2]
+     DRHTTPSetting: 'HTTP'
+    #  DRAppName: '' # HTTPS only
+    #  DRPredName: '' # HTTPS only
+    #  DRZone: '' # HTTPS only
+    #  DRS3InstallationBucket: ''
+     DRS3CreateBucket: "True"
+     DRSignedURL: 'override'
+     DRLbCidr: "10.0.0.0/0"
+     RemoteAccessCIDR: "10.0.0.0/0"
+     KeyPairName: $[taskcat_getkeypair]
+     QSS3KeyPrefix: "quickstart-data-robot-automl-platform/"
+     QSS3BucketName: $[taskcat_autobucket]
+     QSS3BucketRegion: $[taskcat_current_region]
