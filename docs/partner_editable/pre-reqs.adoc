@@ -2,8 +2,4 @@
 
 ==== Prepare for the deployment
 
-Prior to deployment, you will need to fill out a web form at:  <insert url> in order to obtain a download link and a license key.  
-
-The download link is required by the installation process and you need to input the presigned URL you receive into the cloudformation template.
-
-The software license will be used in the post-install process.
+Prior to deployment, you will need to request a licence and download URL. Please see the link:#_software_licenses[Software licenses] section for more information.
