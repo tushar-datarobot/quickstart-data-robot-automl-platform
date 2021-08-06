@@ -1,15 +1,15 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Deploy DataRobot into an existing VPC. (qs-1s36qjm1l) 
+Description: Parameters for deploying DataRobot into an existing VPC. (qs-1s36qjm1l) 
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Launch into an existing VPC"
+    EntrypointName: "Parameters for launching into an existing VPC"
     Order: "2"
   QSLint:
     Exclusions: [ W9002, W9003, W9006 ]
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: Network / Install Configurations
+          default: Network and installation configurations
         Parameters:
           - VPCID
           - VPCCIDR
@@ -18,17 +18,17 @@ Metadata:
           - PublicSubnet1ID
           - PublicSubnet2ID
       - Label:
-          default: Security Configuration
+          default: Security configuration
         Parameters:
           - KeyPairName
       - Label:
-          default: DataRobot Install Parameters
+          default: DataRobot installation configuration
         Parameters:
           - DRS3InstallationBucket
           - DRS3CreateBucket
           - DRSignedURL
       - Label:
-          default: DataRobot Front End Load Balancer Settings
+          default: DataRobot front-end Application Load Balancer settings
         Parameters:
           - DRHTTPSetting
           - DRZone
@@ -36,24 +36,24 @@ Metadata:
           - DRPredName
           - DRLbCidr
       - Label:
-          default: AWS Quick Start Configuration
+          default: AWS Quick Start configuration
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
           - QSS3BucketRegion
     ParameterLabels:
       DRSignedURL:
-        default: Signed URL Provided from the email sent to you by DataRobot
+        default: Signed URL provided by DataRobot
       DRHTTPSetting:
-        default: Select HTTPS for secure access, HTTP for port 80 insecure access for web layers
+        default: HTTP security settings 
       DRZone:
-        Default: 'Required for HTTPS - Enter your domain zone you want to use: e.g. example.com '
+        Default: 'Your domain name (required for HTTPS)'
       DRAppName:
-        default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+        default: Domain name for end-user application server (required for HTTPS) 
       DRPredName:
-        default: Required if HTTPS - Please enter the domain name you want to use for the prediction servers
+        default: Domain name for the prediction servers (required for HTTPS) 
       DRLbCidr:
-        default: Required - Provide a Cidr range you want to be allowed for the front end application and prediction service
+        default: Allowed CIDR range for the front-end application and prediction service
       PublicSubnet1ID:
         default: Public subnet 1 ID
       PublicSubnet2ID:
@@ -63,9 +63,9 @@ Metadata:
       PrivateSubnet2ID:
         default: Private subnet 2 ID
       DRS3InstallationBucket:
-        default: Bucket Name for DR Install S3 Bucket
+        default: Bucket name for DataRobot installation S3 bucket
       DRS3CreateBucket:
-        default: Should Quickstart Create the bucket (select false if it already exists)
+        default: Do you want the Quick Start to create the bucket? 
       VPCID:
         default: VPC ID  
       VPCCIDR:
@@ -96,45 +96,44 @@ Parameters:
     Description: ID of your existing VPC (e.g., vpc-0343606e).
   VPCCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28.
     Description: CIDR block for the VPC.
     Type: String
   KeyPairName:
     Description: Name of an existing public/private key pair. If you do not have one in this AWS Region,
-      please create it before continuing.
+      create it before continuing.
     Type: 'AWS::EC2::KeyPair::KeyName'
   DRHTTPSetting:
     AllowedValues:
       - 'HTTPS'
       - 'HTTP'
     Default: 'HTTPS'
-    Description: Select HTTPS for secured access with certificate, or (not recommended) http for insecure port 80 access
+    Description: Select HTTPS for secured access with certificate, or HTTP (not recommended) for insecure port 80 access.
     Type: String
   DRZone:
-    Description: Required if HTTPS - Enter a DNS zone you control, with a trailing '.' Example - example.com.
+    Description: (Required for HTTPS) Enter a DNS zone that you control with a trailing '.' (for example, example.com.).
     Type: String
     Default: ''
   DRAppName:
-    Description: Required if HTTPS - Please enter the domain name you want to use for the end user application server. Example - datarobot.example.com
+    Description: (Required for HTTPS) Enter the domain name you want to use for the end-user application server (for example, datarobot.example.com).
     Type: String
     Default: ''
   DRPredName:
-    Description: Required if HTTPS - Please enter the domain name you want to use for the prediction servers. Example - prediction.example.com
+    Description: (Required for HTTPS) Enter the domain name you want to use for the prediction servers (for example, prediction.example.com).
     Type: String
     Default: ''
   DRS3InstallationBucket:
     Default: ''
     Description:
-      Name of the S3 bucket you want to use for uploaded data and to store configuration. It should not be public
-      and the account you are running the quickstart will need the ability to assign
-      permissions for access to a role for EC2 instances.
+      Name of the non-public S3 bucket you want to use to upload data and store configuration. The account used for the Quick Start must be able to assign
+      permissions for accessing a role for the EC2 instances.
     Type: String
   DRS3CreateBucket:
     Default: "False"
     AllowedValues:
       - "False"
       - "True"
-    Description: Choose True if you did not already create a bucket and want it to be created by the quickstart
+    Description: Choose True if you don't already have an S3 bucket and want the Quick Start to create one for you. 
     Type: String
   DRVersion:
     Type: String
@@ -144,11 +143,11 @@ Parameters:
     Default: 7.1.1
   DRSignedURL:
     Type: String
-    Description: Presigned URL to download software, must be sent by DataRobot
+    Description: Presigned URL sent by DataRobot to download software.
   DRLbCidr:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]{1}|[1-2][0-8]{2}))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/0-28
-    Description: CIDR block to allow access to front end application and prediction services
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/0-28.
+    Description: CIDR block to allow access to front-end application and prediction services.
     Type: String
   QSS3BucketName:
     AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
@@ -899,10 +898,10 @@ Resources:
 
 Outputs:
   MainTemplate:
-    Description: Main Template Complete
+    Description: Main template complete
     Value: MainTemplate
   AppLoadBalancerURL:
-    Description: "URL of the application load balancer - use this to access the app"
+    Description: "URL of the application load balancer. Use this URL to access the application."
     Value: !GetAtt AppLoadBalancer.DNSName
   AdminPasswordSecretName:
     Description: "The name of the secret that holds the password for localadmin@datarobot.com"

@@ -4,7 +4,7 @@
 == Post-deployment steps
 // If post-deployment steps are required, add them here. If not, remove the heading
 
-Login to the application by targeting your hostname you provided for the application server (or the AWS generated DNS name for the port 80 front end load balancer if you chose an insecure installation)
+Log in to the application by targeting your host name you provided for the application server (or the AWS generated DNS name for the port 80 front end load balancer if you chose an insecure installation)
 These can be found in the Outputs tab in the CloudFormation console.
 
 The initial admin username is: localadmin@datarobot.com
