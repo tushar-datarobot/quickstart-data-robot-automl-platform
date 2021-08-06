@@ -59,7 +59,7 @@ Metadata:
       DRHTTPSetting:
         default: HTTP security settings
       DRZone:
-        Default: Your domain name (required for HTTPS)
+        default: Your domain name (required for HTTPS)
       DRAppName:
         default: Domain name for end-user application server (required for HTTPS)
       DRPredName:
