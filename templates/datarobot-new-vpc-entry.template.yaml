@@ -59,11 +59,15 @@ Metadata:
       DRHTTPSetting:
         default: HTTP security settings
       DRZone:
-        Default: 'Your domain name (required for HTTPS)'
+        Default: Your domain name (required for HTTPS)
       DRAppName:
         default: Domain name for end-user application server (required for HTTPS)
       DRPredName:
         default: Domain name for the prediction servers (required for HTTPS)
+      DRS3InstallationBucket:
+        default: DataRobot S3 bucket
+      DRS3CreateBucket:
+        default: Create a new S3 bucket?
       DRSignedURL:
         default: Signed URL provided by DataRobot
       DRLbCidr:
