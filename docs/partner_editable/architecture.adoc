@@ -8,7 +8,7 @@ AWS Cloud.
 
 [#architecture1]
 .Quick Start architecture for {partner-product-short-name} on AWS
-image::../images/architecture_diagram.png[Architecture]
+image::../images/data-robot-architecture-diagram.png[Architecture]
 
 As shown in <<architecture1>>, the Quick Start sets up the following:
 
@@ -19,20 +19,19 @@ best practices, to provide you with your own virtual network on AWS.*
 ** Managed network address translation (NAT) gateways to allow outbound
 internet access for resources in the private subnets.*
 ** A Linux bastion host in an Auto Scaling group to allow inbound Secure
-Shell (SSH) access to EC2 instances in public and private subnets.*
-** An application load balancer to front end the application server
-** An application load balancer to front end the dedicated prediction servers
-* In the private subnets:
-** EC2 Instances for:
-*** Application Node
-*** HA Pair of Exploratory Data Analysis Nodes
-*** HA (3 nodes) Data Backend running Mongo and Redis
-*** HA Pair of Prediction Nodes (For running model predictions real-time/batch loads)
-*** Autoscaling (1 to 5 nodes) of worker nodes for machine learning
-** Cloudwatch alarms for autoscaling based on load
-** Non-public S3 Bucket for data storage and ingest operations
-** HTTPS Option: Certificates in AWS Certificate Manager for Application Load Balancers
-** HTTPS Option: Route53 Zone records if applicable
+Shell (SSH) access to Elastic Compute Cloud (Amazon EC2) instances in public and private subnets.*
+** An Application Load Balancer to serve as the front end for the application server.
+** An Application Load Balancer to serve as the front end for the dedicated prediction servers.
+* In the private subnets. EC2 instances for:
+** The application node.
+** Pair of high availability (HA) exploratory data analysis nodes.
+** Three HA data back-end nodes running Mongo and Redis.
+** Pair of HA prediction nodes for running model predictions in real-time/batch loads.
+** Auto Scaling of 1-5 worker nodes for machine learning.
+** Amazon CloudWatch alarms for auto scaling based on load.
+** Non-public Amazon Simple Storage Service (Amazon S3) bucket for data storage and ingest operations.
+** (HTTPS option) Certificates in AWS Certificate Manager for Application Load Balancers.
+** (HTTPS option) Amazon Route 53 zone records, if applicable.
 // Add bullet points for any additional components that are included in the deployment. Make sure that the additional components are also represented in the architecture diagram. End each bullet with a period.
 
 

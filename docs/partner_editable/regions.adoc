@@ -13,6 +13,6 @@ Europe (Paris)	eu-west-3
 Europe (Stockholm)	eu-north-1
 South America (São Paulo)	sa-east-1
 
-Please reach out to sales@datarobot.com if you have a need to deploy in another region.
+Reach out to sales@datarobot.com if you need to deploy in another Region.
 
 //Full list: https://docs.aws.amazon.com/general/latest/gr/rande.html
