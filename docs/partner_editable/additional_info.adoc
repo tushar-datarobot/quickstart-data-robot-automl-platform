@@ -1,0 +1,36 @@
+// Add steps as necessary for accessing the software, post-configuration, and testing. Don’t include full usage instructions for your software, but add links to your product documentation for that information.
+//Should any sections not be applicable, remove them
+
+== Post-deployment steps
+// If post-deployment steps are required, add them here. If not, remove the heading
+
+Log in to the application by targeting your host name you provided for the application server (or the AWS generated DNS name for the port 80 front end load balancer if you chose an insecure installation)
+These can be found in the Outputs tab in the CloudFormation console.
+
+The initial admin username is: localadmin@datarobot.com
+The password can be found in the account used to install the Quick Start, inside secrets manager.
+
+When you have logged in, choose the menu in the upper right hand corner to find the drop down which will allow you to insert the license key you received from DataRobot.
+
+== Best practices for using {partner-product-short-name} on AWS
+// Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
+
+Do not use or share the localadmin@datarobot.com, use it to create separate accounts for each user and assign appropriate permissions by role.
+
+Keep training data relatively small. Often there are very small incremental gains by increasing the size of training data.
+A helpful quickstart Guide can be found here: https://api-docs.datarobot.com/docs/quickstart-guide 
+It has helpful tutorial and will provide a basic introduction to the DataRobot Platform.
+
+
+== Security
+// Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
+
+Do not use or share the localadmin@datarobot.com, use it to create separate accounts for each user and assign appropriate permissions by role.
+If you initially chose an HTTP installation, we highly recommend that you edit the front end load balancers to change the listeners to port 443 and add certificates you control to secure the installation.
+The installation leverages your default EBS encryption key for the region into which it was installed. Rotate this key to a different key if your security policies require it.
+The base install creates a crontab entry to dump the data into a backups directory on the S3 bucket at midnight. We recommend changing this to your backup and retention processes/policies.
+
+== Other useful information
+//Provide any other information of interest to users, especially focusing on areas where AWS or cloud usage differs from on-premises usage.
+
+This install is setup to autoscale to 10 workers. If you find that is insufficient for training models in a timely manner, reach out to sales@datarobot.com to obtain additional capacity and customer-facing data scientist support for a larger proof of concept effort.

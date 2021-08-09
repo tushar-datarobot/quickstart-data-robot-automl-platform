@@ -1,0 +1,5 @@
+// If no preperation is required, remove all content from here
+
+==== Prepare for the deployment
+
+Prior to deployment, request a license and download URL. See the link:#_software_licenses[Software licenses] section for more information.

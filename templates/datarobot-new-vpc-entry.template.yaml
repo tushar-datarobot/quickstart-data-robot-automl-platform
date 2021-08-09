@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Deploy DataRobot into a new VPC (qs-1s36qjm45).
+Description: Parameters for deploy DataRobot into a new VPC (qs-1s36qjm45).
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Parameters for launching into a new VPC"
+    Order: "1"
   QSLint:
     Exclusions: [ W9002, W9003, W9006 ]
   cfn-lint:
@@ -27,13 +30,13 @@ Metadata:
       - BastionAMIOS
       - BastionInstanceType
     - Label:
-        default: DataRobot Install Parameters
+        default: DataRobot installation parameters
       Parameters:
         - DRS3InstallationBucket
         - DRS3CreateBucket
         - DRSignedURL
     - Label:
-        default: DataRobot Front End Load Balancer Settings
+        default: DataRobot front-end Application Load Balancer settings
       Parameters:
         - DRHTTPSetting
         - DRZone
@@ -54,17 +57,21 @@ Metadata:
       BastionInstanceType:
         default: Bastion instance type
       DRHTTPSetting:
-        default: Select HTTPS for secure access, HTTP for port 80 insecure access for web layers
+        default: HTTP security settings
       DRZone:
-        Default: 'Required for HTTPS - Enter your domain zone you want to use: e.g. example.com '
+        default: Your domain name (required for HTTPS)
       DRAppName:
-        default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+        default: Domain name for end-user application server (required for HTTPS)
       DRPredName:
-        default: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+        default: Domain name for the prediction servers (required for HTTPS)
+      DRS3InstallationBucket:
+        default: DataRobot S3 bucket
+      DRS3CreateBucket:
+        default: Create a new S3 bucket?
       DRSignedURL:
-        default: Signed URL Provided from the email sent to you by DataRobot
+        default: Signed URL provided by DataRobot
       DRLbCidr:
-        default: Required - Provide a Cidr range you want to be allowed for the front end application and prediction service
+        default: Allowed CIDR range for the front-end application and prediction service
       KeyPairName:
         default: Key pair name
       PrivateSubnet1CIDR:
@@ -80,7 +87,7 @@ Metadata:
       QSS3BucketRegion:
         default: Quick Start S3 bucket region
       QSS3KeyPrefix:
-        default: Quick Start S3 Key Prefix
+        default: Quick Start S3 key prefix
       RemoteAccessCIDR:
         default: Allowed bastion external access CIDR
       VPCCIDR:
@@ -122,82 +129,84 @@ Parameters:
       - 'HTTPS'
       - 'HTTP'
     Default: 'HTTPS'
-    Description: Select HTTPS for secured access with certificate, or (not recommended) http for insecure port 80 access
+    Description: Select HTTPS for secured access with certificate, or HTTP (not recommended) for insecure port 80 access.
     Type: String
   DRZone:
-    Description: Required if HTTPS - Enter a DNS zone you control with a trailing '.' Example - example.com.
+    Description: (Required for HTTPS) Enter a DNS zone that you control with a trailing '.' (for example, example.com.).
     Type: String
     Default: ''
   DRAppName:
-    Description: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+    Description: (Required for HTTPS) Enter the domain name you want to use for the end-user application server (for example, datarobot.example.com).
     Type: String
     Default: ''
   DRPredName:
-    Description: Required if HTTPS - Please enter the domain name you want to use for the end user application server
+    Description: (Required for HTTPS) Enter the domain name you want to use for the prediction servers (for example, prediction.example.com).
     Type: String
     Default: ''
   DRS3InstallationBucket:
     Default: ''
     Description:
-      Name of the S3 bucket you want to use for uploaded data and to store configuration. It should not be public
-      and the account you are running the quickstart will need the ability to assign
-      permissions for access to a role for EC2 instances.
+      Name of the non-public S3 bucket you want to use to upload data and store configuration. The account used for the Quick Start must be able to assign
+      permissions for accessing a role for the EC2 instances.
     Type: String
   DRS3CreateBucket:
     Default: "False"
     AllowedValues:
       - "False"
       - "True"
-    Description: Choose True if you did not already create a bucket and want it to be created by the quickstart
+    Description: Choose True if you don't already have an S3 bucket and want the Quick Start to create one for you.
     Type: String
   DRSignedURL:
-    Default: "Get URL From DataRobot Request Form"
+    Default: "Get URL From DataRobot request form"
     Type: String
-    Description: Presigned URL to download software, must be sent by DataRobot
+    Description: Presigned URL sent by DataRobot to download software.
   DRLbCidr:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]{1}|[1-2][0-8]{2}))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/0-28
-    Description: CIDR block to allow access to front end application and prediction services
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/0-28.
+    Description: CIDR block to allow access to front-end application and prediction services.
     Type: String
   KeyPairName:
-    Description: Name of an existing public/private key pair, which allows you
+    Description: Name of an existing public/private key pair that allows you
       to securely connect to your instance after it launches.
     Type: AWS::EC2::KeyPair::KeyName
   PrivateSubnet1CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28.
     Default: 10.1.0.0/19
     Description: CIDR block for private subnet 1 located in Availability Zone 1.
     Type: String
   PrivateSubnet2CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28.
     Default: 10.1.32.0/19
     Description: CIDR block for private subnet 2 located in Availability Zone 2.
     Type: String
   PublicSubnet1CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28.
     Default: 10.1.128.0/20
     Description: CIDR block for the public (DMZ) subnet 1 located in Availability
       Zone 1.
     Type: String
   PublicSubnet2CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28.
     Default: 10.1.144.0/20
     Description: CIDR block for the public (DMZ) subnet 2 located in Availability
       Zone 2.
     Type: String
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
-    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
-      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
-      (-).
+    ConstraintDescription: The Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a 
+      hyphen (-).
     Default: aws-quickstart
-    Description: S3 bucket name for the Quick Start assets. This string can include
-      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
-      or end with a hyphen (-).
+    Description: Name of the S3 bucket for your copy of the Quick Start assets. 
+      Keep the default name unless you are customizing the template. 
+      Changing the name updates code references to point to a new Quick 
+      Start location. This name can include numbers, lowercase letters, 
+      uppercase letters, and hyphens, but do not start or end with a hyphen (-). 
+      See https://aws-quickstart.github.io/option1.html.
     Type: String
   QSS3BucketRegion:
     Default: 'us-east-1'
@@ -205,22 +214,26 @@ Parameters:
     Type: String
   QSS3KeyPrefix:
     AllowedPattern: ^[0-9a-zA-Z-/]*$
-    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), and forward slash (/).
+    ConstraintDescription: The Quick Start S3 key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slashes (/). The prefix should
+      end with a forward slash (/).
     Default: quickstart-data-robot-automl-platform/
-    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
-      can include numbers, lowercase letters, uppercase letters, hyphens (-), and
-      forward slash (/).
+    Description: S3 key prefix that is used to simulate a directory for your copy of the 
+      Quick Start assets. Keep the default prefix unless you are customizing 
+      the template. Changing this prefix updates code references to point to 
+      a new Quick Start location. This prefix can include numbers, lowercase 
+      letters, uppercase letters, hyphens (-), and forward slashes (/). End with 
+      a forward slash. See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html 
+      and https://aws-quickstart.github.io/option1.html.
     Type: String
   RemoteAccessCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
-    Description: CIDR IP range that is permitted to access the bastions. We recommend
-      that you set this value to a trusted IP range.
+    Description: CIDR IP range that is permitted to access the bastions. Set this value to a trusted IP range.
     Type: String
   VPCCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28.
     Default: 10.1.0.0/16
     Description: CIDR block for the VPC.
     Type: String
@@ -345,7 +358,7 @@ Resources:
 
 Outputs:
   AppLoadBalancerURL:
-    Description: "URL of the application load balancer - use this to access the app"
+    Description: "URL of the Application Load Balancer for accessing the application."
     Value: !GetAtt 'DataRobotStack.Outputs.AppLoadBalancerURL'
   AdminPasswordSecretName:
     Description: "The name of the secret that holds the password for localadmin@datarobot.com"

@@ -1,0 +1,7 @@
+// Replace the content in <>
+// Briefly describe the software. Use consistent and clear branding. 
+// Include the benefits of using the software on AWS, and provide details on usage scenarios.
+
+{partner-product-short-name} accelerates your AI success by putting the power of cutting-edge machine learning technology into the hands of the team you already have in place. The platform incorporates the knowledge, experience, and best practices of the world's leading data scientists to deliver unmatched levels of automation, accuracy, and transparency to help your business transform into an AI-driven enterprise.
+
+Use this Quick Start to deploy {partner-product-short-name} software (also available as a SaaS model hosted on AWS) into your own account and VPC. AWS gives you flexibility to deploy to one or more global Regions and a high-availability environment backed by AWS's architecture and well-defined shared-responsibility model for security. 

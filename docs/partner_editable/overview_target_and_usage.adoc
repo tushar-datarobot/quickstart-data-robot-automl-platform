@@ -1,0 +1,9 @@
+// Replace the content in <>
+// Identify your target audience and explain how/why they would use this Quick Start.
+//Avoid borrowing text from third-party websites (copying text from AWS service documentation is fine). Also, avoid marketing-speak, focusing instead on the technical aspect.
+
+This guide provides instructions for deploying the {partner-product-short-name} Quick Start reference architecture on the AWS Cloud.
+
+This Quick Start is for users who want to install {partner-product-short-name} to create training models, perform automatic discovery of features, build simple applications, and make predictions in real-time/batch at a limited scale. 
+
+For larger-scale implementations, reach out to {partner-product-short-name} sales at sales@datarobot.com to discuss proof-of-concept options and software features.
