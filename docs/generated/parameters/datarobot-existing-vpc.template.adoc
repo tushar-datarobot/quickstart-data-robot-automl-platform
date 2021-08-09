@@ -1,0 +1,44 @@
+
+.Network and installation configurations
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|VPC ID
+(`VPCID`)|`**__Requires input__**`|ID of your existing VPC (e.g., vpc-0343606e).|VPC CIDR
+(`VPCCIDR`)|`**__Requires input__**`|CIDR block for the VPC.|Private subnet 1 ID
+(`PrivateSubnet1ID`)|`**__Requires input__**`|ID of the private subnet in Availability Zone 1 of your existing VPC (e.g., subnet-fe9a8b32).|Private subnet 2 ID
+(`PrivateSubnet2ID`)|`**__Requires input__**`|ID of the private subnet in Availability Zone 2 of your existing VPC (e.g., subnet-be8b01ea).|Public subnet 1 ID
+(`PublicSubnet1ID`)|`**__Requires input__**`|ID of the public subnet in Availability Zone 1 of your existing VPC (e.g., subnet-a0246dcd).|Public subnet 2 ID
+(`PublicSubnet2ID`)|`**__Requires input__**`|ID of the public subnet in Availability Zone 2 of your existing VPC (e.g., subnet-b1236eea).
+|===
+.Security configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Key pair name
+(`KeyPairName`)|`**__Requires input__**`|Name of an existing public/private key pair. If you do not have one in this AWS Region, create it before continuing.
+|===
+.DataRobot installation configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Bucket name for DataRobot installation S3 bucket
+(`DRS3InstallationBucket`)|`**__Blank string__**`|Name of the non-public S3 bucket you want to use to upload data and store configuration. The account used for the Quick Start must be able to assign permissions for accessing a role for the EC2 instances.|Do you want the Quick Start to create the bucket?
+(`DRS3CreateBucket`)|`False`|Choose True if you don't already have an S3 bucket and want the Quick Start to create one for you.|Signed URL provided by DataRobot
+(`DRSignedURL`)|`**__Requires input__**`|Presigned URL sent by DataRobot to download software.
+|===
+.DataRobot front-end Application Load Balancer settings
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|HTTP security settings
+(`DRHTTPSetting`)|`HTTPS`|Select HTTPS for secured access with certificate, or HTTP (not recommended) for insecure port 80 access.|Your domain name (required for HTTPS)
+(`DRZone`)|`**__Blank string__**`|(Required for HTTPS) Enter a DNS zone that you control with a trailing '.' (for example, example.com.).|Domain name for end-user application server (required for HTTPS)
+(`DRAppName`)|`**__Blank string__**`|(Required for HTTPS) Enter the domain name you want to use for the end-user application server (for example, datarobot.example.com).|Domain name for the prediction servers (required for HTTPS)
+(`DRPredName`)|`**__Blank string__**`|(Required for HTTPS) Enter the domain name you want to use for the prediction servers (for example, prediction.example.com).|Allowed CIDR range for the front-end application and prediction service
+(`DRLbCidr`)|`**__Requires input__**`|CIDR block to allow access to front-end application and prediction services.
+|===
+.AWS Quick Start configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Quick Start S3 bucket name
+(`QSS3BucketName`)|`aws-quickstart`|Name of the S3 bucket for your copy of the Quick Start assets. Keep the default name unless you are customizing the template. Changing the name updates code references to point to a new Quick Start location. This name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-). See https://aws-quickstart.github.io/option1.html.|Quick Start S3 key prefix
+(`QSS3KeyPrefix`)|`quickstart-data-robot-automl-platform/`|S3 key prefix that is used to simulate a directory for your copy of the Quick Start assets. Keep the default prefix unless you are customizing the template. Changing this prefix updates code references to point to a new Quick Start location. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). End with a forward slash. See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html and https://aws-quickstart.github.io/option1.html.|Quick Start S3 bucket Region
+(`QSS3BucketRegion`)|`us-east-1`|AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. Keep the default Region unless you are customizing the template. Changing this Region updates code references to point to a new Quick Start location. When using your own bucket, specify the Region. See https://aws-quickstart.github.io/option1.html.
+|===
