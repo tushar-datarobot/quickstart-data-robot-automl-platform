@@ -6,4 +6,4 @@ This guide provides instructions for deploying the {partner-product-short-name} 
 
 This Quick Start is for users who want to install {partner-product-short-name} to create training models, perform automatic discovery of features, build simple applications, and make predictions in real-time or batch loads at a limited scale. 
 
-For larger-scale implementations, reach out to {partner-product-short-name} sales at sales@datarobot.com to discuss proof-of-concept options and software features.
+For larger-scale implementations, contact the {partner-product-short-name} sales team at sales@datarobot.com to discuss proof-of-concept options and software features.

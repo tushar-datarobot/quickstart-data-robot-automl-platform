@@ -2,4 +2,4 @@
 
 ==== Prepare for the deployment
 
-Prior to deployment, request a license and download URL. See the link:#_software_licenses[Software licenses] section for more information.
+Before deployment, request a license and download URL. See the link:#_software_licenses[Software licenses] section for more information.
