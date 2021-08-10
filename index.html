@@ -905,7 +905,7 @@ report bugs, or submit feature ideas for this Quick Start.
 <p>This Quick Start is for users who want to install DataRobot AutoML 7.1 to create training models, perform automatic discovery of features, build simple applications, and make predictions in real-time or batch loads at a limited scale.</p>
 </div>
 <div class="paragraph">
-<p>For larger-scale implementations, reach out to DataRobot AutoML 7.1 sales at <a href="mailto:sales@datarobot.com">sales@datarobot.com</a> to discuss proof-of-concept options and software features.</p>
+<p>For larger-scale implementations, contact the DataRobot AutoML 7.1 sales team at <a href="mailto:sales@datarobot.com">sales@datarobot.com</a> to discuss proof-of-concept options and software features.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -928,7 +928,7 @@ Amazon may share user-deployment information with the AWS Partner that collabora
 <p>DataRobot AutoML 7.1 accelerates your AI success by putting the power of cutting-edge machine learning technology into the hands of the team you already have in place. The platform incorporates the knowledge, experience, and best practices of the world&#8217;s leading data scientists to deliver unmatched levels of automation, accuracy, and transparency to help your business transform into an AI-driven enterprise.</p>
 </div>
 <div class="paragraph">
-<p>Use this Quick Start to deploy DataRobot AutoML 7.1 software (also available as a SaaS model hosted on AWS) into your own account and VPC. AWS gives you flexibility to deploy to one or more global Regions and a high-availability environment backed by AWS&#8217;s architecture and well-defined shared-responsibility model for security.</p>
+<p>Use this Quick Start to deploy DataRobot AutoML 7.1 software (also available as a SaaS model hosted on AWS) into your own account and VPC. AWS gives you flexibility to deploy to one or more global AWS Regions and a high availability environment backed by the AWS architecture and well-defined shared responsibility model for security.</p>
 </div>
 </div>
 </div>
@@ -1037,7 +1037,7 @@ Shell (SSH) access to Amazon Elastic Compute Cloud (Amazon EC2) instances in pub
 </div>
 </li>
 <li>
-<p>Amazon CloudWatch alarms for Auto Scaling based on load.</p>
+<p>Amazon CloudWatch alarms for auto scaling based on load.</p>
 </li>
 <li>
 <p>(HTTPS option) Amazon Route 53 zone records, if applicable.</p>
@@ -1201,7 +1201,7 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <div class="sect3">
 <h4 id="_prepare_for_the_deployment">Prepare for the deployment</h4>
 <div class="paragraph">
-<p>Prior to deployment, request a license and download URL. See the <a href="#_software_licenses">Software licenses</a> section for more information.</p>
+<p>Before deployment, request a license and download URL. See the <a href="#_software_licenses">Software licenses</a> section for more information.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1313,15 +1313,13 @@ If you’re deploying DataRobot AutoML 7.1 into an existing VPC, make sure that 
 <h2 id="_post_deployment_steps">Post-deployment steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Log in to the application by targeting your host name you provided for the application server (or the AWS generated DNS name for the port 80 front end load balancer if you chose an insecure installation)
-These can be found in the Outputs tab in the CloudFormation console.</p>
+<p>In the CloudFormation console,, locate the values in the <strong>Outputs</strong> tab. Then log in to the application by targeting the hostname you provided for the application server (or the AWS-generated DNS name for the port 80 front-end load Application Load Balancer, if you chose an insecure installation).</p>
 </div>
 <div class="paragraph">
-<p>The initial admin username is: <a href="mailto:localadmin@datarobot.com">localadmin@datarobot.com</a>
-The password can be found in the account used to install the Quick Start, inside secrets manager.</p>
+<p>The initial admininstrator user name is <a href="mailto:localadmin@datarobot.com">localadmin@datarobot.com</a>. The password is located in AWS Secrets Manager in the account you used to install the Quick Start.</p>
 </div>
 <div class="paragraph">
-<p>When you have logged in, choose the menu in the upper right hand corner to find the drop down which will allow you to insert the license key you received from DataRobot.</p>
+<p>After logging in, open the menu in the upper-right corner of the window to find the option for inserting the license key you received from DataRobot.</p>
 </div>
 </div>
 </div>
@@ -1329,12 +1327,7 @@ The password can be found in the account used to install the Quick Start, inside
 <h2 id="_best_practices_for_using_datarobot_automl_7_1_on_aws">Best practices for using DataRobot AutoML 7.1 on AWS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Do not use or share the <a href="mailto:localadmin@datarobot.com">localadmin@datarobot.com</a>, use it to create separate accounts for each user and assign appropriate permissions by role.</p>
-</div>
-<div class="paragraph">
-<p>Keep training data relatively small. Often there are very small incremental gains by increasing the size of training data.
-A helpful quickstart Guide can be found here: <a href="https://api-docs.datarobot.com/docs/quickstart-guide" class="bare">https://api-docs.datarobot.com/docs/quickstart-guide</a>
-It has helpful tutorial and will provide a basic introduction to the DataRobot Platform.</p>
+<p>Keep training data relatively small to avoid incurring incremental costs. For more information, including a tutorial and an instroduction to DataRobot, see the <a href="https://api-docs.datarobot.com/docs/quickstart-guide">DataRobot Quickstart Guide</a>.</p>
 </div>
 </div>
 </div>
@@ -1342,10 +1335,12 @@ It has helpful tutorial and will provide a basic introduction to the DataRobot P
 <h2 id="_security">Security</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Do not use or share the <a href="mailto:localadmin@datarobot.com">localadmin@datarobot.com</a>, use it to create separate accounts for each user and assign appropriate permissions by role.
-If you initially chose an HTTP installation, we highly recommend that you edit the front end load balancers to change the listeners to port 443 and add certificates you control to secure the installation.
-The installation leverages your default EBS encryption key for the region into which it was installed. Rotate this key to a different key if your security policies require it.
-The base install creates a crontab entry to dump the data into a backups directory on the S3 bucket at midnight. We recommend changing this to your backup and retention processes/policies.</p>
+<p>Do not use or share the <a href="mailto:localadmin@datarobot.com">localadmin@datarobot.com</a> user name. Only use it to create separate accounts for each user and then assign the appropriate permissions by role.</p>
+</div>
+<div class="paragraph">
+<p>If you initially chose an HTTP installation, edit the front-end Application Load Balancers by changing the listeners to port 443 and adding the certificates you control to secure the installation.
+The installation uses your default Amazon Elastic Block Store (Amazon EBS) encryption key for the installation Region. Use a different key if your security policies require it.
+The base installation creates a crontab entry to dump data into a backup directory on the S3 bucket at midnight. Change this S3 bucket to be your backup directory for data and retention processes and policies.</p>
 </div>
 </div>
 </div>
@@ -1353,7 +1348,7 @@ The base install creates a crontab entry to dump the data into a backups directo
 <h2 id="_other_useful_information">Other useful information</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This install is setup to autoscale to 10 workers. If you find that is insufficient for training models in a timely manner, reach out to <a href="mailto:sales@datarobot.com">sales@datarobot.com</a> to obtain additional capacity and customer-facing data scientist support for a larger proof of concept effort.</p>
+<p>The installation is designed to auto scale to 10 workers. If you need more than 10 for your training models, contact <a href="mailto:sales@datarobot.com">sales@datarobot.com</a> to request support and additional capacity.</p>
 </div>
 </div>
 </div>
@@ -1393,7 +1388,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 <h2 id="_troubleshooting">Troubleshooting</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For troubleshooting, reach out to the DataRobot support team at <a href="mailto:aws-quickstart@datarobot.com">aws-quickstart@datarobot.com</a>.</p>
+<p>For troubleshooting, contact the DataRobot support team at <a href="mailto:aws-quickstart@datarobot.com">aws-quickstart@datarobot.com</a>.</p>
 </div>
 </div>
 </div>
@@ -1655,7 +1650,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">VPC ID
 (<code>VPCID</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of your existing VPC (e.g., vpc-0343606e).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of your existing VPC (for example, vpc-0343606e).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VPC CIDR
@@ -1667,25 +1662,25 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet 1 ID
 (<code>PrivateSubnet1ID</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the private subnet in Availability Zone 1 of your existing VPC (e.g., subnet-fe9a8b32).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the private subnet in Availability Zone 1 of your existing VPC (for example, subnet-fe9a8b32).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet 2 ID
 (<code>PrivateSubnet2ID</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the private subnet in Availability Zone 2 of your existing VPC (e.g., subnet-be8b01ea).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the private subnet in Availability Zone 2 of your existing VPC (for example, subnet-be8b01ea).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet 1 ID
 (<code>PublicSubnet1ID</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the public subnet in Availability Zone 1 of your existing VPC (e.g., subnet-a0246dcd).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the public subnet in Availability Zone 1 of your existing VPC (for example, subnet-a0246dcd).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet 2 ID
 (<code>PublicSubnet2ID</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the public subnet in Availability Zone 2 of your existing VPC (e.g., subnet-b1236eea).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of the public subnet in Availability Zone 2 of your existing VPC (for example, subnet-b1236eea).</p></td>
 </tr>
 </tbody>
 </table>
@@ -1880,7 +1875,7 @@ and to share your customizations with others.</p>
 </html>
 <!--
 repo commit:
-bb0a42b825b11b64b16b7aa47648763ea3b80432
+39d97ed2e8e7541db8ce100d833a0a903a85a199
 
 submodule config:
  6f77ca5b064a055ec8269614e4daf68406eacdca docs/boilerplate (heads/main)

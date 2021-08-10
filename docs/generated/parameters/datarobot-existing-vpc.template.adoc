@@ -3,12 +3,12 @@
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
 |Parameter label (name) |Default value|Description|VPC ID
-(`VPCID`)|`**__Requires input__**`|ID of your existing VPC (e.g., vpc-0343606e).|VPC CIDR
+(`VPCID`)|`**__Requires input__**`|ID of your existing VPC (for example, vpc-0343606e).|VPC CIDR
 (`VPCCIDR`)|`**__Requires input__**`|CIDR block for the VPC.|Private subnet 1 ID
-(`PrivateSubnet1ID`)|`**__Requires input__**`|ID of the private subnet in Availability Zone 1 of your existing VPC (e.g., subnet-fe9a8b32).|Private subnet 2 ID
-(`PrivateSubnet2ID`)|`**__Requires input__**`|ID of the private subnet in Availability Zone 2 of your existing VPC (e.g., subnet-be8b01ea).|Public subnet 1 ID
-(`PublicSubnet1ID`)|`**__Requires input__**`|ID of the public subnet in Availability Zone 1 of your existing VPC (e.g., subnet-a0246dcd).|Public subnet 2 ID
-(`PublicSubnet2ID`)|`**__Requires input__**`|ID of the public subnet in Availability Zone 2 of your existing VPC (e.g., subnet-b1236eea).
+(`PrivateSubnet1ID`)|`**__Requires input__**`|ID of the private subnet in Availability Zone 1 of your existing VPC (for example, subnet-fe9a8b32).|Private subnet 2 ID
+(`PrivateSubnet2ID`)|`**__Requires input__**`|ID of the private subnet in Availability Zone 2 of your existing VPC (for example, subnet-be8b01ea).|Public subnet 1 ID
+(`PublicSubnet1ID`)|`**__Requires input__**`|ID of the public subnet in Availability Zone 1 of your existing VPC (for example, subnet-a0246dcd).|Public subnet 2 ID
+(`PublicSubnet2ID`)|`**__Requires input__**`|ID of the public subnet in Availability Zone 2 of your existing VPC (for example, subnet-b1236eea).
 |===
 .Security configuration
 [width="100%",cols="16%,11%,73%",options="header",]
