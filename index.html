@@ -902,7 +902,7 @@ report bugs, or submit feature ideas for this Quick Start.
 <p>This guide provides instructions for deploying the DataRobot AutoML 7.1 Quick Start reference architecture on the AWS Cloud.</p>
 </div>
 <div class="paragraph">
-<p>This Quick Start is for users who want to install DataRobot AutoML 7.1 to create training models, perform automatic discovery of features, build simple applications, and make predictions in real-time/batch at a limited scale.</p>
+<p>This Quick Start is for users who want to install DataRobot AutoML 7.1 to create training models, perform automatic discovery of features, build simple applications, and make predictions in real-time or batch loads at a limited scale.</p>
 </div>
 <div class="paragraph">
 <p>For larger-scale implementations, reach out to DataRobot AutoML 7.1 sales at <a href="mailto:sales@datarobot.com">sales@datarobot.com</a> to discuss proof-of-concept options and software features.</p>
@@ -1003,7 +1003,7 @@ internet access for resources in the private subnets.*</p>
 </li>
 <li>
 <p>A Linux bastion host in an Auto Scaling group to allow inbound Secure
-Shell (SSH) access to Elastic Compute Cloud (Amazon EC2) instances in public and private subnets.*</p>
+Shell (SSH) access to Amazon Elastic Compute Cloud (Amazon EC2) instances in public and private subnets.*</p>
 </li>
 </ul>
 </div>
@@ -1019,19 +1019,19 @@ Shell (SSH) access to Elastic Compute Cloud (Amazon EC2) instances in public and
 <div class="ulist">
 <ul>
 <li>
-<p>An EC2 instance for the application node.</p>
+<p>An EC2 instance for the application server.</p>
 </li>
 <li>
-<p>Two EC2 instances for the high availability (HA) prediction nodes used for running model predictions in real-time or batch loads.</p>
+<p>Two EC2 instances for the high availability (HA) prediction servers used for running model predictions in real-time or batch loads.</p>
 </li>
 <li>
-<p>Two EC2 instances for the nodes used for constructing data models.</p>
+<p>Two EC2 instances for the servers used for constructing data models.</p>
 </li>
 <li>
-<p>Three EC2 instances for the HA data (back-end) nodes running Mongo and Redis.</p>
+<p>Three EC2 instances for the HA data (backend) servers running MongoDB and Redis.</p>
 </li>
 <li>
-<p>An Auto Scaling group with 1-5 EC2 instances with worker nodes for machine learning.</p>
+<p>An Auto Scaling group with up to five EC2 instances with worker servers for machine learning.</p>
 </li>
 </ul>
 </div>
@@ -1043,10 +1043,10 @@ Shell (SSH) access to Elastic Compute Cloud (Amazon EC2) instances in public and
 <p>(HTTPS option) Amazon Route 53 zone records, if applicable.</p>
 </li>
 <li>
-<p>(HTTPS option) Certificates in AWS Certificate Manager for Application Load Balancers.</p>
+<p>(HTTPS option) Certificates in AWS Certificate Manager (ACM) for the Application Load Balancers.</p>
 </li>
 <li>
-<p>Non-public Amazon Simple Storage Service (Amazon S3) bucket for data storage and ingest operations.</p>
+<p>Private Amazon Simple Storage Service (Amazon S3) bucket for data storage and ingestion operations.</p>
 </li>
 </ul>
 </div>
@@ -1880,7 +1880,7 @@ and to share your customizations with others.</p>
 </html>
 <!--
 repo commit:
-5b78b35474ad0492d734bfb03ef601d9d12ba998
+bb0a42b825b11b64b16b7aa47648763ea3b80432
 
 submodule config:
  6f77ca5b064a055ec8269614e4daf68406eacdca docs/boilerplate (heads/main)
