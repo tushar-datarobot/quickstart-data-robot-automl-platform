@@ -19,19 +19,19 @@ best practices, to provide you with your own virtual network on AWS.*
 ** Managed network address translation (NAT) gateways to allow outbound
 internet access for resources in the private subnets.*
 ** A Linux bastion host in an Auto Scaling group to allow inbound Secure
-Shell (SSH) access to Elastic Compute Cloud (Amazon EC2) instances in public and private subnets.*
+Shell (SSH) access to Amazon Elastic Compute Cloud (Amazon EC2) instances in public and private subnets.*
 * An Application Load Balancer as the front end for the application server.
 * An Application Load Balancer as the front end for the dedicated prediction servers.
 * In the private subnets:
-** An EC2 instance for the application node.
-** Two EC2 instances for the high availability (HA) prediction nodes used for running model predictions in real-time or batch loads.
-** Two EC2 instances for the nodes used for constructing data models. 
-** Three EC2 instances for the HA data (back-end) nodes running Mongo and Redis.
-** An Auto Scaling group with 1-5 EC2 instances with worker nodes for machine learning.
+** An EC2 instance for the application server.
+** Two EC2 instances for the high availability (HA) prediction servers used for running model predictions in real-time or batch loads.
+** Two EC2 instances for the servers used for constructing data models. 
+** Three EC2 instances for the HA data (backend) servers running MongoDB and Redis.
+** An Auto Scaling group with up to five EC2 instances with worker servers for machine learning.
 * Amazon CloudWatch alarms for Auto Scaling based on load.
 * (HTTPS option) Amazon Route 53 zone records, if applicable.
-* (HTTPS option) Certificates in AWS Certificate Manager for Application Load Balancers.
-* Non-public Amazon Simple Storage Service (Amazon S3) bucket for data storage and ingest operations.
+* (HTTPS option) Certificates in AWS Certificate Manager (ACM) for the Application Load Balancers.
+* Private Amazon Simple Storage Service (Amazon S3) bucket for data storage and ingestion operations.
 
 // Add bullet points for any additional components that are included in the deployment. Make sure that the additional components are also represented in the architecture diagram. End each bullet with a period.
 
