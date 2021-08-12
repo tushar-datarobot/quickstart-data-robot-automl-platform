@@ -312,7 +312,7 @@ Resources:
         Encrypted: true
         EncryptionKey: ' '
         SSHKey: !Ref KeyPairName
-        QSInstallationBucket: !Ref QSS3BucketName
+        QSInstallationBucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         # DRInstallationBucket: !Ref DRS3InstallationBucket
         DRInstallationBucket: !If [CreateS3BucketCondition, !Ref 'S3Bucket', !Ref DRS3InstallationBucket]
         ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", Centos]
