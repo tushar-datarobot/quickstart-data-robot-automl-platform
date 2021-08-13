@@ -1151,24 +1151,10 @@ deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 <div class="sect3">
 <h4 id="_supported_aws_regions">Supported AWS Regions</h4>
 <div class="paragraph">
-<p>This Quick Start supports the following Regions:</p>
+<p>For any Quick Start to work in a Region other than its default Region, all the services it deploys must be supported in that Region. You can launch a Quick Start in any Region and see if it works. If you get an error such as “Unrecognized resource type,” the Quick Start is not supported in that Region.</p>
 </div>
 <div class="paragraph">
-<p>US East (Ohio)	us-east-2
-US East (N. Virginia)	us-east-1
-US West (N. California)	us-west-1
-US West (Oregon)	us-west-2
-Asia Pacific (Seoul)	ap-northeast-2
-Asia Pacific (Tokyo)	ap-northeast-1
-Europe (Ireland)	eu-west-1
-Europe (London)	eu-west-2
-Europe (Milan)	eu-south-1
-Europe (Paris)	eu-west-3
-Europe (Stockholm)	eu-north-1
-South America (São Paulo)	sa-east-1</p>
-</div>
-<div class="paragraph">
-<p>Reach out to <a href="mailto:sales@datarobot.com">sales@datarobot.com</a> if you need to deploy in another Region.</p>
+<p>For an up-to-date list of AWS Regions and the AWS services they support, see <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/" target="_blank" rel="noopener">AWS Regional Services</a>.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1313,7 +1299,7 @@ If you’re deploying DataRobot AutoML 7.1 into an existing VPC, make sure that 
 <h2 id="_post_deployment_steps">Post-deployment steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the CloudFormation console,, locate the values in the <strong>Outputs</strong> tab. Then log in to the application by targeting the hostname you provided for the application server (or the AWS-generated DNS name for the port 80 front-end load Application Load Balancer, if you chose an insecure installation).</p>
+<p>In the CloudFormation console, locate the values in the <strong>Outputs</strong> tab. Then log in to the application by targeting the hostname you provided for the application server (or the AWS-generated DNS name for the port 80 front-end load Application Load Balancer, if you chose an insecure installation).</p>
 </div>
 <div class="paragraph">
 <p>The initial admininstrator user name is <a href="mailto:localadmin@datarobot.com">localadmin@datarobot.com</a>. The password is located in AWS Secrets Manager in the account you used to install the Quick Start.</p>
@@ -1875,10 +1861,10 @@ and to share your customizations with others.</p>
 </html>
 <!--
 repo commit:
-ae434cff7d03e0db12f6a79987d023fa2fab89ac
+bb03674df912ec351e3fbc98873b651a7792da7b
 
 submodule config:
- bd3486afbbd9436a72131cb2ebd6d201d3b14645 docs/boilerplate (heads/main)
+ ef68e52c6d483f3b44d4dfdeb4216e78098be29d docs/boilerplate (heads/main)
  ffc7af4e59a09dbf52199a3ecf70f3805abeff48 submodules/quickstart-aws-vpc (v1.0-58-gffc7af4)
  b9950be657d8a8c76e71fca157b4952a587342f4 submodules/quickstart-linux-bastion (heads/main)
 -->

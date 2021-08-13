@@ -4,7 +4,7 @@
 == Post-deployment steps
 // If post-deployment steps are required, add them here. If not, remove the heading
 
-In the CloudFormation console,, locate the values in the *Outputs* tab. Then log in to the application by targeting the hostname you provided for the application server (or the AWS-generated DNS name for the port 80 front-end load Application Load Balancer, if you chose an insecure installation). 
+In the CloudFormation console, locate the values in the *Outputs* tab. Then log in to the application by targeting the hostname you provided for the application server (or the AWS-generated DNS name for the port 80 front-end load Application Load Balancer, if you chose an insecure installation). 
 
 The initial admininstrator user name is localadmin@datarobot.com. The password is located in AWS Secrets Manager in the account you used to install the Quick Start.
 
