@@ -75,6 +75,18 @@ Resources:
           ToPort: 5000
           CidrIp: !Ref CidrBlock
 
+        - Description: NGINX (Internal)
+          IpProtocol: tcp
+          FromPort: 5202
+          ToPort: 5203
+          CidrIp: !Ref CidrBlock
+
+        - Description: ModMan
+          IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: !Ref CidrBlock
+
         - Description: IDE Client Broker and Worker
           IpProtocol: tcp
           FromPort: 5445
@@ -170,6 +182,24 @@ Resources:
           ToPort: 8051
           CidrIp: !Ref CidrBlock
 
+        - Description: Tile Server GL Proxy Port
+          IpProtocol: tcp
+          FromPort: 8052
+          ToPort: 8052
+          CidrIp: !Ref CidrBlock
+
+        - Description: DataRobot AppsBuilder API
+          IpProtocol: tcp
+          FromPort: 8083
+          ToPort: 8083
+          CidrIp: !Ref CidrBlock
+
+        - Description: DataRobot AppsBuilder Internal API
+          IpProtocol: tcp
+          FromPort: 8084
+          ToPort: 8084
+          CidrIp: !Ref CidrBlock
+
         - Description: DataRobot Prediction Optimization Application
           IpProtocol: tcp
           FromPort: 8097
@@ -248,26 +278,70 @@ Resources:
           ToPort: 46379
           CidrIp: !Ref CidrBlock
 
-### These ports are required for HA Mode
-        - Description: Patroni Zookeeper
+### Required ports for MINIO
+        - Description: MinIO Port
+          IpProtocol: tcp/udp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: !Ref CidrBlock
+
+### Required ports for Kubernetes
+        - Description: Calico Networking (BGP)
+          IpProtocol: tcp
+          FromPort: 179
+          ToPort: 179
+          CidrIp: !Ref CidrBlock
+
+        - Description: Kubernetes etcd
+          IpProtocol: tcp
+          FromPort: 2379
+          ToPort: 2380
+          CidrIp: !Ref CidrBlock
+
+        - Description: Calico Networking with VXVLAN enabled
+          IpProtocol: udp
+          FromPort: 4789
+          ToPort: 4789
+          CidrIp: !Ref CidrBlock
+
+        - Description: Kubernetes API HTTPS endpoint
+          IpProtocol: tcp
+          FromPort: 6443
+          ToPort: 6443
+          CidrIp: !Ref CidrBlock
+
+        - Description: Kubernetes (Internal Communication)
+          IpProtocol: tcp
+          FromPort: 10250
+          ToPort: 10252
+          CidrIp: !Ref CidrBlock
+
+        - Description: Kubernetes NodePort Services
+          IpProtocol: tcp
+          FromPort: 30000
+          ToPort: 32767
+          CidrIp: !Ref CidrBlock
+
+### Required Ports for HA Mode
+        - Description: ModMan - Zookeeper
           IpProtocol: tcp
           FromPort: 2888
           ToPort: 2888
           CidrIp: !Ref CidrBlock
 
-        - Description: Patroni Zookeeper
+        - Description: ModMan - Zookeeper
           IpProtocol: tcp
           FromPort: 3181
           ToPort: 3181
           CidrIp: !Ref CidrBlock
 
-        - Description: Patroni Zookeeper
+        - Description: ModMan - Zookeeper
           IpProtocol: tcp
           FromPort: 3888
           ToPort: 3888
           CidrIp: !Ref CidrBlock
 
-        - Description: HA Postgres/Patroni
+        - Description: ModMan - HA Postgres
           IpProtocol: tcp
           FromPort: 4000
           ToPort: 4000
@@ -279,10 +353,28 @@ Resources:
           ToPort: 4369
           CidrIp: !Ref CidrBlock
 
-        - Description: HA Postgres/Patroni
+        - Description: ModMan - HA Postgres
           IpProtocol: tcp
-          FromPort: 5432
+          FromPort: 5433
+          ToPort: 5433
+          CidrIp: !Ref CidrBlock
+
+        - Description: ModMan - HAProxy HA Postgres
+          IpProtocol: tcp
+          FromPort: 5434
           ToPort: 5434
+          CidrIp: !Ref CidrBlock
+
+        - Description: HAProxy HA RabbitMQ TLS
+          IpProtocol: tcp
+          FromPort: 5671
+          ToPort: 5671
+          CidrIp: !Ref CidrBlock
+
+        - Description: HAProxy HA RabbitMQ
+          IpProtocol: tcp
+          FromPort: 5672
+          ToPort: 5672
           CidrIp: !Ref CidrBlock
 
         - Description: HA RabbitMQ
@@ -297,10 +389,28 @@ Resources:
           ToPort: 7001
           CidrIp: !Ref CidrBlock
 
-        - Description: MinIO HA Port
+        - Description: TileServer GL Load Balancer
           IpProtocol: tcp
+          FromPort: 8052
+          ToPort: 8052
+          CidrIp: !Ref CidrBlock  
+
+        - Description: MinIO HA Port
+          IpProtocol: tcp/udp
           FromPort: 9002
           ToPort: 9002
+          CidrIp: !Ref CidrBlock
+
+        - Description: HAProxy HA RabbitMQ Management HTTP(S) Interface
+          IpProtocol: tcp
+          FromPort: 15671
+          ToPort: 15671
+          CidrIp: !Ref CidrBlock
+
+        - Description: HAProxy HA RabbitMQ Management HTTP Interface
+          IpProtocol: tcp
+          FromPort: 15672
+          ToPort: 15672
           CidrIp: !Ref CidrBlock
 
         - Description: HA RabbitMQ Management HTTP(S) Interface
