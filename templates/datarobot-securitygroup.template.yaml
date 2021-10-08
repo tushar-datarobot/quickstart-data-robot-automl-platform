@@ -279,8 +279,14 @@ Resources:
           CidrIp: !Ref CidrBlock
 
 ### Required ports for MINIO
-        - Description: MinIO Port
-          IpProtocol: tcp/udp
+        - Description: MinIO TCP Port
+          IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: !Ref CidrBlock
+
+        - Description: MinIO UDP Port
+          IpProtocol: udp
           FromPort: 9000
           ToPort: 9000
           CidrIp: !Ref CidrBlock
@@ -395,8 +401,14 @@ Resources:
           ToPort: 8052
           CidrIp: !Ref CidrBlock  
 
-        - Description: MinIO HA Port
-          IpProtocol: tcp/udp
+        - Description: MinIO TCP HA Port
+          IpProtocol: tcp
+          FromPort: 9002
+          ToPort: 9002
+          CidrIp: !Ref CidrBlock
+
+        - Description: MinIO UDP HA Port
+          IpProtocol: udp
           FromPort: 9002
           ToPort: 9002
           CidrIp: !Ref CidrBlock
